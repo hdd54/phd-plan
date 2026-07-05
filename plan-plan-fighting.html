@@ -756,9 +756,15 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
       <div class="pomo-progress-wrap"><div class="bar" id="pomoProgressBar"></div></div>
     </div>
     <div class="pomo-types">
-      <button class="pomo-type s" data-pomo-time="25" data-pomo-label="专注">&#127919; 专注 25m</button>
-      <button class="pomo-type break-t" data-pomo-time="5" data-pomo-label="短休">&#127961; 短休 5m</button>
-      <button class="pomo-type break-t" data-pomo-time="15" data-pomo-label="长休">&#127961; 长休 15m</button>
+      <button class="pomo-type s" data-pomo-time="15" data-pomo-label="专注">&#127919; 15m</button>
+      <button class="pomo-type" data-pomo-time="25" data-pomo-label="专注">&#127919; 25m</button>
+      <button class="pomo-type" data-pomo-time="30" data-pomo-label="专注">&#127919; 30m</button>
+      <button class="pomo-type" data-pomo-time="45" data-pomo-label="专注">&#127919; 45m</button>
+      <button class="pomo-type" data-pomo-time="60" data-pomo-label="专注">&#127919; 60m</button>
+      <button class="pomo-type" data-pomo-time="75" data-pomo-label="专注">&#127919; 75m</button>
+      <button class="pomo-type" data-pomo-time="90" data-pomo-label="专注">&#127919; 90m</button>
+      <button class="pomo-type break-t" data-pomo-time="5" data-pomo-label="短休">&#127961; 5m</button>
+      <button class="pomo-type break-t" data-pomo-time="15" data-pomo-label="长休">&#127961; 15m</button>
     </div>
     <div class="pomo-tag-row">
       <input id="pomoTagInput" placeholder="标签（如：论文、刷题…）" maxlength="20">
@@ -2647,7 +2653,7 @@ function renderTemplates(){document.querySelectorAll('.tpl-list').forEach(functi
 
 // ======================== FEATURE: Pomodoro ========================
 var pomo={running:false,time:25*60,left:25*60,interval:null,label:'focus',sessionType:'focus',tag:'',date:null,totalToday:0}
-var POMO_MS=[{n:'50个',c:50,i:'🌱'},{n:'100个',c:100,i:'🌿'},{n:'200个',c:200,i:'🌳'},{n:'500个',c:500,i:'🏆'},{n:'1000个',c:1000,i:'👑'},{n:'2000个',c:2000,i:'💎'}]
+var POMO_MS=[{n:'50个',c:50,i:'🌱'},{n:'100个',c:100,i:'🌿'},{n:'200个',c:200,i:'🌳'},{n:'500个',c:500,i:'🏆'},{n:'1000个',c:1000,i:'👑'},{n:'2000个',c:2000,i:'💎'},{n:'5000个',c:5000,i:'🏅'},{n:'10000个',c:10000,i:'💫'}]
 function pomoLoad(){var s=localStorage.getItem('phd_v4_pomo');if(s)try{var p=JSON.parse(s);pomo.time=p.time||25*60;pomo.left=p.left||pomo.time;pomo.label=p.label||'focus';pomo.sessionType=p.sessionType||'focus'}catch(e){}
   var t=new Date().toDateString();if(pomo.date!==t){pomo.date=t;pomo.totalToday=0}
   updatePomoDisplay();updatePomoBadge();renderPomoRecords();renderPomoStats();renderPomoMstones()}
@@ -2845,7 +2851,8 @@ function renderHeatmap(cid){var wrap=document.getElementById('hm-'+cid);if(!wrap
 
 // ======================== FEATURE: Stats Panel ========================
 function computeStats(){var total=0,done=0,streak=0,allDays=[],weeklyRates=[]
-  Object.keys(data.weeks).forEach(function(cid){(data.weeks[cid]||[]).forEach(function(w,wi){
+  var wkKeys=Object.keys(data).filter(function(k){return k.match(/^y[1-5]-(academic|exam|finance|life)$/)})
+  wkKeys.forEach(function(cid){(data[cid]||[]).forEach(function(w,wi){
     var wTotal=0,wDone=0;(w.days||[]).forEach(function(d,di){
       if(d&&d.trim()){wTotal++;if(w.done&&w.done[di])wDone++;allDays.push({done:w.done&&w.done[di]||false,date:null})}})
     if(wTotal){weeklyRates.push({label:cid.replace('y','').replace('1','Y1').replace('2','Y2').replace('3','Y3').replace('4','Y4').replace('5','Y5')+'W'+(wi+1),rate:Math.round(wDone/wTotal*100),total:wTotal,done:wDone})}
