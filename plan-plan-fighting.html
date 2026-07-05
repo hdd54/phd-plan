@@ -271,7 +271,6 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 #fileInput{display:none}
 
 /* ---- Drag & Drop ---- */
-.di[draggable=true]{cursor:grab}
 .di.dragging{opacity:.4;cursor:grabbing}
 .di.drag-over{border-color:var(--accent)!important;box-shadow:0 0 0 2px rgba(212,165,116,.2)!important}
 .dr.drag-over{background:rgba(212,165,116,.05)}
@@ -1351,21 +1350,59 @@ document.addEventListener('click', e => {
     const cid = t.dataset.c, wi = parseInt(t.dataset.wi);
     if (data[cid] && data[cid][wi] && confirm('删除「'+data[cid][wi].w+'」？')) {
       data[cid].splice(wi, 1);
-      // Clean open state
-      if (openState[cid]) { delete openState[cid][wi]; }
+      // Shift openState indices down for weeks after the deleted one
+      if (openState[cid]) {
+        const newState = {};
+        Object.keys(openState[cid]).forEach(k => {
+          const idx = parseInt(k);
+          if (idx < wi) newState[idx] = openState[cid][k];
+          else if (idx > wi) newState[idx - 1] = openState[cid][k];
+        });
+        openState[cid] = newState;
+      }
       save(); renderWeeks(cid); showToast('🗑 已删除');
     }
     return;
   }
 
-  // Add week — NO auto scroll, just render in place
-  if (t.classList.contains('aw')) {
+  // Add week — fill gaps, insert at correct sorted position
+  if (t.classList.contains('aw') && !t.classList.contains('tpl')) {
     const cid = t.dataset.c;
     if (!data[cid]) data[cid] = [];
-    const n = (data[cid].length||0)+1;
-    data[cid].push({w:'第'+n+'周', s:'', d:DAYS.map(()=>'')});
+    // Scan existing week numbers to find the first gap
+    const nums = [];
+    let maxN = 0;
+    data[cid].forEach((w, idx) => {
+      const m = w.w.match(/第(\d+)周/);
+      if (m) { const v = parseInt(m[1]); nums.push({idx, v}); maxN = Math.max(maxN, v); }
+    });
+    // Find first missing number (gap) starting from 1
+    let n = maxN + 1;
+    for (let i = 1; i <= maxN; i++) {
+      if (!nums.some(x => x.v === i)) { n = i; break; }
+    }
+    const newWeek = {w:'第'+n+'周', s:'', d:DAYS.map(()=>'')};
+    // Insert at correct sorted position
+    const insertAt = data[cid].findIndex((w, idx) => {
+      const m = w.w.match(/第(\d+)周/);
+      return m && parseInt(m[1]) > n;
+    });
+    if (insertAt >= 0) {
+      data[cid].splice(insertAt, 0, newWeek);
+      if (openState[cid]) {
+        const newState = {};
+        Object.keys(openState[cid]).forEach(k => {
+          const idx = parseInt(k);
+          if (idx < insertAt) newState[idx] = openState[cid][k];
+          else newState[idx + 1] = openState[cid][k];
+        });
+        openState[cid] = newState;
+      }
+    } else {
+      data[cid].push(newWeek);
+    }
     if (!openState[cid]) openState[cid] = {};
-    openState[cid][data[cid].length-1] = true; // auto-expand new week
+    openState[cid][insertAt >= 0 ? insertAt : data[cid].length - 1] = true;
     save(); renderWeeks(cid);
     showToast('✓ 已添加');
     return;
@@ -1419,13 +1456,13 @@ document.addEventListener('click', e => {
   if (t.id==='editToggle'||t.closest('#editToggle')||t.id==='editToggle2'||t.closest('#editToggle2')) {
     const isEdit = !document.querySelector('.tb[contentEditable="true"]');
     // Toggle contentEditable on overview text, heading icon, category label, and motto
-    document.querySelectorAll('.tb, .tc .ti, .tc .tt > span:first-child, .tc .tm').forEach(el => {
+    document.querySelectorAll('.tb, .tc .ti, .tc .tt > span:first-child, .tc .tm, .wk-label').forEach(el => {
       el.contentEditable = isEdit;
     });
-    // In edit mode: text cursor on daily textareas; disable drag
+    // In edit mode: text cursor on daily textareas; disable drag; non-edit: default arrow
     document.querySelectorAll('.di').forEach(el => {
       el.draggable = !isEdit;
-      el.style.cursor = isEdit ? 'text' : '';
+      el.style.cursor = isEdit ? 'text' : 'default';
     });
     document.getElementById('edBadge').classList.toggle('s', isEdit);
     document.querySelectorAll('#editToggle,#editToggle2').forEach(b => {
@@ -3120,7 +3157,9 @@ function showTplPicker(cardId){var el=document.getElementById('tplPicker');if(!e
   el.querySelector('.tpl-picker-close').onclick=function(){el.classList.remove('s')}}
 function applyTpl(cardId,tplIdx){var tpl=WEEK_TPL[tplIdx];if(!tpl)return;if(!data[cardId])data[cardId]=[]
   var nWeeks=prompt('创建几周？(1-12)','4');nWeeks=parseInt(nWeeks)||4;if(nWeeks<1||nWeeks>12)nWeeks=4
-  for(var w=0;w<nWeeks;w++){var startWeek=data[cardId].length+1
+  // Find max existing week number
+  var maxN=0;data[cardId].forEach(function(w){var m=w.w.match(/第(\d+)周/);if(m)maxN=Math.max(maxN,parseInt(m[1]))});
+  for(var w=0;w<nWeeks;w++){var startWeek=maxN+w+1
     data[cardId].push({w:'第'+(startWeek)+'周',s:'',d:tpl.d.slice()})}
   save();renderWeeks(cardId);showToast('✓ 已创建 '+nWeeks+' 周计划')}
 
