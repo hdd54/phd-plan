@@ -218,12 +218,30 @@ h1,h2,h3{font-family:"Noto Serif SC","STSong","Source Han Serif SC","Songti SC",
 #fileInput{display:none}
 
 /* ---- AI Panel ---- */
-.ai-fab{position:fixed;right:clamp(.6rem,2vw,1.2rem);bottom:clamp(3rem,5vw,4rem);z-index:250;width:clamp(2.2rem,3.5vw,2.8rem);height:clamp(2.2rem,3.5vw,2.8rem);border-radius:50%;border:none;background:linear-gradient(135deg,#d4a853,#b8933a);color:#0a0e1a;font-size:clamp(1rem,1.8vw,1.3rem);cursor:grab;box-shadow:0 4px 20px rgba(212,168,83,.35);transition:all .25s;display:flex;align-items:center;justify-content:center;user-select:none;touch-action:none;overflow:hidden}
+.ai-fab{position:fixed;right:clamp(.6rem,2vw,1.2rem);bottom:clamp(3rem,5vw,4rem);z-index:250;width:clamp(2.2rem,3.5vw,2.8rem);height:clamp(2.2rem,3.5vw,2.8rem);border-radius:50%;border:none;background:linear-gradient(135deg,#d4a853,#b8933a);color:#0a0e1a;font-size:clamp(1rem,1.8vw,1.3rem);cursor:grab;box-shadow:0 4px 20px rgba(212,168,83,.35);transition:all .25s;display:flex;align-items:center;justify-content:center;user-select:none;touch-action:none;overflow:visible}
 .ai-fab:active{cursor:grabbing}
 .ai-fab:hover{transform:scale(1.12);box-shadow:0 6px 28px rgba(212,168,83,.5)}
 .ai-fab.o{transform:rotate(45deg) scale(.9);box-shadow:none}
 .ai-fab.dragging{transition:none!important;transform:scale(1.12);box-shadow:0 8px 32px rgba(212,168,83,.5)}
 .ai-fab svg{width:clamp(1.2rem,2vw,1.6rem);height:clamp(1.2rem,2vw,1.6rem);display:block;pointer-events:none}
+/* FAB status dot */
+.fab-status{position:absolute;bottom:-2px;right:-2px;width:clamp(8px,1.2vw,10px);height:clamp(8px,1.2vw,10px);border-radius:50%;border:2px solid #0a0e1a;transition:all .3s}
+.fab-status.idle{background:#2dd4bf;box-shadow:0 0 6px rgba(45,212,191,.5)}
+.fab-status.thinking{background:#d4a853;box-shadow:0 0 8px rgba(212,168,83,.6);animation:fabPulse 1s infinite}
+.fab-status.confirming{background:#60a5fa;box-shadow:0 0 8px rgba(96,165,250,.5);animation:fabPulse 1.5s infinite}
+.fab-status.error{background:#f472b6;box-shadow:0 0 6px rgba(244,114,182,.5)}
+.fab-status.off{background:var(--txt4)}
+@keyframes fabPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.7)}}
+/* AI panel status bar */
+.ai-status-bar{display:flex;align-items:center;gap:.25rem;padding:clamp(.15rem,.25vw,.2rem) clamp(.6rem,1.2vw,.9rem);border-bottom:1px solid var(--border2);flex-shrink:0;min-height:clamp(1.2rem,2vw,1.4rem)}
+.ai-status-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;transition:all .3s}
+.ai-status-dot.idle{background:#2dd4bf;box-shadow:0 0 6px rgba(45,212,191,.4)}
+.ai-status-dot.thinking{background:#d4a853;box-shadow:0 0 6px rgba(212,168,83,.4);animation:fabPulse 1s infinite}
+.ai-status-dot.confirming{background:#60a5fa;box-shadow:0 0 6px rgba(96,165,250,.4);animation:fabPulse 1.5s infinite}
+.ai-status-dot.error{background:#f472b6;box-shadow:0 0 6px rgba(244,114,182,.4)}
+.ai-status-dot.off{background:var(--txt4)}
+.ai-status-text{font-size:clamp(.55rem,.8vw,.6rem);color:var(--txt4);white-space:nowrap;transition:color .3s}
+.ai-status-text.talk{color:var(--gold)}
 .ai-overlay{position:fixed;inset:0;z-index:299;background:rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .3s}
 .ai-overlay.s{opacity:1;pointer-events:auto}
 .ai-panel{position:fixed;top:0;right:0;bottom:0;width:clamp(300px,40vw,480px);z-index:300;background:rgba(10,14,26,.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-left:1px solid rgba(212,168,83,.2);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);box-shadow:-8px 0 40px rgba(0,0,0,.5);overflow:hidden}
@@ -469,6 +487,7 @@ h1,h2,h3{font-family:"Noto Serif SC","STSong","Source Han Serif SC","Songti SC",
     <!-- cheek sparkle -->
     <circle cx="11" cy="28" r="1" fill="#60a5fa" opacity="0.5"/>
     <circle cx="41" cy="28" r="1" fill="#60a5fa" opacity="0.5"/>
+    <span class="fab-status off" id="fabStatus"></span>
   </svg>
 </button>
 <div class="ai-overlay" id="aiOverlay"></div>
@@ -480,6 +499,7 @@ h1,h2,h3{font-family:"Noto Serif SC","STSong","Source Han Serif SC","Songti SC",
       <button class="ai-close-btn" id="aiClose">✕</button>
     </div>
   </div>
+  <div class="ai-status-bar"><span class="ai-status-dot off" id="aiStatusDot"></span><span class="ai-status-text" id="aiStatusText">未配置</span></div>
   <div class="ai-key-section">
     <div class="ai-key-row">
       <span class="ai-label">接口</span>
@@ -1121,7 +1141,27 @@ function autoTitle(msg) {
   return clean.length > 18 ? clean.slice(0, 18) + '…' : clean;
 }
 
+// ===== AI Status Management =====
+function setAIStatus(state, detail) {
+  const dot = document.getElementById('aiStatusDot');
+  const text = document.getElementById('aiStatusText');
+  const fab = document.getElementById('fabStatus');
+  const states = {
+    idle:    { cls: 'idle',    label: '待命' },
+    thinking:{ cls: 'thinking',label: '思考中' },
+    confirming:{cls: 'confirming',label: '等待确认' },
+    error:   { cls: 'error',   label: '出错了' },
+    off:     { cls: 'off',     label: '未配置' }
+  };
+  const s = states[state] || states.off;
+  if (dot) { dot.className = 'ai-status-dot ' + s.cls; }
+  if (text) { text.textContent = detail || s.label; text.className = 'ai-status-text' + (state==='thinking'?' talk':''); }
+  if (fab) { fab.className = 'fab-status ' + s.cls; }
+}
+
 // Restore saved config
+const hasAiKey = !!aiKey;
+setAIStatus(hasAiKey ? 'idle' : 'off');
 if (aiKey) { aiKeyStatus.textContent = '✓ 已设置'; aiKeyStatus.style.color = '#2dd4bf'; aiKeySave.textContent = '更新'; }
 aiKeyInput.value = aiKey;
 aiEndpointInput.value = aiEndpoint;
@@ -1217,6 +1257,7 @@ aiKeySave.addEventListener('click', () => {
   localStorage.setItem(AI_MODEL_KEY, md);
   aiKeyStatus.textContent = '✓ 已保存'; aiKeyStatus.style.color = '#2dd4bf';
   aiKeySave.textContent = '更新';
+  setAIStatus('idle');
   addAIMessage('system', '🔑 配置已保存 (' + aiModel + ' @ ' + aiEndpoint.replace(/^https?:\/\//,'').substring(0,30) + '…)。你可以开始使用 AI 助手了。');
   scrollChat();
 });
@@ -1323,7 +1364,7 @@ function addAIMessage(role, content, extra) {
     const cf = document.createElement('button'); cf.className = 'btn-confirm'; cf.textContent = '✅ 确认应用';
     cf.addEventListener('click', () => applyEditProposal(extra.proposal, cf));
     const rj = document.createElement('button'); rj.className = 'btn-reject'; rj.textContent = '❌ 拒绝';
-    rj.addEventListener('click', () => { propDiv.innerHTML = '<p style="color:#f472b6">✕ 已拒绝</p>'; });
+    rj.addEventListener('click', () => { propDiv.innerHTML = '<p style="color:#f472b6">✕ 已拒绝</p>'; setAIStatus('idle'); });
     actsDiv.appendChild(cf); actsDiv.appendChild(rj);
     propDiv.appendChild(actsDiv);
     div.appendChild(propDiv);
@@ -1587,6 +1628,7 @@ async function sendAIMessage() {
   }
   aiInput.value = ''; aiSend.disabled = true; autoResize(aiInput);
   aiProcessing = true;
+  setAIStatus('thinking');
 
   // Add user message
   addAIMessage('u', text);
@@ -1628,6 +1670,7 @@ async function sendAIMessage() {
       try { const je = JSON.parse(errText); errMsg = je.error?.message || je.error?.type || errMsg; } catch(e) {}
       addAIMessage('ai', '⚠️ ' + errMsg + '。请检查 API Key 是否有效。');
       aiProcessing = false; aiSend.disabled = !aiInput.value.trim();
+      setAIStatus('error', '请求失败');
       saveChatHistory(); return;
     }
 
@@ -1656,16 +1699,23 @@ async function sendAIMessage() {
     addAIMessage('ai', replyBody, proposal ? { proposal } : null);
     scrollChat();
     saveChatHistory();
+    if (proposal) setAIStatus('confirming');
 
   } catch(err) {
     removeTyping();
     addAIMessage('ai', '⚠️ 网络错误：' + (err.message || '请求失败') + '。请检查网络连接。');
     scrollChat();
     saveChatHistory();
+    setAIStatus('error', '网络错误');
   }
 
   aiProcessing = false;
   aiSend.disabled = !aiInput.value.trim();
+  // If no error and not confirming, go idle; confirming is set by proposal
+  if (!aiProcessing) {
+    const hasPending = document.querySelector('.ai-edit-proposal .btn-confirm');
+    if (!hasPending) setAIStatus('idle');
+  }
 }
 
 // Apply edit proposal
@@ -1755,6 +1805,7 @@ function applyEditProposal(proposal, btnEl) {
   }
 
   showToast('🤖 AI 已应用 ' + applied + ' 项修改');
+  setAIStatus('idle');
 }
 
 // Patch save to also persist AI chat history
