@@ -1040,8 +1040,13 @@ document.addEventListener('click', e => {
   }
 
   // Card toggle — preserve open state across all weeks inside
-  if (t.closest('.wt')) {
-    const toggle = t.closest('.wt');
+  var wtToggle = t.closest('.wt');
+  // Also allow clicking on .tc card body (except inner interactive areas) to toggle
+  if (!wtToggle && t.closest('.tc') && !t.closest('.tb') && !t.closest('.wp') && !t.closest('.tp')) {
+    wtToggle = t.closest('.tc').querySelector('.wt');
+  }
+  if (wtToggle) {
+    const toggle = wtToggle;
     const cid = toggle.dataset.c;
     const body = document.getElementById('plan-body-'+cid);
     if (body) {
