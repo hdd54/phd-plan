@@ -1987,25 +1987,15 @@ async function gistPush() {
   updateGistUI();
 }
 
-// ===== Pull =====
+// ===== Pull (always overwrites local data with remote) =====
 async function gistPull() {
   gistSyncing = true;
   gistDom('gistPullBtn').disabled = true;
   setGistStatus('⏳ 拉取中…', '');
   try {
     const remote = await gistFetch();
-    const remoteSync = remote._syncedAt || 0;
     delete remote._syncedAt;
-    
-    if (remoteSync > 0 && remoteSync <= gistLastSync && gistLastSync > 0) {
-      if (!confirm('云端数据早于或等于本地同步时间。仍要覆盖本地数据？')) {
-        setGistStatus('已取消', '');
-        gistSyncing = false; gistDom('gistPullBtn').disabled = false;
-        return;
-      }
-    }
-    
-    // Preserve overviews
+    // Preserve overviews if remote doesn't have them
     const localOverviews = data._overviews;
     data = remote;
     if (!data._overviews && localOverviews) data._overviews = localOverviews;
@@ -2056,30 +2046,24 @@ function updateGistUI() {
   }
 }
 
-// ===== Init: try auto-pull on load =====
+// ===== Init: auto-pull remote data on page load =====
 function trySyncOnLoad() {
   if (!gistToken || !gistId) return;
   setGistStatus('⏳ 自动同步中…', '');
   gistFetch().then(function(remote) {
-    const remoteSync = remote._syncedAt || 0;
-    if (remoteSync > gistLastSync) {
-      delete remote._syncedAt;
-      const localOverviews = data._overviews;
-      data = remote;
-      if (!data._overviews && localOverviews) data._overviews = localOverviews;
-      ensure(data);
-      save();
-      renderAll();
-      gistLastSync = Date.now();
-      localStorage.setItem(GIST_LAST_SYNC_KEY, gistLastSync.toString());
-      setGistStatus('✅ 已自动同步其他设备的修改', 'ok');
-      showToast('⚡ 已同步其他设备的数据');
-    } else {
-      setGistStatus('✅ 数据已最新', 'ok');
-    }
+    delete remote._syncedAt;
+    const localOverviews = data._overviews;
+    data = remote;
+    if (!data._overviews && localOverviews) data._overviews = localOverviews;
+    ensure(data);
+    save();
+    renderAll();
+    gistLastSync = Date.now();
+    localStorage.setItem(GIST_LAST_SYNC_KEY, gistLastSync.toString());
+    setGistStatus('✅ 已自动同步云端数据', 'ok');
+    showToast('⚡ 已同步云端数据');
     updateGistUI();
   }).catch(function(e) {
-    // Silent fail on auto-sync
     setGistStatus('⚠️ 自动同步失败: ' + (e.message||'').substring(0,40), 'err');
   });
 }
