@@ -17,9 +17,9 @@
   --card:#14110f; --card-h:#1c1815;
   /* semantic aliases for existing code */
   --gold:var(--accent); --gold-dim:rgba(212,165,116,.12);
-  --teal:var(--accent-3); --teal-dim:rgba(74,124,140,.1);
-  --rose:var(--accent-2); --rose-dim:rgba(232,93,47,.08);
-  --blue:#7a9bb5; --blue-dim:rgba(122,155,181,.1);
+--teal:var(--accent-3); --teal-dim:rgba(74,124,140,.1);
+--rose:var(--accent-2); --rose-dim:rgba(232,93,47,.08);
+--blue:var(--accent-3); --blue-dim:rgba(74,124,140,.1);
   --coral:var(--accent-2);
   --txt:var(--fg); --txt2:var(--fg-dim); --txt3:var(--muted); --txt4:var(--muted);
   --border:var(--line); --border2:var(--line-2);
@@ -115,15 +115,15 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:400;letter-spacing:-.01em}
 .tc:hover::before{opacity:1}
 .tc:hover::after{opacity:1}
 .tc.a::before{background:linear-gradient(90deg,var(--accent),transparent)}
-.tc.b::before{background:linear-gradient(90deg,var(--blue),transparent)}
-.tc.c::before{background:linear-gradient(90deg,var(--teal),transparent)}
+.tc.b::before{background:linear-gradient(90deg,var(--accent-3),transparent)}
+.tc.c::before{background:linear-gradient(90deg,var(--accent),transparent)}
 .tc.d::before{background:linear-gradient(90deg,var(--accent-2),transparent)}
 .tc .ti{font-size:clamp(.85rem,1.8vw,1rem);margin-bottom:.15rem;font-family:var(--font-serif);color:var(--accent)}
 .tc .tt{font-size:clamp(.72rem,1.3vw,.82rem);font-weight:300;margin-bottom:.1rem;display:flex;align-items:center;justify-content:space-between;letter-spacing:.06em;text-transform:uppercase}
 .tc .ttg{font-size:clamp(.5rem,.8vw,.55rem);font-weight:300;padding:.05rem .35rem;border-radius:100px;border:1px solid;letter-spacing:.1em;text-transform:uppercase}
 .tc.a .ttg{color:var(--accent);border-color:rgba(212,165,116,.2);background:rgba(212,165,116,.08)}
-.tc.b .ttg{color:var(--blue);border-color:var(--blue-dim);background:var(--blue-dim)}
-.tc.c .ttg{color:var(--teal);border-color:var(--teal-dim);background:var(--teal-dim)}
+.tc.b .ttg{color:var(--accent-3);border-color:rgba(74,124,140,.2);background:rgba(74,124,140,.08)}
+.tc.c .ttg{color:var(--accent);border-color:rgba(212,165,116,.2);background:rgba(212,165,116,.08)}
 .tc.d .ttg{color:var(--accent-2);border-color:rgba(232,93,47,.15);background:rgba(232,93,47,.08)}
 .tc .tb{font-size:clamp(.7rem,1.2vw,.78rem);color:var(--fg-dim);line-height:clamp(1.4,2.2vw,1.6);margin-top:.15rem;font-weight:300}
 .tc .tb ul{list-style:none;padding:0}
@@ -135,8 +135,8 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:400;letter-spacing:-.01em}
 .tp{margin-top:.45rem;height:1px;background:var(--line);border-radius:2px;overflow:hidden}
 .tp .bar{height:100%;border-radius:2px;width:0%;transition:width 1s ease-out}
 .tc.a .tp .bar{background:var(--accent)}
-.tc.b .tp .bar{background:var(--blue)}
-.tc.c .tp .bar{background:var(--teal)}
+.tc.b .tp .bar{background:var(--accent-3)}
+.tc.c .tp .bar{background:var(--accent)}
 .tc.d .tp .bar{background:var(--accent-2)}
 .tc .tm{font-size:clamp(.6rem,1vw,.65rem);color:var(--muted);margin-top:.3rem;display:flex;justify-content:space-between;letter-spacing:.05em;font-weight:300}
 
@@ -251,19 +251,19 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:400;letter-spacing:-.01em}
 .ai-fab svg{width:clamp(1.2rem,2vw,1.6rem);height:clamp(1.2rem,2vw,1.6rem);display:block;pointer-events:none}
 /* FAB status dot */
 .fab-status{position:absolute;bottom:-2px;right:-2px;width:clamp(8px,1.2vw,10px);height:clamp(8px,1.2vw,10px);border-radius:50%;border:2px solid #0a0908;transition:all .3s}
-.fab-status.idle{background:#2dd4bf;box-shadow:0 0 6px rgba(45,212,191,.5)}
+.fab-status.idle{background:var(--accent);box-shadow:0 0 6px rgba(212,165,116,.5)}
 .fab-status.thinking{background:#d4a574;box-shadow:0 0 8px rgba(212,165,116,.6);animation:fabPulse 1s infinite}
-.fab-status.confirming{background:#60a5fa;box-shadow:0 0 8px rgba(96,165,250,.5);animation:fabPulse 1.5s infinite}
-.fab-status.error{background:#f472b6;box-shadow:0 0 6px rgba(244,114,182,.5)}
+.fab-status.confirming{background:var(--accent-3);box-shadow:0 0 8px rgba(74,124,140,.5);animation:fabPulse 1.5s infinite}
+.fab-status.error{background:var(--accent-2);box-shadow:0 0 6px rgba(232,93,47,.5)}
 .fab-status.off{background:var(--txt4)}
 @keyframes fabPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.7)}}
 /* AI panel status bar */
 .ai-status-bar{display:flex;align-items:center;gap:.25rem;padding:clamp(.15rem,.25vw,.2rem) clamp(.6rem,1.2vw,.9rem);border-bottom:1px solid var(--border2);flex-shrink:0;min-height:clamp(1.2rem,2vw,1.4rem)}
 .ai-status-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;transition:all .3s}
-.ai-status-dot.idle{background:#2dd4bf;box-shadow:0 0 6px rgba(45,212,191,.4)}
+.ai-status-dot.idle{background:var(--accent);box-shadow:0 0 6px rgba(212,165,116,.4)}
 .ai-status-dot.thinking{background:#d4a574;box-shadow:0 0 6px rgba(212,165,116,.4);animation:fabPulse 1s infinite}
-.ai-status-dot.confirming{background:#60a5fa;box-shadow:0 0 6px rgba(96,165,250,.4);animation:fabPulse 1.5s infinite}
-.ai-status-dot.error{background:#f472b6;box-shadow:0 0 6px rgba(244,114,182,.4)}
+.ai-status-dot.confirming{background:var(--accent-3);box-shadow:0 0 6px rgba(74,124,140,.4);animation:fabPulse 1.5s infinite}
+.ai-status-dot.error{background:var(--accent-2);box-shadow:0 0 6px rgba(232,93,47,.4)}
 .ai-status-dot.off{background:var(--txt4)}
 .ai-status-text{font-size:clamp(.55rem,.8vw,.6rem);color:var(--txt4);white-space:nowrap;transition:color .3s}
 .ai-status-text.talk{color:var(--gold)}
@@ -284,26 +284,26 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:400;letter-spacing:-.01em}
 .ai-key-section .ai-key-actions{display:flex;gap:.35rem;align-items:center;margin-top:.1rem}
 .ai-key-btn{background:var(--gold-dim);border:1px solid var(--gold);color:var(--gold);border-radius:6px;padding:clamp(.15rem,.3vw,.22rem) clamp(.4rem,.6vw,.5rem);font-size:clamp(.6rem,.9vw,.68rem);cursor:pointer;white-space:nowrap;transition:all .2s}
 .ai-key-btn:hover{background:rgba(212,165,116,.25)}
-.ai-key-btn.s{background:rgba(45,212,191,.15);border-color:#2dd4bf;color:#2dd4bf}
+.ai-key-btn.s{background:rgba(212,165,116,.15);border-color:var(--accent);color:var(--accent)}
 .ai-key-status{font-size:clamp(.55rem,.8vw,.62rem);color:var(--txt4);margin-left:.2rem}
 .ai-chat{flex:1;overflow-y:auto;padding:clamp(.5rem,.8vw,.7rem);display:flex;flex-direction:column;gap:clamp(.4rem,.6vw,.55rem);scroll-behavior:smooth}
 .ai-chat::-webkit-scrollbar{width:4px}.ai-chat::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
 .ai-msg{max-width:92%;padding:clamp(.35rem,.6vw,.5rem) clamp(.5rem,.8vw,.65rem);border-radius:10px;font-size:clamp(.65rem,1vw,.73rem);line-height:1.55;word-wrap:break-word;animation:fadeUp .25s ease}
 .ai-msg.m{background:rgba(212,165,116,.12);border:1px solid rgba(212,165,116,.2);border-bottom-right-radius:4px;align-self:flex-end;color:var(--txt)}
 .ai-msg.u{background:rgba(255,255,255,.05);border:1px solid var(--border2);border-bottom-left-radius:4px;align-self:flex-start;color:var(--txt)}
-.ai-msg.ai{background:rgba(45,212,191,.06);border:1px solid rgba(45,212,191,.15);border-bottom-left-radius:4px;align-self:flex-start;color:var(--txt)}
+.ai-msg.ai{background:rgba(212,165,116,.06);border:1px solid rgba(212,165,116,.15);border-bottom-left-radius:4px;align-self:flex-start;color:var(--txt)}
 .ai-msg .role-tag{font-size:clamp(.5rem,.7vw,.55rem);color:var(--txt4);margin-bottom:.15rem;display:block}
 .ai-msg .ai-edit-proposal{margin-top:.4rem;padding:clamp(.35rem,.5vw,.45rem);border-radius:6px;background:rgba(212,165,116,.08);border:1px dashed rgba(212,165,116,.35)}
 .ai-msg .ai-edit-proposal p{margin:0 0 .25rem;color:var(--txt3);font-size:clamp(.6rem,.85vw,.65rem)}
 .ai-msg .ai-edit-proposal .edit-actions{display:flex;gap:.3rem;margin-top:.25rem}
 .ai-msg .ai-edit-proposal button{padding:clamp(.15rem,.3vw,.2rem) clamp(.4rem,.6vw,.5rem);border-radius:6px;border:none;font-size:clamp(.58rem,.8vw,.63rem);cursor:pointer;transition:all .2s}
-.ai-msg .ai-edit-proposal .btn-confirm{background:rgba(45,212,191,.2);color:#2dd4bf;border:1px solid rgba(45,212,191,.3)}
-.ai-msg .ai-edit-proposal .btn-confirm:hover{background:rgba(45,212,191,.35)}
-.ai-msg .ai-edit-proposal .btn-reject{background:rgba(244,114,182,.15);color:#f472b6;border:1px solid rgba(244,114,182,.25)}
-.ai-msg .ai-edit-proposal .btn-reject:hover{background:rgba(244,114,182,.3)}
+.ai-msg .ai-edit-proposal .btn-confirm{background:rgba(212,165,116,.2);color:var(--accent);border:1px solid rgba(212,165,116,.3)}
+.ai-msg .ai-edit-proposal .btn-confirm:hover{background:rgba(212,165,116,.35)}
+.ai-msg .ai-edit-proposal .btn-reject{background:rgba(232,93,47,.15);color:var(--accent-2);border:1px solid rgba(232,93,47,.25)}
+.ai-msg .ai-edit-proposal .btn-reject:hover{background:rgba(232,93,47,.3)}
 .ai-msg .ai-edit-result{font-size:clamp(.58rem,.85vw,.63rem);margin-top:.2rem;padding:.15rem .35rem;border-radius:4px}
-.ai-msg .ai-edit-result.ok{color:#2dd4bf;background:rgba(45,212,191,.08)}
-.ai-msg .ai-edit-result.fail{color:#f472b6;background:rgba(244,114,182,.08)}
+.ai-msg .ai-edit-result.ok{color:var(--accent);background:rgba(212,165,116,.08)}
+.ai-msg .ai-edit-result.fail{color:var(--accent-2);background:rgba(232,93,47,.08)}
 .ai-msg pre{background:rgba(0,0,0,.3);border-radius:4px;padding:.35rem;overflow-x:auto;font-size:clamp(.55rem,.8vw,.6rem);color:var(--txt3);margin:.2rem 0 0}
 .ai-msg code{font-family:'SF Mono','Cascadia Code',monospace;font-size:.92em}
 .ai-input-area{flex-shrink:0;padding:clamp(.4rem,.6vw,.5rem) clamp(.6rem,1.2vw,.9rem);border-top:1px solid var(--border);display:flex;gap:.2rem;align-items:flex-end}
@@ -312,8 +312,8 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:400;letter-spacing:-.01em}
 .ai-input-area textarea::placeholder{color:var(--txt4)}
 .ai-mic-btn{flex-shrink:0;width:clamp(1.6rem,2.5vw,2rem);height:clamp(1.6rem,2.5vw,2rem);border-radius:50%;border:1px solid var(--border2);background:rgba(255,255,255,.04);color:var(--txt3);font-size:clamp(.7rem,1.1vw,.8rem);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;padding:0;line-height:1}
 .ai-mic-btn:hover{border-color:var(--gold);color:var(--gold)}
-.ai-mic-btn.r{background:rgba(244,114,182,.15);border-color:#f472b6;color:#f472b6;animation:micPulse 1s infinite}
-@keyframes micPulse{0%,100%{box-shadow:0 0 0 0 rgba(244,114,182,.3)}50%{box-shadow:0 0 0 6px rgba(244,114,182,0)}}
+.ai-mic-btn.r{background:rgba(232,93,47,.15);border-color:var(--accent-2);color:var(--accent-2);animation:micPulse 1s infinite}
+@keyframes micPulse{0%,100%{box-shadow:0 0 0 0 rgba(232,93,47,.3)}50%{box-shadow:0 0 0 6px rgba(232,93,47,0)}}
 .ai-mic-btn:disabled{opacity:.3;cursor:not-allowed;animation:none}
 .ai-send-btn{background:linear-gradient(135deg,#d4a574,#c49360);border:none;border-radius:8px;padding:clamp(.3rem,.5vw,.4rem) clamp(.6rem,1vw,.8rem);color:#0a0908;font-size:clamp(.65rem,1vw,.73rem);font-weight:500;cursor:pointer;white-space:nowrap;transition:opacity .2s;height:fit-content;font-family:var(--font-sans);letter-spacing:.05em}
 .ai-send-btn:disabled{opacity:.4;cursor:not-allowed}
@@ -368,8 +368,8 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:400;letter-spacing:-.01em}
 .gist-btn{background:rgba(255,255,255,.04);border:1px solid var(--border2);border-radius:6px;padding:clamp(.12rem,.25vw,.2rem) clamp(.3rem,.5vw,.4rem);color:var(--txt3);font-size:clamp(.55rem,.8vw,.6rem);cursor:pointer;transition:all .2s;white-space:nowrap}
 .gist-btn:hover{border-color:var(--gold);color:var(--gold)}
 .gist-status-text{font-size:clamp(.55rem,.8vw,.62rem);color:var(--txt4);margin-top:.15rem;min-height:1.2em}
-.gist-status-text.ok{color:#2dd4bf}
-.gist-status-text.err{color:#f472b6}
+.gist-status-text.ok{color:var(--accent)}
+.gist-status-text.err{color:var(--accent-2)}
 
 @media(max-width:480px){
   .btm-bar{max-height:30px}
@@ -498,11 +498,11 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:400;letter-spacing:-.01em}
 <button class="ai-fab" id="aiFab">
   <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
     <!-- antenna -->
-    <line x1="26" y1="16" x2="26" y2="8" stroke="#f472b6" stroke-width="1.5" stroke-linecap="round"/>
-    <circle cx="26" cy="7" r="2.5" fill="#f472b6" opacity="0.9"/>
+    <line x1="26" y1="16" x2="26" y2="8" stroke="#e85d2f" stroke-width="1.5" stroke-linecap="round"/>
+    <circle cx="26" cy="7" r="2.5" fill="#e85d2f" opacity="0.9"/>
     <!-- ears -->
-    <rect x="4" y="21" width="5" height="12" rx="2.5" fill="#60a5fa"/>
-    <rect x="43" y="21" width="5" height="12" rx="2.5" fill="#60a5fa"/>
+    <rect x="4" y="21" width="5" height="12" rx="2.5" fill="#4a7c8c"/>
+    <rect x="43" y="21" width="5" height="12" rx="2.5" fill="#4a7c8c"/>
     <!-- head -->
     <rect x="9" y="16" width="34" height="24" rx="7" fill="#0a0908" stroke="#d4a574" stroke-width="1.3"/>
     <!-- eyes -->
@@ -515,13 +515,13 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:400;letter-spacing:-.01em}
     <circle cx="21.8" cy="24.5" r="1.2" fill="#0a0908" opacity="0.6"/>
     <circle cx="34.8" cy="24.5" r="1.2" fill="#0a0908" opacity="0.6"/>
     <!-- blush -->
-    <ellipse cx="13.5" cy="32" rx="2.8" ry="1.5" fill="#2dd4bf" opacity="0.35"/>
-    <ellipse cx="38.5" cy="32" rx="2.8" ry="1.5" fill="#2dd4bf" opacity="0.35"/>
+    <ellipse cx="13.5" cy="32" rx="2.8" ry="1.5" fill="#d4a574" opacity="0.35"/>
+    <ellipse cx="38.5" cy="32" rx="2.8" ry="1.5" fill="#d4a574" opacity="0.35"/>
     <!-- mouth smile -->
-    <path d="M22 33.5 Q26 37 30 33.5" stroke="#f472b6" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+    <path d="M22 33.5 Q26 37 30 33.5" stroke="#e85d2f" stroke-width="1.3" fill="none" stroke-linecap="round"/>
     <!-- cheek sparkle -->
-    <circle cx="11" cy="28" r="1" fill="#60a5fa" opacity="0.5"/>
-    <circle cx="41" cy="28" r="1" fill="#60a5fa" opacity="0.5"/>
+    <circle cx="11" cy="28" r="1" fill="#d4a574" opacity="0.5"/>
+    <circle cx="41" cy="28" r="1" fill="#d4a574" opacity="0.5"/>
     <span class="fab-status off" id="fabStatus"></span>
   </svg>
 </button>
@@ -616,7 +616,7 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:400;letter-spacing:-.01em}
 
 const DAYS = ['周一','周二','周三','周四','周五','周六','周日'];
 const WEEKDAY_MAP = {1:'周一',2:'周二',3:'周三',4:'周四',5:'周五',6:'周六',0:'周日'};
-const COLORS = {a:'#d4a574',b:'#60a5fa',c:'#2dd4bf',d:'#f472b6'};
+const COLORS = {a:'#d4a574',b:'#4a7c8c',c:'#d4a574',d:'#e85d2f'};
 
 // ======================== DEFAULT DATA ========================
 const Y1A = [
@@ -1197,7 +1197,7 @@ function setAIStatus(state, detail) {
 // Restore saved config
 const hasAiKey = !!aiKey;
 setAIStatus(hasAiKey ? 'idle' : 'off');
-if (aiKey) { aiKeyStatus.textContent = '✓ 已设置'; aiKeyStatus.style.color = '#2dd4bf'; aiKeySave.textContent = '更新'; }
+if (aiKey) { aiKeyStatus.textContent = '✓ 已设置'; aiKeyStatus.style.color = '#d4a574'; aiKeySave.textContent = '更新'; }
 aiKeyInput.value = aiKey;
 aiEndpointInput.value = aiEndpoint;
 aiModelInput.value = aiModel;
@@ -1285,12 +1285,12 @@ aiKeySave.addEventListener('click', () => {
   const val = aiKeyInput.value.trim();
   const ep = aiEndpointInput.value.trim() || 'https://api.deepseek.com/chat/completions';
   const md = aiModelInput.value.trim() || 'deepseek-chat';
-  if (!val || !val.startsWith('sk-')) { aiKeyStatus.textContent = '⚠️ 需要有效的 sk- 开头密钥'; aiKeyStatus.style.color = '#f472b6'; return; }
+  if (!val || !val.startsWith('sk-')) { aiKeyStatus.textContent = '⚠️ 需要有效的 sk- 开头密钥'; aiKeyStatus.style.color = '#e85d2f'; return; }
   aiKey = val; aiEndpoint = ep; aiModel = md;
   localStorage.setItem(AI_KEY, val);
   localStorage.setItem(AI_ENDPOINT_KEY, ep);
   localStorage.setItem(AI_MODEL_KEY, md);
-  aiKeyStatus.textContent = '✓ 已保存'; aiKeyStatus.style.color = '#2dd4bf';
+  aiKeyStatus.textContent = '✓ 已保存'; aiKeyStatus.style.color = '#d4a574';
   aiKeySave.textContent = '更新';
   setAIStatus('idle');
   addAIMessage('system', '🔑 配置已保存 (' + aiModel + ' @ ' + aiEndpoint.replace(/^https?:\/\//,'').substring(0,30) + '…)。你可以开始使用 AI 助手了。');
@@ -1399,7 +1399,7 @@ function addAIMessage(role, content, extra) {
     const cf = document.createElement('button'); cf.className = 'btn-confirm'; cf.textContent = '✅ 确认应用';
     cf.addEventListener('click', () => applyEditProposal(extra.proposal, cf));
     const rj = document.createElement('button'); rj.className = 'btn-reject'; rj.textContent = '❌ 拒绝';
-    rj.addEventListener('click', () => { propDiv.innerHTML = '<p style="color:#f472b6">✕ 已拒绝</p>'; setAIStatus('idle'); });
+    rj.addEventListener('click', () => { propDiv.innerHTML = '<p style="color:#e85d2f">✕ 已拒绝</p>'; setAIStatus('idle'); });
     actsDiv.appendChild(cf); actsDiv.appendChild(rj);
     propDiv.appendChild(actsDiv);
     div.appendChild(propDiv);
@@ -1554,7 +1554,7 @@ h1{font-size:18pt;color:#d4a574;border-bottom:2px solid #d4a574;padding-bottom:6
 .meta{color:#888;font-size:10pt;margin:6px 0 18px}
 .msg{margin:10px 0;padding:10px 14px;border-radius:6px}
 .msg-u{background:#f5f5f5;border-left:3px solid #d4a574}
-.msg-ai{background:#f0faf8;border-left:3px solid #2dd4bf}
+.msg-ai{background:#fdf8f3;border-left:3px solid #d4a574}
 .msg-system{background:#fafafa;border-left:3px solid #ccc;color:#888;font-style:italic}
 .label{font-weight:bold;font-size:10pt;margin-bottom:3px;color:#555}
 .content{white-space:pre-wrap;font-size:11pt}
@@ -1587,7 +1587,7 @@ h1{font-size:18pt;color:#d4a574;border-bottom:2px solid #d4a574;padding-bottom:6
 .meta{color:#888;font-size:10pt;margin:6px 0 18px}
 .msg{margin:10px 0;padding:10px 14px;border-radius:6px}
 .msg-u{background:#f5f5f5;border-left:3px solid #d4a574}
-.msg-ai{background:#f0faf8;border-left:3px solid #2dd4bf}
+.msg-ai{background:#fdf8f3;border-left:3px solid #d4a574}
 .msg-system{background:#fafafa;border-left:3px solid #ccc;color:#888;font-style:italic}
 .label{font-weight:bold;font-size:10pt;margin-bottom:3px;color:#555}
 .content{white-space:pre-wrap;font-size:11pt}
@@ -1658,7 +1658,7 @@ function buildSystemPrompt() {
 async function sendAIMessage() {
   const text = aiInput.value.trim();
   if (!text || aiProcessing || !aiKey) {
-    if (!aiKey) { aiKeyStatus.textContent = '⚠️ 请先设置 API Key'; aiKeyStatus.style.color = '#f472b6'; }
+    if (!aiKey) { aiKeyStatus.textContent = '⚠️ 请先设置 API Key'; aiKeyStatus.style.color = '#e85d2f'; }
     return;
   }
   aiInput.value = ''; aiSend.disabled = true; autoResize(aiInput);
@@ -1832,9 +1832,9 @@ function applyEditProposal(proposal, btnEl) {
   if (propDiv) {
     let resultHtml = '';
     if (errors.length === 0) {
-      resultHtml = '<span style="color:#2dd4bf">✅ 已应用 ' + applied + ' 项修改</span>';
+      resultHtml = '<span style="color:#d4a574">✅ 已应用 ' + applied + ' 项修改</span>';
     } else {
-      resultHtml = '<span style="color:#2dd4bf">✅ 已应用 ' + applied + ' 项</span><span style="color:#f472b6;margin-left:.5rem">⚠️ ' + errors.length + ' 项失败: ' + errors.join('; ') + '</span>';
+      resultHtml = '<span style="color:#d4a574">✅ 已应用 ' + applied + ' 项</span><span style="color:#e85d2f;margin-left:.5rem">⚠️ ' + errors.length + ' 项失败: ' + errors.join('; ') + '</span>';
     }
     propDiv.innerHTML = '<p>' + resultHtml + '</p>';
   }
