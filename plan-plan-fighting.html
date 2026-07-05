@@ -417,22 +417,103 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 .search-input-wrap .sh-count{white-space:nowrap}
 
 /* ===== Feature: Pomodoro ===== */
+/* Floating button */
 .pomo-btn{position:fixed;right:clamp(3.2rem,5vw,4.2rem);bottom:clamp(3rem,5vw,4rem);z-index:249;width:clamp(1.4rem,2.2vw,1.8rem);height:clamp(1.4rem,2.2vw,1.8rem);border-radius:50%;border:1px solid var(--line-2);background:var(--bg2);color:var(--muted);font-size:clamp(.6rem,1vw,.7rem);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .25s;font-family:var(--font-sans)}
 .pomo-btn:hover{border-color:var(--accent);color:var(--accent)}
 .pomo-btn.r{color:var(--accent-2);border-color:var(--accent-2);animation:pomoPulse 1s infinite}
 @keyframes pomoPulse{0%,100%{box-shadow:0 0 0 0 rgba(232,93,47,.2)}50%{box-shadow:0 0 0 8px rgba(232,93,47,0)}}
-.pomo-panel{position:fixed;right:clamp(.6rem,2vw,1.2rem);bottom:clamp(6rem,10vw,8rem);z-index:260;width:clamp(180px,28vw,240px);background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 12px 40px rgba(0,0,0,.5);padding:clamp(.6rem,1.2vw,.9rem);display:none;flex-direction:column;align-items:center;gap:clamp(.3rem,.6vw,.5rem)}
-.pomo-panel.s{display:flex}
-.pomo-time{font-family:var(--font-serif);font-size:clamp(1.8rem,3vw,2.4rem);color:var(--fg);letter-spacing:-.02em;line-height:1}
-.pomo-time.r{color:var(--accent-2)}
-.pomo-label{font-size:clamp(.5rem,.8vw,.55rem);color:var(--muted);letter-spacing:.15em;text-transform:uppercase}
-.pomo-progress{width:100%;height:2px;background:var(--line);border-radius:2px;overflow:hidden}
-.pomo-progress .bar{height:100%;width:0%;background:var(--accent);border-radius:2px;transition:width .5s}
-.pomo-progress .bar.r{background:var(--accent-2)}
-.pomo-actions{display:flex;gap:.3rem}
-.pomo-act{background:rgba(255,255,255,.04);border:1px solid var(--line-2);border-radius:6px;padding:.15rem .4rem;color:var(--muted);font-size:clamp(.5rem,.8vw,.55rem);cursor:pointer;transition:all .2s;font-family:var(--font-sans);white-space:nowrap}
-.pomo-act:hover{border-color:var(--accent);color:var(--accent)}
-.pomo-act.d:hover{border-color:var(--accent-2);color:var(--accent-2)}
+/* Badge on button showing today's count */
+.pomo-badge{position:absolute;top:-4px;right:-4px;width:14px;height:14px;border-radius:50%;background:var(--accent-2);color:var(--bg);font-size:8px;font-weight:700;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;pointer-events:none;font-family:var(--font-sans)}
+.pomo-badge.s{opacity:1}
+/* Modal overlay */
+.pomo-overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .25s}
+.pomo-overlay.s{opacity:1;pointer-events:auto}
+/* Modal panel */
+.pomo-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.92);z-index:310;width:clamp(340px,75vw,520px);max-height:clamp(400px,80vh,620px);background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 24px 80px rgba(0,0,0,.6);display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:all .3s cubic-bezier(.2,.9,.3,1);overflow:hidden}
+.pomo-modal.s{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+/* Tab bar */
+.pomo-tabs{display:flex;border-bottom:1px solid var(--line);flex-shrink:0}
+.pomo-tab{flex:1;padding:clamp(.35rem,.7vw,.5rem);background:none;border:none;color:var(--muted);font-family:var(--font-sans);font-size:clamp(.55rem,.9vw,.62rem);cursor:pointer;transition:all .2s;letter-spacing:.08em;position:relative}
+.pomo-tab::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:0;height:2px;background:var(--accent);transition:width .25s;border-radius:2px}
+.pomo-tab:hover{color:var(--fg-dim)}
+.pomo-tab.s{color:var(--accent)}
+.pomo-tab.s::after{width:60%}
+/* Modal body */
+.pomo-body{flex:1;overflow-y:auto;padding:clamp(.5rem,1vw,.8rem);display:flex;flex-direction:column;gap:clamp(.3rem,.6vw,.5rem)}
+.pomo-body::-webkit-scrollbar{width:4px}.pomo-body::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:4px}
+/* Modal close */
+.pomo-close{position:absolute;top:clamp(.3rem,.6vw,.5rem);right:clamp(.3rem,.6vw,.5rem);z-index:5;background:none;border:none;color:var(--muted);font-size:1rem;cursor:pointer;padding:.1rem;line-height:1;transition:color .2s}
+.pomo-close:hover{color:var(--accent)}
+/* Timer display */
+.pomo-timer-area{text-align:center;padding:clamp(.4rem,.8vw,.6rem) 0}
+.pomo-session-label{font-size:clamp(.5rem,.8vw,.55rem);color:var(--muted);letter-spacing:.15em;text-transform:uppercase;margin-bottom:.1rem}
+.pomo-timer-display{font-family:var(--font-serif);font-size:clamp(2.8rem,5vw,3.8rem);color:var(--fg);letter-spacing:-.03em;line-height:1.1;font-weight:300;font-variant-numeric:tabular-nums}
+.pomo-timer-display.r{color:var(--accent-2)}
+.pomo-timer-display.break{color:var(--accent-3)}
+.pomo-progress-wrap{width:100%;height:3px;background:var(--line);border-radius:3px;overflow:hidden;margin:clamp(.2rem,.4vw,.3rem) 0}
+.pomo-progress-wrap .bar{height:100%;width:0%;background:var(--accent);border-radius:3px;transition:width .5s}
+.pomo-progress-wrap .bar.r{background:var(--accent-2)}
+.pomo-progress-wrap .bar.break{background:var(--accent-3)}
+/* Session type selectors */
+.pomo-types{display:flex;gap:.3rem;justify-content:center;flex-wrap:wrap}
+.pomo-type{background:rgba(255,255,255,.03);border:1px solid var(--line-2);border-radius:100px;padding:.12rem .45rem;color:var(--muted);font-size:clamp(.5rem,.8vw,.55rem);cursor:pointer;transition:all .2s;font-family:var(--font-sans);letter-spacing:.05em;white-space:nowrap}
+.pomo-type:hover{border-color:var(--accent);color:var(--fg-dim)}
+.pomo-type.s{background:rgba(212,165,116,.1);border-color:var(--accent);color:var(--accent)}
+.pomo-type.break-t.s{background:rgba(74,124,140,.1);border-color:var(--accent-3);color:var(--accent-3)}
+/* Timer controls */
+.pomo-ctrl{display:flex;gap:.4rem;justify-content:center;align-items:center}
+.pomo-ctrl-btn{background:rgba(255,255,255,.04);border:1px solid var(--line-2);border-radius:100px;padding:.2rem .6rem;color:var(--fg-dim);font-size:clamp(.55rem,.9vw,.62rem);cursor:pointer;transition:all .2s;font-family:var(--font-sans);letter-spacing:.05em;min-width:clamp(3rem,5vw,4rem)}
+.pomo-ctrl-btn:hover{border-color:var(--accent);color:var(--accent)}
+.pomo-ctrl-btn.primary{background:rgba(212,165,116,.12);border-color:var(--accent);color:var(--accent)}
+.pomo-ctrl-btn.primary:hover{background:rgba(212,165,116,.25)}
+.pomo-ctrl-btn.danger{border-color:var(--line-2);color:var(--muted)}
+.pomo-ctrl-btn.danger:hover{border-color:var(--accent-2);color:var(--accent-2)}
+.pomo-ctrl-btn:disabled{opacity:.3;cursor:not-allowed;pointer-events:none}
+/* Records tab */
+.pomo-records{display:flex;flex-direction:column;gap:.15rem}
+.pomo-record{display:flex;align-items:center;gap:.3rem;padding:.2rem .3rem;border-bottom:1px solid rgba(255,255,255,.015);font-size:clamp(.55rem,.9vw,.62rem)}
+.pomo-record:last-child{border-bottom:none}
+.pr-date{color:var(--muted);min-width:clamp(3rem,5vw,4rem);font-size:clamp(.5rem,.8vw,.55rem)}
+.pr-time{color:var(--fg-dim);min-width:clamp(2.2rem,3.5vw,2.8rem);font-size:clamp(.5rem,.8vw,.55rem);font-variant-numeric:tabular-nums}
+.pr-type{color:var(--accent);font-size:clamp(.45rem,.7vw,.5rem);padding:.02rem .25rem;border-radius:100px;background:rgba(212,165,116,.08);letter-spacing:.05em}
+.pr-type.break-r{color:var(--accent-3);background:rgba(74,124,140,.08)}
+.pr-tag{color:var(--muted);font-size:clamp(.45rem,.7vw,.5rem);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pr-empty{text-align:center;padding:.8rem;color:var(--muted);font-size:clamp(.6rem,1vw,.68rem)}
+/* Stats tab */
+.pomo-stats{display:grid;grid-template-columns:1fr 1fr;gap:clamp(.3rem,.6vw,.5rem)}
+.pomo-stat-card{background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:var(--rs);padding:clamp(.3rem,.6vw,.5rem);text-align:center}
+.pomo-stat-card .ps-num{font-family:var(--font-serif);font-size:clamp(1.2rem,2.2vw,1.6rem);color:var(--fg);font-weight:300;line-height:1.2}
+.pomo-stat-card .ps-label{font-size:clamp(.45rem,.7vw,.5rem);color:var(--muted);letter-spacing:.08em;margin-top:.05rem}
+.pomo-stat-card .ps-sub{font-size:clamp(.4rem,.6vw,.45rem);color:var(--muted);letter-spacing:.05em;margin-top:.02rem;opacity:.6}
+.pomo-stat-card.highlight{border-color:rgba(212,165,116,.2);background:rgba(212,165,116,.04)}
+.pomo-stat-card.highlight .ps-num{color:var(--accent)}
+/* Pomo chart */
+.pomo-chart-wrap{margin-top:.2rem}
+.pomo-chart-title{font-size:clamp(.5rem,.8vw,.55rem);color:var(--muted);letter-spacing:.08em;margin-bottom:.15rem}
+.pomo-chart{display:flex;gap:2px;align-items:flex-end;height:clamp(32px,5vw,48px);padding:.1rem 0}
+.pomo-chart .col{flex:1;border-radius:2px 2px 0 0;min-height:3px;position:relative;cursor:pointer;transition:height .5s}
+.pomo-chart .col:hover{opacity:.7}
+.pomo-chart .col-tip{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);font-size:clamp(.38rem,.55vw,.42rem);color:var(--muted);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .2s}
+.pomo-chart .col:hover .col-tip{opacity:1}
+.pomo-chart-labels{display:flex;gap:2px;margin-top:.08rem}
+.pomo-chart-labels .cl{flex:1;font-size:clamp(.38rem,.55vw,.42rem);color:var(--muted);text-align:center;overflow:hidden;text-overflow:ellipsis}
+/* Milestones tab */
+.pomo-mstones{display:flex;flex-direction:column;gap:.25rem}
+.pomo-mstone{display:flex;align-items:center;gap:.3rem;padding:.2rem .3rem;border-left:2px solid var(--line);border-radius:0 4px 4px 0;transition:all .3s}
+.pomo-mstone.done{border-left-color:var(--accent);background:rgba(212,165,116,.04)}
+.pomo-mstone .pm-icon{font-size:clamp(.7rem,1.2vw,.85rem);width:clamp(1.2rem,2vw,1.5rem);text-align:center}
+.pomo-mstone .pm-info{flex:1}
+.pomo-mstone .pm-name{font-size:clamp(.55rem,.9vw,.62rem);color:var(--fg-dim)}
+.pomo-mstone .pm-prog{font-size:clamp(.45rem,.7vw,.5rem);color:var(--muted)}
+.pomo-mstone .pm-badge{font-size:clamp(.4rem,.6vw,.45rem);padding:.04rem .25rem;border-radius:100px;background:rgba(212,165,116,.1);color:var(--accent);letter-spacing:.05em}
+.pomo-mstone .pm-badge.done{background:rgba(212,165,116,.2);color:var(--accent)}
+.pomo-mstone .pm-prog-bar{height:3px;background:var(--line);border-radius:2px;overflow:hidden;width:clamp(3rem,5vw,5rem);flex-shrink:0}
+.pomo-mstone .pm-prog-bar .bar{height:100%;background:var(--accent);border-radius:2px;transition:width .8s}
+/* Tag input */
+.pomo-tag-row{display:flex;gap:.2rem;align-items:center}
+.pomo-tag-row input{flex:1;background:rgba(255,255,255,.03);border:1px solid var(--line-2);border-radius:4px;padding:.1rem .3rem;color:var(--fg-dim);font-family:var(--font-sans);font-size:clamp(.5rem,.8vw,.55rem);outline:none;transition:border-color .2s}
+.pomo-tag-row input:focus{border-color:var(--accent)}
+.pomo-tag-row input::placeholder{color:var(--muted)}
 
 /* ===== Feature: Weekly Templates ===== */
 .tpl-btn{background:none;border:none;color:var(--muted);font-size:clamp(.5rem,.8vw,.55rem);cursor:pointer;padding:.05rem .2rem;border-radius:4px;transition:all .2s;font-family:var(--font-sans);letter-spacing:.05em;margin-left:.2rem;white-space:nowrap}
@@ -657,14 +738,52 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 </div>
 
 <!-- ===== POMODORO ===== -->
-<button class="pomo-btn" id="pomoBtn" title="番茄钟">&#9200;</button>
-<div class="pomo-panel" id="pomoPanel">
-  <div class="pomo-label" id="pomoLabel">专注</div>
-  <div class="pomo-time" id="pomoTime">25:00</div>
-  <div class="pomo-progress"><div class="bar" id="pomoBar"></div></div>
-  <div class="pomo-actions">
-    <button class="pomo-act" id="pomoStart">开始</button>
-    <button class="pomo-act d" id="pomoReset">重置</button>
+<button class="pomo-btn" id="pomoBtn" title="番茄钟">&#9200;<span class="pomo-badge" id="pomoBadge">0</span></button>
+<div class="pomo-overlay" id="pomoOverlay"></div>
+<div class="pomo-modal" id="pomoModal">
+  <button class="pomo-close" id="pomoClose">&times;</button>
+  <div class="pomo-tabs">
+    <button class="pomo-tab s" data-ptab="timer">&#9200; 计时</button>
+    <button class="pomo-tab" data-ptab="records">&#128196; 记录</button>
+    <button class="pomo-tab" data-ptab="stats">&#128200; 统计</button>
+    <button class="pomo-tab" data-ptab="milestones">&#127942; 里程碑</button>
+  </div>
+  <!-- Tab: Timer -->
+  <div class="pomo-body" id="pomoTabTimer">
+    <div class="pomo-timer-area">
+      <div class="pomo-session-label" id="pomoSessionLabel">专注</div>
+      <div class="pomo-timer-display" id="pomoTimerDisplay">25:00</div>
+      <div class="pomo-progress-wrap"><div class="bar" id="pomoProgressBar"></div></div>
+    </div>
+    <div class="pomo-types">
+      <button class="pomo-type s" data-pomo-time="25" data-pomo-label="专注">&#127919; 专注 25m</button>
+      <button class="pomo-type break-t" data-pomo-time="5" data-pomo-label="短休">&#127961; 短休 5m</button>
+      <button class="pomo-type break-t" data-pomo-time="15" data-pomo-label="长休">&#127961; 长休 15m</button>
+    </div>
+    <div class="pomo-tag-row">
+      <input id="pomoTagInput" placeholder="标签（如：论文、刷题…）" maxlength="20">
+    </div>
+    <div class="pomo-ctrl">
+      <button class="pomo-ctrl-btn primary" id="pomoStartBtn">&#9654; 开始</button>
+      <button class="pomo-ctrl-btn danger" id="pomoResetBtn">&#8635; 重置</button>
+    </div>
+  </div>
+  <!-- Tab: Records -->
+  <div class="pomo-body" id="pomoTabRecords" style="display:none">
+    <div class="pomo-records" id="pomoRecordsList"></div>
+  </div>
+  <!-- Tab: Stats -->
+  <div class="pomo-body" id="pomoTabStats" style="display:none">
+    <div class="pomo-stats" id="pomoStatsGrid"></div>
+    <div class="pomo-chart-wrap">
+      <div class="pomo-chart-title">&#128202; 近7天完成数</div>
+      <div class="pomo-chart" id="pomoChart"></div>
+      <div class="pomo-chart-labels" id="pomoChartLabels"></div>
+    </div>
+  </div>
+  <!-- Tab: Milestones -->
+  <div class="pomo-body" id="pomoTabMilestones" style="display:none">
+    <div class="pomo-mstones" id="pomoMstoneList"></div>
   </div>
 </div>
 
@@ -2527,40 +2646,106 @@ function renderTemplates(){document.querySelectorAll('.tpl-list').forEach(functi
   el.querySelectorAll('.tpl-item').forEach(function(s){s.onclick=function(){loadTemplate(s.closest('.wp')?.id?.replace('plan-body-','')||'',s.dataset.tpl)}})})}
 
 // ======================== FEATURE: Pomodoro ========================
-var pomo={running:false,time:25*60,left:25*60,interval:null,label:'focus',date:null,cb:null}
-function pomoInit(){var saved=localStorage.getItem('phd_v4_pomo');if(saved)try{var p=JSON.parse(saved);pomo.time=p.time||25*60;pomo.left=p.left||pomo.time;pomo.label=p.label||'focus'}catch(e){}
-  var today=new Date().toDateString();if(pomo.date!==today)pomo.date=today
-  document.getElementById('pomoTime').textContent=fmtTime(pomo.left);updatePomoUI()}
-function pomoStart(){if(pomo.running){clearInterval(pomo.interval);pomo.running=false;document.getElementById('pomoStart').textContent='继续';return}
-  pomo.running=true;document.getElementById('pomoStart').textContent='暂停';pomo.date=new Date().toDateString()
-  pomo.interval=setInterval(function(){pomo.left--;document.getElementById('pomoTime').textContent=fmtTime(pomo.left)
-    document.getElementById('pomoBar').style.width=((1-pomo.left/pomo.time)*100)+'%'
-    if(pomo.left<=0){clearInterval(pomo.interval);pomo.running=false;pomoDone()}},1000);updatePomoUI()}
-function pomoDone(){document.getElementById('pomoStart').textContent='完成';showToast('✅ 番茄完成！')
-  // Record in today's task
-  var today=new Date();var dayNames=['日','一','二','三','四','五','六'];var dayLabel='周'+dayNames[today.getDay()]
-  // Find current year section and first week
-  var cids=Object.keys(data.weeks);if(cids.length){var cid=cids[0];var weeks=data.weeks[cid];if(weeks&&weeks.length){
-    var w=weeks[0];var todayStr=today.toLocaleDateString('zh-CN');var fi=today.getDay()===0?6:today.getDay()-1
-    if(!data._pomoLog)data._pomoLog=[];data._pomoLog.push({date:todayStr,time:new Date().toLocaleTimeString()});save()
-  }}
-  localStorage.setItem('phd_v4_pomo',JSON.stringify({time:pomo.time,left:pomo.time,label:pomo.label,date:pomo.date}));updatePomoUI()}
-function pomoReset(){clearInterval(pomo.interval);pomo.running=false;pomo.left=pomo.time
-  document.getElementById('pomoTime').textContent=fmtTime(pomo.time);document.getElementById('pomoStart').textContent='开始'
-  document.getElementById('pomoBar').style.width='0%';updatePomoUI()}
-function pomoSet(n){clearInterval(pomo.interval);pomo.running=false;pomo.time=n*60;pomo.left=pomo.time
-  document.getElementById('pomoTime').textContent=fmtTime(pomo.time);document.getElementById('pomoStart').textContent='开始'
-  document.getElementById('pomoBar').style.width='0%';updatePomoUI()}
-function fmtTime(s){var m=Math.floor(s/60);return String(m).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
-function updatePomoUI(){var p=document.getElementById('pomoTime');p.classList.toggle('r',pomo.running)
-  document.getElementById('pomoBar').classList.toggle('r',pomo.running)
-  document.getElementById('pomoBtn').classList.toggle('r',pomo.running)
-  localStorage.setItem('phd_v4_pomo',JSON.stringify({time:pomo.time,left:pomo.left,label:pomo.label,date:pomo.date}))}
-// Bind pomodoro UI
-document.getElementById('pomoBtn').addEventListener('click',function(){document.getElementById('pomoPanel').classList.toggle('s')})
-document.getElementById('pomoStart').addEventListener('click',pomoStart)
-document.getElementById('pomoReset').addEventListener('click',pomoReset)
-pomoInit()
+var pomo={running:false,time:25*60,left:25*60,interval:null,label:'focus',sessionType:'focus',tag:'',date:null,totalToday:0}
+var POMO_MS=[{n:'50个',c:50,i:'🌱'},{n:'100个',c:100,i:'🌿'},{n:'200个',c:200,i:'🌳'},{n:'500个',c:500,i:'🏆'},{n:'1000个',c:1000,i:'👑'},{n:'2000个',c:2000,i:'💎'}]
+function pomoLoad(){var s=localStorage.getItem('phd_v4_pomo');if(s)try{var p=JSON.parse(s);pomo.time=p.time||25*60;pomo.left=p.left||pomo.time;pomo.label=p.label||'focus';pomo.sessionType=p.sessionType||'focus'}catch(e){}
+  var t=new Date().toDateString();if(pomo.date!==t){pomo.date=t;pomo.totalToday=0}
+  updatePomoDisplay();updatePomoBadge();renderPomoRecords();renderPomoStats();renderPomoMstones()}
+function pomoSaveState(){localStorage.setItem('phd_v4_pomo',JSON.stringify({time:pomo.time,left:pomo.left,label:pomo.label,sessionType:pomo.sessionType,date:pomo.date}))}
+function pomoOpen(){document.getElementById('pomoOverlay').classList.add('s');document.getElementById('pomoModal').classList.add('s')}
+function pomoClose(){if(pomo.running&&!confirm('计时器正在运行，确定关闭？'))return
+  document.getElementById('pomoOverlay').classList.remove('s');document.getElementById('pomoModal').classList.remove('s')}
+function pomoSetType(el){var m=el.dataset;if(!m.pomoTime)return
+  if(pomo.running){pomoClose();return}
+  document.querySelectorAll('.pomo-type').forEach(function(b){b.classList.remove('s')});el.classList.add('s')
+  pomo.time=parseInt(m.pomoTime)*60;pomo.left=pomo.time;pomo.label=m.pomoLabel||'focus';pomo.sessionType=el.classList.contains('break-t')?'break':'focus'
+  clearInterval(pomo.interval);pomo.running=false
+  updatePomoDisplay();document.getElementById('pomoStartBtn').textContent='▶ 开始'
+  document.getElementById('pomoProgressBar').style.width='0%'
+  pomoSaveState()}
+function updatePomoDisplay(){var el=document.getElementById('pomoTimerDisplay');el.textContent=fmtTime(pomo.left)
+  el.className='pomo-timer-display'+(pomo.running?' r':'')+(pomo.sessionType==='break'?' break':'')
+  document.getElementById('pomoSessionLabel').textContent=pomo.label||'专注'
+  document.getElementById('pomoProgressBar').className='bar'+(pomo.running?' r':'')+(pomo.sessionType==='break'?' break':'')
+  document.getElementById('pomoProgressBar').style.width=((1-pomo.left/pomo.time)*100)+'%'}
+function updatePomoBadge(){var b=document.getElementById('pomoBadge');var t=getPomoTodayCount();b.textContent=t>99?'99+':t;b.classList.toggle('s',t>0)}
+function getPomoTodayCount(){var logs=pomoGetLogs();var t=new Date().toLocaleDateString('zh-CN');return logs.filter(function(l){return l.date===t}).length}
+function pomoGetLogs(){if(data._pomoLog)return data._pomoLog;return []}
+function pomoStart(){if(pomo.running){clearInterval(pomo.interval);pomo.running=false;document.getElementById('pomoStartBtn').textContent='▶ 继续';updatePomoDisplay();pomoSaveState();return}
+  pomo.running=true;document.getElementById('pomoStartBtn').textContent='⏸ 暂停';pomo.date=new Date().toDateString()
+  pomo.interval=setInterval(function(){pomo.left--
+    updatePomoDisplay()
+    if(pomo.left<=0){clearInterval(pomo.interval);pomo.running=false;pomoComplete()}},1000)
+  pomoSaveState()}
+function pomoComplete(){document.getElementById('pomoStartBtn').textContent='✓ 完成'
+  var tag=document.getElementById('pomoTagInput').value.trim()
+  var now=new Date();var ds=now.toLocaleDateString('zh-CN');var ts=now.toLocaleTimeString()
+  if(!data._pomoLog)data._pomoLog=[]
+  data._pomoLog.push({date:ds,time:ts,type:pomo.sessionType,label:pomo.label,tag:tag,duration:pomo.time/60})
+  save();pomo.left=pomo.time;updatePomoDisplay();document.getElementById('pomoProgressBar').style.width='0%'
+  document.getElementById('pomoTagInput').value=''
+  updatePomoBadge();renderPomoRecords();renderPomoStats();renderPomoMstones()
+  showToast('✅ 番茄 '+pomo.label+' 完成！');pomoSaveState()}
+function pomoReset(){if(pomo.running&&!confirm('重置当前番茄？'))return
+  clearInterval(pomo.interval);pomo.running=false;pomo.left=pomo.time
+  document.getElementById('pomoStartBtn').textContent='▶ 开始';updatePomoDisplay()
+  document.getElementById('pomoProgressBar').style.width='0%';pomoSaveState()}
+function renderPomoRecords(){var el=document.getElementById('pomoRecordsList');var logs=pomoGetLogs()
+  if(!logs.length){el.innerHTML='<div class="pr-empty">暂无记录，完成第一个番茄吧！</div>';return}
+  el.innerHTML=logs.slice().reverse().slice(0,100).map(function(l){
+    var tc=l.type==='break'?'break-r':'';var tn=l.label||'专注'
+    return'<div class="pomo-record"><span class="pr-date">'+esc(l.date)+'</span><span class="pr-time">'+esc(l.time)+'</span><span class="pr-type '+tc+'">'+esc(tn)+'</span><span class="pr-tag">'+(l.tag?esc(l.tag):'')+'</span></div>'
+  }).join('')}
+function renderPomoStats(){var el=document.getElementById('pomoStatsGrid');var logs=pomoGetLogs()
+  var total=logs.length;var today=getPomoTodayCount();var streak=0;var maxStreak=0;var cur=0
+  // compute daily streak
+  var dayCounts={};logs.forEach(function(l){dayCounts[l.date]=(dayCounts[l.date]||0)+1})
+  var sortedDays=Object.keys(dayCounts).sort()
+  for(var i=0;i<sortedDays.length;i++){if(i>0){var d1=new Date(sortedDays[i]),d2=new Date(sortedDays[i-1]);var diff=(d1-d2)/86400000;if(diff===1)cur++;else if(diff>1)cur=0}
+    else cur=1;maxStreak=Math.max(maxStreak,cur)}
+  // week chart
+  var weekDays=[];for(var i=6;i>=0;i--){var d=new Date();d.setDate(d.getDate()-i);var ds=d.toLocaleDateString('zh-CN');weekDays.push({label:['日','一','二','三','四','五','六'][d.getDay()],date:ds,count:dayCounts[ds]||0})}
+  var maxC=Math.max(1,Math.max.apply(null,weekDays.map(function(w){return w.count})))
+  el.innerHTML=
+    '<div class="pomo-stat-card highlight"><div class="ps-num">'+total+'</div><div class="ps-label">累计番茄</div></div>'+
+    '<div class="pomo-stat-card highlight"><div class="ps-num">'+today+'</div><div class="ps-label">今日完成</div></div>'+
+    '<div class="pomo-stat-card"><div class="ps-num">'+maxStreak+'</div><div class="ps-label">最长连续天数</div><div class="ps-sub">'+sortedDays.length+' 天有记录</div></div>'+
+    '<div class="pomo-stat-card"><div class="ps-num">'+(total?Math.round(today/total*100)+'%':'0%')+'</div><div class="ps-label">今日占比</div></div>'
+  var chart=document.getElementById('pomoChart'),cl=document.getElementById('pomoChartLabels')
+  chart.innerHTML=weekDays.map(function(w){return'<div class="col" style="height:'+Math.max(3,w.count/maxC*100*0.55)+'px;background:'+(w.count?'rgba(212,165,116,.6)':'rgba(255,255,255,.04)')+'" title="'+w.date+': '+w.count+'个"><span class="col-tip">'+w.count+'</span></div>'}).join('')
+  cl.innerHTML=weekDays.map(function(w){return'<span class="cl">'+(w.count?'● ':'○ ')+w.label+'</span>'}).join('')}
+function renderPomoMstones(){var el=document.getElementById('pomoMstoneList');var total=pomoGetLogs().length
+  el.innerHTML=POMO_MS.map(function(m){
+    var done=total>=m.c
+    return'<div class="pomo-mstone'+(done?' done':'')+'"><span class="pm-icon">'+(done?m.i:'○')+'</span><div class="pm-info"><div class="pm-name">'+m.i+' 累计 '+m.n+' 番茄</div><div class="pm-prog">'+(done?'已达成 ✓':'当前 '+total+'/'+m.c)+'</div></div><div class="pm-prog-bar"><div class="bar" style="width:'+Math.min(100,total/m.c*100)+'%"></div></div>'+(done?'<span class="pm-badge done">✓</span>':'<span class="pm-badge">'+Math.round(total/m.c*100)+'%</span>')+'</div>'
+  }).join('')}
+// Pomodoro UI bindings
+document.getElementById('pomoBtn').addEventListener('click',function(){pomoOpen()})
+document.getElementById('pomoOverlay').addEventListener('click',pomoClose)
+document.getElementById('pomoClose').addEventListener('click',pomoClose)
+document.getElementById('pomoStartBtn').addEventListener('click',pomoStart)
+document.getElementById('pomoResetBtn').addEventListener('click',pomoReset)
+// Tab switching
+document.querySelectorAll('.pomo-tab').forEach(function(tab){
+  tab.addEventListener('click',function(){
+    document.querySelectorAll('.pomo-tab').forEach(function(t){t.classList.remove('s')})
+    tab.classList.add('s')
+    var target=tab.dataset.ptab
+    document.querySelectorAll('.pomo-body').forEach(function(b){b.style.display='none'})
+    var el=document.getElementById('pomoTab'+target.charAt(0).toUpperCase()+target.slice(1))
+    if(el){el.style.display='flex'}
+    if(target==='records')renderPomoRecords()
+    if(target==='stats')renderPomoStats()
+    if(target==='milestones')renderPomoMstones()
+  })
+})
+// Session type buttons
+document.querySelectorAll('.pomo-type').forEach(function(btn){
+  btn.addEventListener('click',function(){pomoSetType(btn)})
+})
+// Keyboard: Escape to close
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&document.getElementById('pomoModal').classList.contains('s'))pomoClose()})
+pomoLoad()
 
 // ======================== FEATURE: Milestone Timeline ========================
 function renderMilestones(cid){var area=document.getElementById('ms-'+cid);if(!area)return;var ms=data._milestones||{};var list=ms[cid]||[]
