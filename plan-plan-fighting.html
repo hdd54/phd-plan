@@ -374,6 +374,14 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 @keyframes aiTyping{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-4px)}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
+/* ---- AI Reasoning (thinking content) ---- */
+.ai-reasoning{font-size:clamp(.55rem,.8vw,.6rem);color:var(--txt4);margin-top:.2rem;border-left:2px solid var(--gold);padding-left:.5rem;background:rgba(212,165,116,.03);border-radius:0 4px 4px 0}
+.ai-reasoning summary{cursor:pointer;color:var(--txt3);font-size:clamp(.5rem,.75vw,.55rem);user-select:none;padding:.1rem 0;letter-spacing:.05em;opacity:.7;transition:opacity .2s}
+.ai-reasoning summary:hover{opacity:1}
+.ai-reasoning .reasoning-body{white-space:pre-wrap;line-height:1.5;padding:.1rem 0 .05rem;color:var(--txt4)}
+.ai-reasoning .reasoning-body.streaming{color:var(--gold);opacity:.8}
+.ai-reasoning .reasoning-label::before{content:'🧠';margin-right:.2rem}
+
 /* ---- AI Conversation Manager ---- */
 .ai-conv-btn{background:none;border:none;color:var(--txt3);font-size:clamp(.8rem,1.2vw,.9rem);cursor:pointer;padding:.15rem .2rem;line-height:1;border-radius:4px;transition:color .2s;margin-right:.1rem}
 .ai-conv-btn:hover{color:var(--gold)}
@@ -1889,7 +1897,7 @@ aiInput.addEventListener('keydown', e => {
 
 aiSend.addEventListener('click', sendAIMessage);
 
-function addAIMessage(role, content, extra) {
+function addAIMessage(role, content, extra, reasoning) {
   const div = document.createElement('div');
   div.className = 'ai-msg ' + role;
   if (role === 'ai' || role === 'system') {
@@ -1897,6 +1905,20 @@ function addAIMessage(role, content, extra) {
     tag.className = 'role-tag';
     tag.textContent = role === 'ai' ? 'AI 助手' : '系统';
     div.appendChild(tag);
+  }
+  // Show reasoning content (collapsible) if present
+  if (reasoning) {
+    const reasonDetails = document.createElement('details');
+    reasonDetails.className = 'ai-reasoning';
+    const reasonSummary = document.createElement('summary');
+    reasonSummary.className = 'reasoning-label';
+    reasonSummary.textContent = '思考过程';
+    reasonDetails.appendChild(reasonSummary);
+    const reasonBody = document.createElement('div');
+    reasonBody.className = 'reasoning-body';
+    reasonBody.textContent = reasoning;
+    reasonDetails.appendChild(reasonBody);
+    div.appendChild(reasonDetails);
   }
   const p = document.createElement('div');
   p.style.whiteSpace = 'pre-wrap';
@@ -1921,7 +1943,7 @@ function addAIMessage(role, content, extra) {
   aiChat.appendChild(div);
 }
 
-function addTypingIndicator() {
+function addTypingIndicator(reasoningCb) {
   const div = document.createElement('div');
   div.className = 'ai-msg ai';
   div.id = 'aiTyping';
@@ -1941,6 +1963,19 @@ function addTypingIndicator() {
   timer.className = 'typing-timer'; timer.id = 'aiTypingTimer'; timer.textContent = '0s';
   wrap.appendChild(timer);
   div.appendChild(wrap);
+  // Reasoning area (collapsible, shows thinking content in real-time)
+  const reasonDetails = document.createElement('details');
+  reasonDetails.className = 'ai-reasoning';
+  reasonDetails.id = 'aiReasoning';
+  const reasonSummary = document.createElement('summary');
+  reasonSummary.className = 'reasoning-label';
+  reasonSummary.textContent = '思考过程';
+  reasonDetails.appendChild(reasonSummary);
+  const reasonBody = document.createElement('div');
+  reasonBody.className = 'reasoning-body streaming';
+  reasonBody.id = 'aiReasoningBody';
+  reasonDetails.appendChild(reasonBody);
+  div.appendChild(reasonDetails);
   aiChat.appendChild(div);
   scrollChat();
   // Start timer
@@ -1950,6 +1985,17 @@ function addTypingIndicator() {
     const el = document.getElementById('aiTypingTimer');
     if (el) el.textContent = Math.floor((Date.now() - aiTypingStart) / 1000) + 's';
   }, 200);
+  // Return a function to update reasoning content in real-time
+  if (reasoningCb) {
+    reasoningCb.update = function(text) {
+      reasonBody.textContent = text;
+      if (!reasonDetails.open) reasonDetails.open = true;
+      scrollChat();
+    };
+    reasoningCb.finalize = function() {
+      reasonBody.classList.remove('streaming');
+    };
+  }
 }
 
 function removeTyping() {
@@ -1972,7 +2018,7 @@ function renderChatHistory() {
   }
   msgs.forEach(msg => {
     if (msg.role === 'system') return;
-    addAIMessage(msg.role, msg.content, msg.extra || null);
+    addAIMessage(msg.role, msg.content, msg.extra || null, msg.reasoning || null);
   });
 }
 
@@ -1982,9 +2028,13 @@ function saveChatHistory() {
   aiChat.querySelectorAll('.ai-msg').forEach(el => {
     const role = el.classList.contains('u') ? 'u' : el.classList.contains('ai') || el.classList.contains('system') ? 'ai' : null;
     if (!role) return;
-    const textEl = el.querySelector('div[style*="pre-wrap"]') || el.querySelector('div:not(.role-tag):not(.ai-edit-proposal):not(.ai-edit-result)');
+    const textEl = el.querySelector('div[style*="pre-wrap"]') || el.querySelector('div:not(.role-tag):not(.ai-edit-proposal):not(.ai-edit-result):not(.ai-reasoning):not(.reasoning-body)');
     if (!textEl) return;
-    toStore.push({ role, content: textEl.textContent });
+    // Capture reasoning content if present
+    let reasoning = null;
+    const reasoningEl = el.querySelector('.ai-reasoning .reasoning-body');
+    if (reasoningEl && reasoningEl.textContent.trim()) reasoning = reasoningEl.textContent;
+    toStore.push({ role, content: textEl.textContent, reasoning });
   });
   // Keep last 80 messages
   if (toStore.length > 80) toStore.splice(0, toStore.length - 80);
@@ -2196,8 +2246,9 @@ async function sendAIMessage() {
   });
   msgs.push({ role: 'user', content: text });
 
-  // Show typing
-  addTypingIndicator();
+  // Show typing with reasoning area
+  const reasoningCb = {};
+  addTypingIndicator(reasoningCb);
 
   try {
     const resp = await fetch(aiEndpoint, {
@@ -2208,12 +2259,12 @@ async function sendAIMessage() {
         messages: msgs,
         max_tokens: 4096,
         temperature: 0.3,
-        stream: false
+        stream: true
       })
     });
-    removeTyping();
 
     if (!resp.ok) {
+      removeTyping();
       const errText = await resp.text();
       let errMsg = 'API 请求失败';
       try { const je = JSON.parse(errText); errMsg = je.error?.message || je.error?.type || errMsg; } catch(e) {}
@@ -2223,8 +2274,49 @@ async function sendAIMessage() {
       saveChatHistory(); return;
     }
 
-    const result = await resp.json();
-    const reply = result.choices?.[0]?.message?.content || '（没有回复）';
+    // Streaming SSE response
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let replyContent = '';
+    let reasoningContent = '';
+    let gotReasoning = false;
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() || ''; // keep incomplete line in buffer
+
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed || !trimmed.startsWith('data: ')) continue;
+        const dataStr = trimmed.slice(6);
+        if (dataStr === '[DONE]') { break; }
+
+        try {
+          const data = JSON.parse(dataStr);
+          const delta = data.choices?.[0]?.delta || {};
+          // Reasoning content (real-time thinking)
+          if (delta.reasoning_content) {
+            reasoningContent += delta.reasoning_content;
+            if (reasoningCb.update) reasoningCb.update(reasoningContent);
+            gotReasoning = true;
+          }
+          // Regular content
+          if (delta.content) {
+            replyContent += delta.content;
+          }
+        } catch(e) { /* skip malformed JSON lines */ }
+      }
+    }
+
+    removeTyping();
+    if (reasoningCb.finalize) reasoningCb.finalize();
+
+    const reply = replyContent || '（没有回复）';
 
     // Parse for edit proposals
     let replyBody = reply;
@@ -2245,7 +2337,7 @@ async function sendAIMessage() {
       } catch(e) { /* ignore parse errors */ }
     }
 
-    addAIMessage('ai', replyBody, proposal ? { proposal } : null);
+    addAIMessage('ai', replyBody, proposal ? { proposal } : null, gotReasoning ? reasoningContent : null);
     scrollChat();
     saveChatHistory();
     if (proposal) setAIStatus('confirming');
