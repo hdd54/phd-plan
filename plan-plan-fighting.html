@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>博士四年规划 · 每周每日追踪</title>
+<link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,300;1,9..144,400&family=Space+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -241,6 +242,31 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 .toast.s{opacity:1;transform:translateY(0)}
 
 #fileInput{display:none}
+
+/* ---- Sub-tasks (line breaks) ---- */
+.st-list{margin:.08rem 0 .08rem clamp(.3rem,.6vw,.5rem);padding:0;list-style:none;display:flex;flex-direction:column;gap:.03rem}
+.st-list li{font-size:clamp(.48rem,.75vw,.52rem);color:var(--txt2);padding:.02rem .2rem .02rem 1.1em;position:relative;line-height:1.4}
+.st-list li::before{content:'•';position:absolute;left:.25em;color:var(--accent);opacity:.6}
+.st-list li+li{border-top:1px solid rgba(255,255,255,.03)}
+/* ---- Drag & Drop ---- */
+.di[draggable=true]{cursor:grab}
+.di.dragging{opacity:.4;cursor:grabbing}
+.di.drag-over{border-color:var(--accent)!important;box-shadow:0 0 0 2px rgba(212,165,116,.2)!important}
+.dr.drag-over{background:rgba(212,165,116,.05)}
+/* ---- White Noise Button ---- */
+.noise-btn{position:fixed;right:clamp(3.2rem,5vw,4.2rem);bottom:clamp(8.5rem,12vw,9.5rem);z-index:249;background:rgba(10,9,8,.85);backdrop-filter:blur(8px);border:1px solid var(--line-2);border-radius:100px;padding:.15rem .4rem;color:var(--muted);font-size:clamp(.5rem,.8vw,.55rem);cursor:pointer;transition:all .2s;font-family:var(--font-sans);white-space:nowrap;letter-spacing:.05em}
+.noise-btn:hover{border-color:var(--accent);color:var(--fg-dim)}
+.noise-btn.s{background:rgba(212,165,116,.1);border-color:var(--accent);color:var(--accent)}
+/* ---- CSV Export Button ---- */
+.csv-btn{position:fixed;right:clamp(3.2rem,5vw,4.2rem);bottom:clamp(11rem,16vw,13rem);z-index:249;background:rgba(10,9,8,.85);backdrop-filter:blur(8px);border:1px solid var(--line-2);border-radius:100px;padding:.15rem .4rem;color:var(--muted);font-size:clamp(.5rem,.8vw,.55rem);cursor:pointer;transition:all .2s;font-family:var(--font-sans);white-space:nowrap;letter-spacing:.05em}
+.csv-btn:hover{border-color:var(--accent);color:var(--fg-dim)}
+/* ---- Template Picker ---- */
+.tpl-picker{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.92);z-index:320;background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:clamp(.5rem,1vw,.7rem);box-shadow:0 24px 80px rgba(0,0,0,.6);display:none;flex-direction:column;gap:.35rem;min-width:clamp(200px,30vw,280px);opacity:0;pointer-events:none;transition:all .25s}
+.tpl-picker.s{display:flex;opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+.tpl-picker-h{font-size:clamp(.65rem,1vw,.72rem);color:var(--accent);letter-spacing:.08em;border-bottom:1px solid var(--line);padding-bottom:.25rem;font-family:var(--font-serif);font-weight:400}
+.tpl-picker-btn{background:rgba(255,255,255,.03);border:1px solid var(--line-2);border-radius:var(--rs);padding:.25rem .4rem;color:var(--fg-dim);font-size:clamp(.55rem,.9vw,.62rem);cursor:pointer;transition:all .2s;text-align:left;font-family:var(--font-sans)}
+.tpl-picker-btn:hover{background:rgba(212,165,116,.08);border-color:var(--accent);color:var(--accent)}
+.tpl-picker-close{position:absolute;top:.25rem;right:.35rem;background:none;border:none;color:var(--muted);font-size:.8rem;cursor:pointer}
 
 /* ---- AI Panel ---- */
 .ai-fab{position:fixed;right:clamp(.6rem,2vw,1.2rem);bottom:clamp(3rem,5vw,4rem);z-index:250;width:clamp(2.2rem,3.5vw,2.8rem);height:clamp(2.2rem,3.5vw,2.8rem);border-radius:50%;border:none;background:linear-gradient(135deg,#d4a574,#c49360);color:#0a0908;font-size:clamp(1rem,1.8vw,1.3rem);cursor:grab;box-shadow:0 4px 20px rgba(212,165,116,.35);transition:all .25s;display:flex;align-items:center;justify-content:center;user-select:none;touch-action:none;overflow:visible}
@@ -824,6 +850,12 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
   <div class="stat-chart-labels" id="sChartLabels"></div>
 </div>
 
+<!-- ===== CSV EXPORT BUTTON ===== -->
+<button class="csv-btn" id="csvBtn">📥 导出 CSV</button>
+
+<!-- ===== WHITE NOISE BUTTON ===== -->
+<button class="noise-btn" id="noiseBtn">🎵 白噪音</button>
+
 <!-- ===== KEYBOARD HINT ===== -->
 <div class="kbd-hint" id="kbdHint"></div>
 
@@ -1064,8 +1096,8 @@ function renderWeeks(cardId) {
   let html = '<div class="weeks-wrap">';
   weeks.forEach((week, wi) => {
     const dd = week.d || [];
-    let done = 0, total = dd.length;
-    dd.forEach(t => { if (typeof t === 'object' ? t.done : false) done++; });
+    let done = 0, total = 0;
+    dd.forEach(t => { var txt=typeof t==='object'?t.text:(t||'');var lines=txt.split('\n').filter(function(l){return l.trim()});total+=Math.max(1,lines.length);if(typeof t==='object'&&t.done)done+=Math.max(1,lines.length)});
     const wkOpen = openState[cardId][wi] || false;
 
     html += `<div class="week" data-wi="${wi}">
@@ -1084,10 +1116,12 @@ function renderWeeks(cardId) {
       const dayLabel = DAYS[di] || 'Day'+(di+1);
       const isToday = dayLabel === todayCN;
       var journalKey=cardId+'-w'+wi,journalVal='';if(data._journal&&data._journal[journalKey]&&data._journal[journalKey][di])journalVal=data._journal[journalKey][di];
-      html += `<div class="dr${chk?' done':''}${isToday?' today':''}">
+      var lines=txt.split('\n').filter(function(l){return l.trim()});var hasLines=lines.length>1
+      html += `<div class="dr${chk?' done':''}${isToday?' today':''}" data-di="${di}">
         <span class="dl">${dayLabel}</span>
-        <textarea class="di" rows="1" data-c="${cardId}" data-wi="${wi}" data-di="${di}" placeholder="今天做什么">${esc(txt)}</textarea>
+        <textarea class="di" rows="1" data-c="${cardId}" data-wi="${wi}" data-di="${di}" placeholder="今天做什么" draggable="true">${esc(txt)}</textarea>
         <div class="md-preview" id="mdp-${cardId}-${wi}-${di}"></div>
+        ${hasLines?'<ul class="st-list">'+lines.map(function(l){return'<li>'+esc(l.trim())+'</li>'}).join('')+'</ul>':''}
         <button class="md-btn" data-c="${cardId}" data-wi="${wi}" data-di="${di}">MD</button>
         <input class="dc" type="checkbox" ${chk?'checked':''} data-c="${cardId}" data-wi="${wi}" data-di="${di}" />
         <button class="journal-btn" data-c="${cardId}" data-wi="${wi}" data-di="${di}" title="随笔">&#128221;</button>
@@ -1098,7 +1132,7 @@ function renderWeeks(cardId) {
     });
     html += `</div><div class="ws-box"><textarea placeholder="本周总结..." data-c="${cardId}" data-wi="${wi}">${esc(week.s||'')}</textarea></div></div></div>`;
   });
-  html += '</div><button class="aw" data-c="'+cardId+'">+ 添加新周</button>';
+  html += '</div><div style="display:flex;gap:.3rem;margin-top:.2rem"><button class="aw" data-c="'+cardId+'">+ 添加新周</button><button class="aw tpl" data-c="'+cardId+'">📋 模板</button></div>';
   body.innerHTML = html;
   updateMeta(cardId);
   // auto-resize all textareas in this card
@@ -1125,10 +1159,11 @@ function autoResize(el) {
   el.style.height = Math.max(el.scrollHeight, 22) + 'px';
 }
 
+function countLines(t){var txt=typeof t==='object'?t.text:(t||'');return Math.max(1,txt.split('\n').filter(function(l){return l.trim()}).length||1)}
 function updateMeta(cardId) {
   const weeks = data[cardId] || [];
   let total=0,done=0;
-  weeks.forEach(w=>(w.d||[]).forEach(t=>{total++;if((typeof t==='object'?t.done:false))done++}));
+  weeks.forEach(w=>(w.d||[]).forEach(t=>{total+=countLines(t);if(typeof t==='object'&&t.done)done+=countLines(t)}));
   const pct=total===0?0:Math.round((done/total)*100);
   const bar=document.querySelector(`.bar[data-c="${cardId}"]`);
   if(bar) bar.style.width=pct+'%';
@@ -1142,7 +1177,7 @@ function updateMeta(cardId) {
 function updateAllStats() {
   let total=0,done=0;
   const yt={y1:{t:0,d:0},y2:{t:0,d:0},y3:{t:0,d:0},y4:{t:0,d:0},y5:{t:0,d:0}};
-  for(const[cid,weeks]of Object.entries(data)){const y=cid.substring(0,2);if(!yt[y])continue;(weeks||[]).forEach(w=>(w.d||[]).forEach(t=>{const d=typeof t==='object'?t.done:false;total++;if(d)done++;yt[y].t++;if(d)yt[y].d++}))}
+  for(const[cid,weeks]of Object.entries(data)){const y=cid.substring(0,2);if(!yt[y])continue;(weeks||[]).forEach(w=>(w.d||[]).forEach(t=>{const d=typeof t==='object'?t.done:false;var c=countLines(t);total+=c;if(d)done+=c;yt[y].t+=c;if(d)yt[y].d+=c}))}
   document.getElementById('statTotal').textContent=total;
   document.getElementById('statDone').textContent=done;
   const ys=document.getElementById('yearStats');
@@ -2649,9 +2684,9 @@ function toggleJournal(dr,dayIdx,wkKey){var jb=dr.querySelector('.journal-box');
 function saveJournal(wkKey,dayIdx,val){if(!data._journal)data._journal={};if(!data._journal[wkKey])data._journal[wkKey]={};data._journal[wkKey][dayIdx]=val;save()}
 
 // ======================== FEATURE: Weekly Templates ========================
-function saveTemplate(cid){var weeks=data.weeks[cid];if(!weeks||!weeks.length){showToast('⚠️ 没有周数据');return}
+function saveTemplate(cid){var weeks=data[cid];if(!weeks||!weeks.length){showToast('⚠️ 没有周数据');return}
   var tpl={days:[],summary:''};weeks.forEach(function(w){
-    w.days.forEach(function(d,i){if(!tpl.days[i])tpl.days[i]='';if(d&&d.trim())tpl.days[i]=d.trim()});if(w.summary&&w.summary.trim())tpl.summary=w.summary.trim()})
+    (w.d||w.days||[]).forEach(function(d,i){if(!tpl.days[i])tpl.days[i]='';var txt=typeof d==='object'?d.text:(d||'');if(txt&&txt.trim())tpl.days[i]=txt.trim()});if(w.summary||w.s)w.summary=(w.summary||w.s||'').trim()})
   var name=prompt('模板名称：');if(!name||!name.trim())return;if(!data._templates)data._templates={}
   data._templates[name.trim()]=tpl;save();showToast('✓ 已保存模板 "'+name.trim()+'"')
   renderTemplates()}
@@ -2661,8 +2696,8 @@ function applyTemplate(cid){if(!data._templates||!Object.keys(data._templates).l
     names.forEach(function(n){html+='<button class="fb" data-tpl="'+n+'" style="text-align:left;justify-content:flex-start">'+esc(n)+'</button>'})
     html+='</div>';showToast(html)}}
 function loadTemplate(cid,name){var tpl=data._templates[name];if(!tpl){showToast('⚠️ 模板不存在');return}
-  var weeks=data.weeks[cid];if(!weeks||!weeks.length){showToast('⚠️ 请先添加周');return}
-  weeks.forEach(function(w){w.days.forEach(function(d,i){if(tpl.days[i])w.days[i]=tpl.days[i]});if(tpl.summary)w.summary=tpl.summary})
+  var weeks=data[cid];if(!weeks||!weeks.length){showToast('⚠️ 请先添加周');return}
+  weeks.forEach(function(w){(w.d||w.days||[]).forEach(function(d,i){if(tpl.days[i]){var nv=typeof d==='object'?{text:tpl.days[i],done:d.done}:tpl.days[i];if(Array.isArray(w.d))w.d[i]=nv;else w.days[i]=nv}});if(tpl.summary){w.s=tpl.summary;w.summary=tpl.summary}})
   save();renderAll();showToast('✓ 已应用模板 "'+name+'"')}
 function renderTemplates(){document.querySelectorAll('.tpl-list').forEach(function(el){
   var names=data._templates?Object.keys(data._templates):[]
@@ -2712,6 +2747,8 @@ function pomoComplete(){pomoFloatHide();document.getElementById('pomoStartBtn').
   var now=new Date();var ds=now.toLocaleDateString('zh-CN');var ts=now.toLocaleTimeString()
   if(!data._pomoLog)data._pomoLog=[]
   data._pomoLog.push({date:ds,time:ts,type:pomo.sessionType,label:pomo.label,tag:tag,duration:pomo.time/60})
+  try{if(Notification.permission==='granted')new Notification('🍅 番茄完成！',{body:pomo.label+' · '+(pomo.time/60)+'分钟',icon:'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%2280%22 font-size=%2280%22>🍅</text></svg>'})}catch(e){}
+  try{var ac=new(window.AudioContext||window.webkitAudioContext),o=ac.createOscillator(),g=ac.createGain();o.connect(g);g.connect(ac.destination);o.frequency.value=880;g.gain.setValueAtTime(.3,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+1);o.start(ac.currentTime);o.stop(ac.currentTime+1)}catch(e){}
   save();pomo.left=pomo.time;updatePomoDisplay();document.getElementById('pomoProgressBar').style.width='0%'
   document.getElementById('pomoTagInput').value=''
   updatePomoBadge();renderPomoRecords();renderPomoStats();renderPomoMstones()
@@ -2805,9 +2842,9 @@ function searchDo(q){q=q.trim().toLowerCase();var res=document.getElementById('s
   if(!q){res.innerHTML='';cnt.textContent='';return}
   var hits=[];Object.keys(data).filter(function(k){return k.match(/^y[1-5]/)}).forEach(function(cid){
     var yearLabel=cid.replace('y','第').replace('1','一').replace('2','二').replace('3','三').replace('4','四').replace('5','五')+'年'
-    ;(data.weeks[cid]||[]).forEach(function(w,wi){
-      var wNum=wi+1;(w.days||[]).forEach(function(d,di){
-        if(d&&d.toLowerCase().includes(q)){var dayNames=['周一','周二','周三','周四','周五','周六','周日'];hits.push({loc:yearLabel+' 第'+wNum+'周 '+dayNames[di],text:d,cid:cid,wi:wi,di:di})}})
+    ;(data[cid]||[]).forEach(function(w,wi){
+      var wNum=wi+1;(w.d||w.days||[]).forEach(function(d,di){
+        var txt=typeof d==='object'?d.text:d||'';if(txt.toLowerCase().includes(q)){var dayNames=['周一','周二','周三','周四','周五','周六','周日'];hits.push({loc:yearLabel+' 第'+wNum+'周 '+dayNames[di],text:txt,cid:cid,wi:wi,di:di})}})
       if(w.summary&&w.summary.toLowerCase().includes(q))hits.push({loc:yearLabel+' 第'+wNum+'周 总结',text:w.summary,cid:cid,wi:wi,di:-1})
     })})
   // Search OKRs
@@ -2917,6 +2954,18 @@ document.addEventListener('keydown',function(e){
 
 // Click floating timer to reopen pomo modal
 document.getElementById('pomoFloat').addEventListener('click',function(){pomoOpen()})
+// CSV export
+document.getElementById('csvBtn').addEventListener('click',exportCSV)
+// White noise toggle
+document.getElementById('noiseBtn').addEventListener('click',noiseToggle)
+// Template buttons (delegated)
+document.addEventListener('click',function(e){var b=e.target.closest('.aw.tpl');if(b)showTplPicker(b.dataset.c)})
+// Initialize drag & drop
+initDrag()
+// Request notification permission
+if('Notification'in window&&Notification.permission==='default')Notification.requestPermission()
+// Register service worker for PWA
+if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js')
 
 // ======================== FEATURE: Init all new features ========================
 function initFeatures(){
@@ -2954,6 +3003,61 @@ function initFeatures(){
 document.getElementById('statsToggle').addEventListener('click',function(){document.getElementById('statsPanel').classList.toggle('s')})
 // Init on load
 setTimeout(initFeatures,500)
+
+// ======================== FEATURE: CSV Export ========================
+function exportCSV(){var csv='\ufeff类型,日期,时间,标签,标签备注,时长(分钟)\n'
+  ;(data._pomoLog||[]).forEach(function(r){csv+='番茄钟,'+r.date+','+r.time+','+r.label+','+(r.tag||'')+','+r.duration+'\n'})
+  csv+='\n\n年度,分类,周次,日期,任务,已完成,周总结\n'
+  Object.keys(data).filter(function(k){return k.match(/^y[1-5]/)}).forEach(function(cid){
+    var yl=cid.replace('y','第').replace('1','一').replace('2','二').replace('3','三').replace('4','四').replace('5','五')+'年'
+    ;(data[cid]||[]).forEach(function(w,wi){(w.d||[]).forEach(function(d,di){
+      var txt=typeof d==='object'?d.text:d||'';var done=typeof d==='object'?d.done:false
+      csv+=yl+','+cid.split('-')[1]+',第'+(wi+1)+'周,周'+(['一','二','三','四','五','六','日'][di]||'')+','+txt.replace(/\n/g,' | ')+','+(done?'是':'否')+','+(w.s||'')+'\n'})})})
+  var blob=new Blob([csv],{type:'text/csv;charset=utf-8'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='phd-plan-export.csv';a.click();URL.revokeObjectURL(a.href)}
+
+// ======================== FEATURE: White Noise ========================
+var noiseCtx=null,noiseNode=null,noiseGain=null,noiseType='rain'
+function noiseStart(type){try{if(!noiseCtx)noiseCtx=new(window.AudioContext||window.webkitAudioContext);noiseStop()}catch(e){}try{
+  noiseType=type||'rain';var sr=noiseCtx.sampleRate;var len=sr*2;var buf=noiseCtx.createBuffer(1,len);var d=buf.getChannelData(0)
+  if(noiseType==='rain'){for(var i=0;i<len;i++)d[i]=Math.random()*2-1;noiseGain=noiseCtx.createGain();noiseGain.gain.value=.08}
+  else{for(var i=0;i<len;i++){var t=i/sr;d[i]=(Math.random()*2-1)*.3+Math.sin(2*Math.PI*200*t)*.03+Math.sin(2*Math.PI*400*t)*.02};noiseGain=noiseCtx.createGain();noiseGain.gain.value=.04}
+  noiseNode=noiseCtx.createBufferSource();noiseNode.buffer=buf;noiseNode.loop=true
+  var f=noiseCtx.createBiquadFilter();f.type='lowpass';f.frequency.value=noiseType==='rain'?800:1500
+  noiseNode.connect(f);f.connect(noiseGain);noiseGain.connect(noiseCtx.destination);noiseNode.start()
+  document.getElementById('noiseBtn').textContent='🔊 关闭白噪音';document.getElementById('noiseBtn').classList.add('s')}catch(e){}}
+function noiseStop(){if(noiseNode){try{noiseNode.stop()}catch(e){}noiseNode.disconnect();noiseNode=null}
+  document.getElementById('noiseBtn').textContent='🎵 白噪音';document.getElementById('noiseBtn').classList.remove('s')}
+function noiseToggle(){if(noiseNode)noiseStop();else noiseStart()}
+
+// ======================== FEATURE: Weekly Templates ========================
+var WEEK_TPL=[{n:'📚 论文周',d:['2h 实验/仿真','1h 文献阅读','数据分析','论文写作','组会准备','自由学习','休息']},{n:'📋 备考周',d:['行测 1h','申论 1h','错题整理','真题模拟','申论练习','自由复习','休息']},{n:'💰 财务周',d:['记账','预算规划','投资学习','副业探索','理财复盘','自由安排','休息']},{n:'❤️ 生活周',d:['运动30min','阅读','兴趣学习','社交','整理收纳','自由活动','休息']}]
+function showTplPicker(cardId){var el=document.getElementById('tplPicker');if(!el){el=document.createElement('div');el.id='tplPicker';el.className='tpl-picker';document.body.appendChild(el)}
+  el.innerHTML='<div class="tpl-picker-h">选择周模板</div>'+WEEK_TPL.map(function(t,i){return'<button class="tpl-picker-btn" data-tpl="'+i+'" data-c="'+cardId+'">'+esc(t.n)+'</button>'}).join('')+'<button class="tpl-picker-close">✕</button>'
+  el.classList.add('s')
+  el.querySelectorAll('.tpl-picker-btn').forEach(function(b){b.onclick=function(){applyTpl(b.dataset.c,parseInt(b.dataset.tpl));el.classList.remove('s')}})
+  el.querySelector('.tpl-picker-close').onclick=function(){el.classList.remove('s')}}
+function applyTpl(cardId,tplIdx){var tpl=WEEK_TPL[tplIdx];if(!tpl)return;if(!data[cardId])data[cardId]=[]
+  var nWeeks=prompt('创建几周？(1-12)','4');nWeeks=parseInt(nWeeks)||4;if(nWeeks<1||nWeeks>12)nWeeks=4
+  for(var w=0;w<nWeeks;w++){var startWeek=data[cardId].length+1
+    data[cardId].push({w:'第'+(startWeek)+'周',s:'',d:tpl.d.slice()})}
+  save();renderWeeks(cardId);showToast('✓ 已创建 '+nWeeks+' 周计划')}
+
+// ======================== FEATURE: Drag & Drop ========================
+function initDrag(){document.addEventListener('dragstart',function(e){var ta=e.target.closest('.di');if(!ta)return;e.dataTransfer.setData('text/plain',ta.id);ta.classList.add('dragging')})
+  document.addEventListener('dragover',function(e){var ta=e.target.closest('.di');if(!ta||ta.classList.contains('dragging'))return;e.preventDefault();ta.classList.add('drag-over')})
+  document.addEventListener('dragleave',function(e){var ta=e.target.closest('.di');if(ta)ta.classList.remove('drag-over')})
+  document.addEventListener('drop',function(e){var ta=e.target.closest('.di');if(!ta)return;e.preventDefault();ta.classList.remove('drag-over')
+    var srcId=e.dataTransfer.getData('text/plain');var src=document.getElementById(srcId);if(!src||src===ta)return
+    var srcDr=src.closest('.dr'),tgtDr=ta.closest('.dr');if(!srcDr||!tgtDr||srcDr.parentElement!==tgtDr.parentElement)return
+    var parent=tgtDr.parentElement;var idxSrc=Array.from(parent.children).indexOf(srcDr);var idxTgt=Array.from(parent.children).indexOf(tgtDr)
+    if(idxSrc<idxTgt)parent.insertBefore(srcDr,tgtDr.nextSibling);else parent.insertBefore(srcDr,tgtDr)
+    saveDragOrder(parent)})
+  document.addEventListener('dragend',function(e){document.querySelectorAll('.di.dragging,.di.drag-over').forEach(function(el){el.classList.remove('dragging','drag-over')})})}
+function saveDragOrder(container){var cardId=container.closest('.wp')?.dataset?.c;if(!cardId)return
+  var wi=container.closest('.week')?.dataset?.wi;if(wi===undefined)return
+  var drs=container.querySelectorAll('.dr');var week=data[cardId][parseInt(wi)];if(!week||!week.d)return
+  var reordered=[];drs.forEach(function(dr){var idx=parseInt(dr.dataset.di);if(!isNaN(idx)&&week.d[idx])reordered.push(week.d[idx])})
+  if(reordered.length===week.d.length){week.d=reordered;save();renderWeeks(cardId);showToast('✓ 任务顺序已更新')}}
 
 // ======================== UTIL ========================
 function esc(s) { if(typeof s!=='string')return s||'';const d=document.createElement('div');d.textContent=s;return d.innerHTML; }
