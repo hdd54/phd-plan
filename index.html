@@ -507,10 +507,15 @@ h1,h2,h3{font-family:"Noto Serif SC","STSong","Source Han Serif SC","Songti SC",
           <span class="gist-label">Token</span>
           <input type="password" id="gistTokenInput" placeholder="ghp_... 或 github_pat_..." spellcheck="false" />
         </div>
+        <div class="gist-row">
+          <span class="gist-label">Gist ID</span>
+          <input type="text" id="gistIdInput" placeholder="自动获取，也可手动粘贴" spellcheck="false" />
+        </div>
         <div class="gist-actions">
           <button class="gist-btn" id="gistSaveBtn">💾 保存 Token</button>
           <button class="gist-btn" id="gistSyncBtn">⬆ 推送</button>
           <button class="gist-btn" id="gistPullBtn">⬇ 拉取</button>
+          <button class="gist-btn" id="gistFindBtn">🔍 查找我的 Gist</button>
         </div>
         <div class="gist-status-text" id="gistStatus">未连接</div>
       </div>
@@ -1768,8 +1773,9 @@ let gistSyncing = false;
 
 function gistDom(id) { return document.getElementById(id); }
 
-// Restore gist token input
+// Restore gist token and ID inputs
 if (gistToken) gistDom('gistTokenInput').value = gistToken;
+if (gistId) gistDom('gistIdInput').value = gistId;
 updateGistUI();
 
 // Toggle sync section
@@ -1779,7 +1785,18 @@ gistDom('gistToggle').addEventListener('click', function() {
   this.querySelector('span:last-child').textContent = body.classList.contains('o') ? '▴' : '▾';
 });
 
-// Save token
+// Manual Gist ID input: update live
+gistDom('gistIdInput').addEventListener('input', function() {
+  gistId = this.value.trim();
+  if (gistId) {
+    localStorage.setItem(GIST_ID_KEY, gistId);
+    updateGistUI();
+  } else {
+    localStorage.removeItem(GIST_ID_KEY);
+  }
+});
+
+// Save token → verify + find existing gist or create
 gistDom('gistSaveBtn').addEventListener('click', async function() {
   const token = gistDom('gistTokenInput').value.trim();
   if (!token || (!token.startsWith('ghp_') && !token.startsWith('github_pat_') && !token.startsWith('gho_') && !token.startsWith('ghu_'))) {
@@ -1788,24 +1805,15 @@ gistDom('gistSaveBtn').addEventListener('click', async function() {
   }
   gistToken = token;
   localStorage.setItem(GIST_TOKEN_KEY, token);
+
+  // Also pick up manual gistId if entered
+  const manualId = gistDom('gistIdInput').value.trim();
+  if (manualId) gistId = manualId;
+
   setGistStatus('⏳ 验证中…', '');
   
-  if (!gistId) {
-    try {
-      const now = Date.now();
-      const pushData = JSON.parse(JSON.stringify(data));
-      pushData._syncedAt = now;
-      const resp = await gistCreate(JSON.stringify(pushData));
-      gistId = resp.id;
-      localStorage.setItem(GIST_ID_KEY, gistId);
-      gistLastSync = now;
-      localStorage.setItem(GIST_LAST_SYNC_KEY, gistLastSync.toString());
-      setGistStatus('✅ Gist 已创建 (ID: ' + gistId.slice(0,8) + '…)', 'ok');
-      showToast('⚡ Gist 自动同步已开启');
-    } catch(e) {
-      setGistStatus('⚠️ 创建失败: ' + (e.message || e), 'err');
-    }
-  } else {
+  // If we have a gistId, verify it
+  if (gistId) {
     try {
       const remote = await gistFetch();
       if (remote._syncedAt > gistLastSync) {
@@ -1814,9 +1822,65 @@ gistDom('gistSaveBtn').addEventListener('click', async function() {
       } else {
         setGistStatus('✅ Token 有效，Gist 已就绪', 'ok');
       }
+      updateGistUI();
+      return;
     } catch(e) {
-      setGistStatus('⚠️ 验证失败: ' + (e.message || '请求失败'), 'err');
+      // gistId invalid or gist deleted → fall through to find/create
+      setGistStatus('⚠️ 已存的 Gist 无效，正在查找…', '');
+      gistId = '';
     }
+  }
+  
+  // No gistId → search for existing gist with our filename
+  setGistStatus('🔍 正在查找已有的数据 Gist…', '');
+  try {
+    const foundId = await gistFindExisting();
+    if (foundId) {
+      gistId = foundId;
+      localStorage.setItem(GIST_ID_KEY, gistId);
+      gistDom('gistIdInput').value = gistId;
+      setGistStatus('✅ 找到已有 Gist，正在拉取…', 'ok');
+      await gistPull();
+    } else {
+      // No existing gist → create one
+      setGistStatus('⏳ 未找到，正在创建新 Gist…', '');
+      const now = Date.now();
+      const pushData = JSON.parse(JSON.stringify(data));
+      pushData._syncedAt = now;
+      const resp = await gistCreate(JSON.stringify(pushData));
+      gistId = resp.id;
+      localStorage.setItem(GIST_ID_KEY, gistId);
+      gistDom('gistIdInput').value = gistId;
+      gistLastSync = now;
+      localStorage.setItem(GIST_LAST_SYNC_KEY, gistLastSync.toString());
+      setGistStatus('✅ Gist 已创建 (ID: ' + gistId.slice(0,8) + '…)', 'ok');
+      showToast('⚡ Gist 自动同步已开启');
+    }
+  } catch(e) {
+    setGistStatus('⚠️ 操作失败: ' + (e.message || e), 'err');
+  }
+  updateGistUI();
+});
+
+// 🔍 Find my Gist button
+gistDom('gistFindBtn').addEventListener('click', async function() {
+  const token = gistDom('gistTokenInput').value.trim();
+  if (!token) { setGistStatus('⚠️ 请先填入 Token', 'err'); return; }
+  gistToken = token;
+  localStorage.setItem(GIST_TOKEN_KEY, token);
+  setGistStatus('🔍 正在查找已有 Gist…', '');
+  try {
+    const foundId = await gistFindExisting();
+    if (foundId) {
+      gistId = foundId;
+      localStorage.setItem(GIST_ID_KEY, gistId);
+      gistDom('gistIdInput').value = gistId;
+      setGistStatus('✅ 找到 Gist: ' + gistId.slice(0,12) + '…，点 ⬇拉取 获取数据', 'ok');
+    } else {
+      setGistStatus('⚠️ 未找到数据 Gist，点 💾保存Token 创建一个', 'err');
+    }
+  } catch(e) {
+    setGistStatus('⚠️ 查找失败: ' + (e.message || e), 'err');
   }
   updateGistUI();
 });
@@ -1825,6 +1889,7 @@ gistDom('gistSaveBtn').addEventListener('click', async function() {
 gistDom('gistSyncBtn').addEventListener('click', async function() {
   if (!gistToken) { showToast('⚠️ 请先保存 Token'); return; }
   if (gistSyncing) return;
+  if (!gistId) { showToast('⚠️ 未找到 Gist，请先保存 Token'); return; }
   await gistPush();
 });
 
@@ -1832,6 +1897,7 @@ gistDom('gistSyncBtn').addEventListener('click', async function() {
 gistDom('gistPullBtn').addEventListener('click', async function() {
   if (!gistToken) { showToast('⚠️ 请先保存 Token'); return; }
   if (gistSyncing) return;
+  if (!gistId) { showToast('⚠️ 未找到 Gist，请先保存 Token'); return; }
   await gistPull();
 });
 
@@ -1871,6 +1937,24 @@ async function gistFetch() {
   const file = gist.files && gist.files[GIST_FILENAME];
   if (!file) throw new Error('Gist 中未找到 ' + GIST_FILENAME);
   return JSON.parse(file.content);
+}
+
+// ===== Find existing gist by filename =====
+async function gistFindExisting() {
+  // List user's gists (paginated, get 50 most recent)
+  const resp = await fetch('https://api.github.com/gists?per_page=50', {
+    headers: { 'Authorization': 'token ' + gistToken, 'Accept': 'application/vnd.github.v3+json' }
+  });
+  if (!resp.ok) { const e = await resp.json().catch(()=>({})); throw new Error((e.message||resp.statusText)+' ('+resp.status+')'); }
+  const gists = await resp.json();
+  if (!Array.isArray(gists)) throw new Error('无法获取 Gist 列表');
+  // Find the first gist that has our filename
+  for (const g of gists) {
+    if (g.files && g.files[GIST_FILENAME]) {
+      return g.id;
+    }
+  }
+  return null; // not found
 }
 
 // ===== Push =====
