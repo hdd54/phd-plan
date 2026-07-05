@@ -25,8 +25,16 @@
   --txt:var(--fg); --txt2:var(--fg-dim); --txt3:var(--muted); --txt4:var(--muted);
   --border:var(--line); --border2:var(--line-2);
   --r:14px; --rs:6px;
-  --font-serif:'Fraunces',Georgia,'Songti SC',serif;
-  --font-sans:'Space Grotesk','PingFang SC','Microsoft YaHei',sans-serif;
+  --font-serif:'Fraunces',Georgia,'Songti SC','Noto Serif SC',serif;
+  --font-sans:'Space Grotesk','PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;
+  /* Chinese-inspired accent colors */
+  --cinnabar:#CC2936;   /* 朱红 */
+  --cinnabar-dim:rgba(204,41,54,.12);
+  --jade:#3b7a5c;       /* 翠玉 */
+  --jade-dim:rgba(59,122,92,.1);
+  --ink:#1a1a1e;        /* 墨黑 */
+  --paper:#f4f1ea;      /* 宣纸 */
+  --gold-leaf:#C9A96E;  /* 金箔 */
 }
 html{scroll-behavior:smooth;font-size:15px}
 body{
@@ -35,13 +43,19 @@ body{
   font-weight:300;line-height:1.5;
   -webkit-font-smoothing:antialiased;overflow-x:hidden
 }
+/* Chinese-style scrollbar */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--cinnabar);border-radius:2px;opacity:.5}
+::-webkit-scrollbar-thumb:hover{background:var(--gold-leaf)}
 /* noise texture overlay */
 body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:0.06;pointer-events:none;z-index:2;mix-blend-mode:overlay}
 ::selection{background:var(--accent);color:var(--bg)}
 h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 
-/* ===== scroll progress ===== */
-#progress{position:fixed;top:0;left:0;height:1.5px;background:var(--accent);width:0%;z-index:300;transition:width .15s ease-out;box-shadow:0 0 12px rgba(212,165,116,.5)}
+/* ===== scroll progress (Chinese ribbon style) ===== */
+#progress{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--cinnabar),var(--accent));width:0%;z-index:300;transition:width .15s ease-out;box-shadow:0 0 12px rgba(204,41,54,.4),0 0 24px rgba(212,165,116,.2)}
+#progress::after{content:'';position:absolute;right:-2px;top:-1px;width:6px;height:4px;background:var(--accent);border-radius:0 0 3px 3px}
 
 /* ===== canvas particles ===== */
 #pc{position:fixed;inset:0;pointer-events:none;z-index:0}
@@ -57,9 +71,13 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 .hero{position:relative;z-index:1;min-height:55vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:clamp(2.5rem,6vw,4rem) clamp(1rem,3vw,1.5rem) clamp(1.5rem,3vw,2rem);overflow:hidden}
 .hero::after{content:'';position:absolute;top:-30%;left:-10%;width:120%;height:60%;background:radial-gradient(ellipse 800px 500px at 50% 40%,rgba(212,165,116,.08)0%,transparent 70%);pointer-events:none}
 .hero::before{content:'';position:absolute;bottom:0;left:0;right:0;height:clamp(3rem,6vw,6rem);background:linear-gradient(to bottom,transparent,var(--bg));pointer-events:none;z-index:1}
-.hmark{font-family:var(--font-serif);font-size:clamp(2rem,6.5vw,4.5rem);font-weight:300;line-height:0.95;letter-spacing:-.04em;margin-bottom:.5rem;opacity:0;animation:fU 1.2s .1s forwards}
+/* Chinese seal/stamp decoration for hero */
+.hmark{position:relative;font-family:var(--font-serif);font-size:clamp(2rem,6.5vw,4.5rem);font-weight:300;line-height:0.95;letter-spacing:-.04em;margin-bottom:.5rem;opacity:0;animation:fU 1.2s .1s forwards;display:inline-block}
 .hmark em{font-style:italic;color:var(--accent)}
-.hline{width:clamp(40px,6vw,80px);height:1px;background:var(--accent);margin:0 auto 1.2rem;opacity:0;animation:fU 1s .4s forwards}
+/* Chinese seal stamp */
+.hmark::after{content:'博';position:absolute;top:-.3em;right:-.9em;font-size:clamp(.35rem,1.2vw,.5rem);font-family:'Songti SC','Noto Serif SC',serif;color:var(--cinnabar);border:1.5px solid var(--cinnabar);padding:.08em .18em;line-height:1;letter-spacing:0;opacity:.7;transform:rotate(8deg);border-radius:2px}
+.hline{width:clamp(40px,6vw,80px);height:1px;background:var(--accent);margin:0 auto 1.2rem;opacity:0;animation:fU 1s .4s forwards;position:relative}
+.hline::before{content:'◆';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:clamp(.35rem,.6vw,.4rem);color:var(--accent);background:var(--bg);padding:0 .4rem}
 .hsub{font-size:clamp(.7rem,1.2vw,.85rem);color:var(--fg-dim);letter-spacing:.35em;text-transform:uppercase;margin-bottom:2rem;opacity:0;animation:fU 1s .55s forwards;font-weight:300;position:relative;display:inline-block}
 .hsub::after{content:'';position:absolute;bottom:-.6rem;left:50%;transform:translateX(-50%);width:clamp(20px,3vw,40px);height:1px;background:var(--muted);opacity:0;animation:fU 1s .7s forwards}
 .hstats{display:flex;gap:clamp(1.5rem,4vw,3rem);flex-wrap:wrap;justify-content:center;opacity:0;animation:fU 1s .7s forwards}
@@ -68,11 +86,11 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 .hstat .l{font-size:clamp(.55rem,1vw,.65rem);color:var(--muted);margin-top:.1rem;letter-spacing:.15em;text-transform:uppercase}
 @keyframes fU{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
 
-/* ===== year stats ===== */
+/* ===== year stats (Chinese seal badges) ===== */
 .ysb{position:relative;z-index:1;max-width:820px;margin:0 auto;padding:0 clamp(.6rem,2vw,1rem);display:flex;justify-content:center;flex-wrap:wrap;gap:.6rem}
 .ysb-item{display:flex;align-items:center;gap:.4rem;font-size:clamp(.5rem,.9vw,.6rem);color:var(--muted);padding:.18rem .55rem;background:var(--bg2);border-radius:100px;border:1px solid var(--line);letter-spacing:.1em;text-transform:uppercase;transition:all .25s}
 .ysb-item:hover{border-color:rgba(212,165,116,.2);color:var(--fg-dim)}
-.ysb-item .ysb-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.ysb-item .ysb-dot{width:5px;height:5px;border-radius:0;flex-shrink:0;background:var(--cinnabar);transform:rotate(45deg)}
 .ysb-item .ysb-p{color:var(--accent);font-weight:400;margin-left:.05rem;font-family:var(--font-serif)}
 
 /* ===== left nav rail ===== */
@@ -89,10 +107,11 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 .yn{max-width:clamp(400px,70vw,720px);margin:0 auto;display:flex;justify-content:space-between}
 .yni{display:flex;flex-direction:column;align-items:center;gap:.12rem;cursor:pointer;padding:clamp(.12rem,.3vw,.2rem) clamp(.35rem,1.2vw,.6rem);border:none;background:none;color:var(--muted);font-family:var(--font-sans);font-size:clamp(.65rem,1.5vw,.8rem);transition:all .25s;position:relative;border-radius:var(--rs);letter-spacing:.12em;font-weight:300}
 .yni:hover{color:var(--fg-dim)}
-.yni.a{color:var(--accent)}
+.yni.a{color:var(--accent);text-shadow:0 0 12px rgba(212,165,116,.15)}
 .yni .yd{width:clamp(5px,1vw,7px);height:clamp(5px,1vw,7px);border-radius:50%;border:1.5px solid var(--line-2);background:transparent;transition:all .35s}
 .yni.a .yd{border-color:var(--accent);background:var(--accent);box-shadow:0 0 10px rgba(212,165,116,.3)}
 .yni .yl{font-size:clamp(.5rem,1.2vw,.7rem);font-weight:300;letter-spacing:.15em}
+.yni.a .yl{color:var(--cinnabar);letter-spacing:.18em;text-shadow:0 0 8px rgba(204,41,54,.15)}
 
 /* ===== sections ===== */
 .sec{position:relative;z-index:1;max-width:clamp(600px,90vw,1020px);margin:0 auto;padding:clamp(1.5rem,4vw,2.5rem) clamp(.6rem,2vw,1.2rem)}
@@ -101,8 +120,9 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 .sec-divider hr{border:none;height:1px;background:linear-gradient(90deg,transparent,rgba(212,165,116,.15) 30%,rgba(212,165,116,.15) 70%,transparent);margin:0 auto;max-width:60%}
 .sh{margin-bottom:clamp(.8rem,2vw,1.2rem)}
 .sh .ey{font-size:clamp(.5rem,1vw,.6rem);letter-spacing:.35em;color:var(--accent);margin-bottom:.2rem;display:flex;align-items:center;gap:.35rem;text-transform:uppercase;font-weight:300}
-.sh .ey::before{content:'';width:20px;height:1px;background:var(--accent)}
+.sh .ey::before{content:'❚';width:auto;height:auto;background:none;color:var(--cinnabar);font-size:clamp(.5rem,.8vw,.6rem)}
 .sh h2{font-size:clamp(.9rem,2.2vw,1.45rem);line-height:1.2;display:flex;align-items:center;gap:.4rem;font-weight:300}
+.sh h2::after{content:'';flex:1;height:1px;margin-left:.3rem;background:linear-gradient(90deg,rgba(212,165,116,.2),transparent)}
 .sh .sub{color:var(--fg-dim);margin-top:.15rem;font-size:clamp(.65rem,1.1vw,.72rem);font-weight:300;letter-spacing:.05em}
 
 .tg{display:grid;grid-template-columns:1fr 1fr;gap:clamp(.5rem,1.2vw,.8rem)}
@@ -110,6 +130,7 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 
 /* ===== card ===== */
 .tc{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:clamp(.75rem,1.8vw,1rem);transition:all .3s cubic-bezier(.2,.8,.2,1);position:relative;overflow:hidden}
+/* Chinese window lattice corner ornament */
 .tc::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;opacity:0;transition:opacity .3s}
 .tc::after{content:'';position:absolute;top:-60%;right:-60%;width:120%;height:120%;background:radial-gradient(circle,rgba(212,165,116,.02)0%,transparent 70%);opacity:0;transition:opacity .5s;pointer-events:none}
 .tc:hover{background:var(--card-h);border-color:var(--line-2);transform:translateY(-2px);box-shadow:0 8px 40px rgba(0,0,0,.5)}
@@ -995,23 +1016,52 @@ const Y1A = [
   {w:'第8周',s:'',d:['完成全部正式实验数据采集','系统整理数据做统计分析','开始撰写综述论文框架','完成文献综述部分初稿','综述方法论与技术对比章节','综述初稿发给导师预览','本周总结：数据完整综述框架完成']},
 ];
 const Y2A = [
-  {w:'第1-2周',s:'',d:['整理博一实验数据','补充缺失实验组','优化数据处理脚本','完善实验系统稳定性','撰写实验进展报告','阅读Paper1目标期刊近期论文','制定Paper1写作计划']},
-  {w:'第3-5周',s:'',d:['Paper1结果部分制图','Paper1方法部分写作','Paper1引言部分写作','Paper1讨论部分写作','全文修改与格式调整','交给导师审阅','按导师意见修改']},
-  {w:'第6-8周',s:'',d:['Paper1终稿定稿','准备投稿材料清单','投出Paper1！','整理专利技术交底书','与导师讨论专利点','撰写专利权利要求','提交专利1申请']},
+  {w:'第1周',s:'',d:['整理博一实验数据','检查数据完整性','优化数据处理脚本']},
+  {w:'第2周',s:'',d:['补充缺失实验组','完善实验系统稳定性','撰写实验进展报告']},
+  {w:'第3周',s:'',d:['阅读Paper1目标期刊近期论文','制定Paper1写作计划','确定论文创新点']},
+  {w:'第4周',s:'',d:['Paper1结果部分制图','方法部分写作','整理参考文献']},
+  {w:'第5周',s:'',d:['Paper1引言部分写作','讨论部分写作','全文初稿整合']},
+  {w:'第6周',s:'',d:['全文修改与格式调整','交给导师审阅','按导师意见修改']},
+  {w:'第7周',s:'',d:['Paper1终稿定稿','准备投稿材料','撰写Cover Letter']},
+  {w:'第8周',s:'',d:['投出Paper1！','整理专利技术交底书','与导师讨论专利点']},
 ];
 const Y3A = [
-  {w:'第1-4周',s:'',d:['Paper1审稿意见回复','逐条修改论文','撰写修改说明','重新投出或改投','开始Paper2实验设计','跑Paper2预实验','整理实验材料']},
-  {w:'第5-8周',s:'',d:['Paper2正式实验数据采集','数据初步分析','Paper2写作开始','完成Paper2初稿','修改后投出','专利2申请材料整理','提交专利2']},
-  {w:'第9-12周',s:'',d:['博士论文开题报告撰写','文献综述章节完成','研究内容与技术路线确定','开题PPT制作','开题答辩预演','正式开题答辩','开题通过后整理专家意见']},
+  {w:'第1周',s:'',d:['Paper1审稿意见逐条整理','制定修改计划','与导师讨论回复策略']},
+  {w:'第2周',s:'',d:['逐条修改论文','撰写修改说明','提交修改稿']},
+  {w:'第3周',s:'',d:['重新投出或改投','开始Paper2实验设计','跑Paper2预实验']},
+  {w:'第4周',s:'',d:['分析预实验结果','优化实验方案','整理实验材料与SOP']},
+  {w:'第5周',s:'',d:['Paper2正式实验数据采集','记录每日实验数据','数据质量检查']},
+  {w:'第6周',s:'',d:['数据初步分析','制作实验结果图','验证实验结论']},
+  {w:'第7周',s:'',d:['Paper2写作开始','撰写引言与方法部分','完成结果与讨论']},
+  {w:'第8周',s:'',d:['完成Paper2初稿','修改后投出','专利2申请材料整理']},
+  {w:'第9周',s:'',d:['提交专利2','博士论文开题报告撰写','阅读开题相关文献']},
+  {w:'第10周',s:'',d:['文献综述章节完成','研究内容与技术路线确定','开题报告初稿完成']},
+  {w:'第11周',s:'',d:['开题PPT制作','开题答辩预演','正式开题答辩']},
+  {w:'第12周',s:'',d:['开题通过后整理专家意见','修改研究方案','制定下阶段计划']},
 ];
 const Y4A = [
-  {w:'第1-4周',s:'',d:['博士论文第一章定稿','博士论文第二章写作','第三章实验数据整理','实验结果补全','第四章初稿','第五章初稿','全文进度检查']},
-  {w:'第5-8周',s:'',d:['论文初稿完成发给导师','按导师意见第一轮修改','第二轮修改','论文格式规范化','参考文献整理','论文摘要与结论定稿','提交预审']},
-  {w:'第9-12周',s:'',d:['送盲审','等待盲审结果期间备考','盲审意见返回','按盲审意见修改','修改说明撰写','预答辩PPT','预答辩']},
+  {w:'第1周',s:'',d:['博士论文第一章定稿','完善绪论部分', '补充最新研究背景']},
+  {w:'第2周',s:'',d:['博士论文第二章写作','文献综述深化','论文框架优化']},
+  {w:'第3周',s:'',d:['第三章实验数据整理','实验结果补全','制作实验结果图表']},
+  {w:'第4周',s:'',d:['第四章初稿','第五章初稿','全文进度检查']},
+  {w:'第5周',s:'',d:['论文初稿完成发给导师','逐条整理导师修改意见','制定修改计划']},
+  {w:'第6周',s:'',d:['按导师意见第一轮修改','第二轮修改','论文格式规范化']},
+  {w:'第7周',s:'',d:['参考文献整理','论文摘要与结论定稿','全文通读检查']},
+  {w:'第8周',s:'',d:['最终修改定稿','填写送审表格','提交预审']},
+  {w:'第9周',s:'',d:['送盲审','等待盲审结果','准备备考/充实的任务']},
+  {w:'第10周',s:'',d:['盲审意见返回','逐条阅读评审意见','按盲审意见修改']},
+  {w:'第11周',s:'',d:['修改说明撰写','预答辩PPT制作','预答辩预演']},
+  {w:'第12周',s:'',d:['预答辩','记录专家意见','论文最终修改定稿']},
 ];
 const Y5A = [
-  {w:'第1-4周',s:'',d:['检查毕业要求完成情况','补齐剩余实验数据','补写论文缺失章节','论文初稿完成','发给导师修改','按意见修改','论文定稿']},
-  {w:'第5-8周',s:'',d:['送审','盲审修改','答辩准备','答辩','毕业材料提交','学位申请','毕业！']},
+  {w:'第1周',s:'',d:['检查毕业要求完成情况','核对学分与发表要求','补齐剩余实验数据']},
+  {w:'第2周',s:'',d:['补写论文缺失章节','完善数据分析','论文初稿完成']},
+  {w:'第3周',s:'',d:['发给导师修改','按意见修改','修改说明撰写']},
+  {w:'第4周',s:'',d:['导师确认修改','论文定稿','查重与格式最终检查']},
+  {w:'第5周',s:'',d:['送审材料准备','提交盲审','答辩PPT初稿制作']},
+  {w:'第6周',s:'',d:['盲审意见返回','按意见修改','答辩PPT完善']},
+  {w:'第7周',s:'',d:['答辩演讲练习','模拟答辩','正式答辩']},
+  {w:'第8周',s:'',d:['毕业材料提交','学位申请','毕业！🎓']},
 ];
 
 // ======================== STATE ========================
@@ -1048,6 +1098,31 @@ function ensure(p) {
   ['y1','y2','y3','y4','y5'].forEach(y=>['exam','finance','life'].forEach(t=>{const c=y+'-'+t;if(!p[c])p[c]=[]}));
   // Ensure overviews storage
   if (!p._overviews) p._overviews = {};
+  // Migration: expand ranged week labels (e.g. '第1-4周' → individual weeks)
+  var expanded=0;
+  ['y1-academic','y2-academic','y3-academic','y4-academic','y5-academic'].forEach(function(cid){
+    if(!p[cid]||!Array.isArray(p[cid])||p[cid].length<2)return;
+    // Check if first week label contains a dash (ranged)
+    var first=p[cid][0].w;
+    if(first&&first.indexOf('-')>0){
+      var newWeeks=[];p[cid].forEach(function(w){
+        if(w.s)s=w.s;
+        var m=w.w.match(/第(\d+)[-–至](\d+)周/);
+        if(!m){newWeeks.push({w:w.w,s:(w.s||w.summary||''),d:w.d.slice()});return}
+        var start=parseInt(m[1]),end=parseInt(m[2]);
+        var tasks=w.d.filter(function(t){return t&&t.trim()});
+        var per=Math.max(1,Math.ceil(tasks.length/(end-start+1)));
+        for(var wi=start;wi<=end;wi++){
+          var weekTasks=[];
+          for(var di=0;di<per;di++){var ti=(wi-start)*per+di;if(tasks[ti])weekTasks.push(tasks[ti])}
+          if(weekTasks.length===0)weekTasks=[''];
+          newWeeks.push({w:'第'+wi+'周',s:(wi===end?(w.s||w.summary||''):''),d:weekTasks})
+        }
+      });
+      p[cid]=newWeeks;expanded++;
+    }
+  });
+  if(expanded>0)save();
 }
 function cloneDeep(arr){return arr.map(w=>({w:w.w,s:w.s||'',d:[...w.d]}))}
 function save(){localStorage.setItem(SK,JSON.stringify(data));saveOpenState();}
