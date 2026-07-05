@@ -4,11 +4,16 @@
   "description": "五年博士买房准备计划 - 周计划/番茄钟/里程碑",
   "start_url": "plan-plan-fighting.html",
   "display": "standalone",
-  "orientation": "portrait",
+  "display_override": ["window-controls-overlay", "standalone"],
+  "orientation": "any",
   "background_color": "#0a0908",
   "theme_color": "#d4a574",
+  "scope": "/phd-plan/",
+  "categories": ["productivity", "education"],
+  "lang": "zh-CN",
   "icons": [
-    { "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='24' fill='%230a0908'/><text x='96' y='132' font-size='120' text-anchor='middle' fill='%23d4a574'>🏠</text></svg>", "sizes": "192x192", "type": "image/svg+xml" },
-    { "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='48' fill='%230a0908'/><text x='256' y='340' font-size='280' text-anchor='middle' fill='%23d4a574'>🏠</text></svg>", "sizes": "512x512", "type": "image/svg+xml" }
-  ]
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ],
+  "screenshots": [],
+  "prefer_related_applications": false
 }

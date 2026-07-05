@@ -1,5 +1,5 @@
-const CACHE = 'phd-plan-v3';
-const URLS = ['plan-plan-fighting.html','manifest.json'];
+const CACHE = 'phd-plan-v4';
+const URLS = ['plan-plan-fighting.html','manifest.json','icon.svg'];
 
 self.addEventListener('install', e => {
   e.waitUntil(
