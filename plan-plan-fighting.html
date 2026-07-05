@@ -270,11 +270,6 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 
 #fileInput{display:none}
 
-/* ---- Sub-tasks (line breaks) ---- */
-.st-list{margin:.08rem 0 .08rem clamp(.3rem,.6vw,.5rem);padding:0;list-style:none;display:flex;flex-direction:column;gap:.03rem}
-.st-list li{font-size:clamp(.48rem,.75vw,.52rem);color:var(--txt2);padding:.02rem .2rem .02rem 1.1em;position:relative;line-height:1.4}
-.st-list li::before{content:'•';position:absolute;left:.25em;color:var(--accent);opacity:.6}
-.st-list li+li{border-top:1px solid rgba(255,255,255,.03)}
 /* ---- Drag & Drop ---- */
 .di[draggable=true]{cursor:grab}
 .di.dragging{opacity:.4;cursor:grabbing}
@@ -1022,52 +1017,52 @@ const Y1A = [
   {w:'第8周',s:'',d:['完成全部正式实验数据采集','系统整理数据做统计分析','开始撰写综述论文框架','完成文献综述部分初稿','综述方法论与技术对比章节','综述初稿发给导师预览','本周总结：数据完整综述框架完成']},
 ];
 const Y2A = [
-  {w:'第1周',s:'',d:['整理博一实验数据','检查数据完整性','优化数据处理脚本']},
-  {w:'第2周',s:'',d:['补充缺失实验组','完善实验系统稳定性','撰写实验进展报告']},
-  {w:'第3周',s:'',d:['阅读Paper1目标期刊近期论文','制定Paper1写作计划','确定论文创新点']},
-  {w:'第4周',s:'',d:['Paper1结果部分制图','方法部分写作','整理参考文献']},
-  {w:'第5周',s:'',d:['Paper1引言部分写作','讨论部分写作','全文初稿整合']},
-  {w:'第6周',s:'',d:['全文修改与格式调整','交给导师审阅','按导师意见修改']},
-  {w:'第7周',s:'',d:['Paper1终稿定稿','准备投稿材料','撰写Cover Letter']},
-  {w:'第8周',s:'',d:['投出Paper1！','整理专利技术交底书','与导师讨论专利点']},
+  {w:'第1周',s:'',d:['整理博一全部实验数据','检查数据完整性与异常值','补充缺失实验组','优化数据处理脚本','完善实验系统稳定性','备份所有原始数据','撰写实验进展报告']},
+  {w:'第2周',s:'',d:['阅读Paper1目标期刊近期论文','整理文献综述框架','确定Paper1创新点','制定Paper1写作计划','绘制论文图表模板','学习期刊投稿格式要求','与导师讨论论文框架']},
+  {w:'第3周',s:'',d:['Paper1结果部分数据整理','制作论文核心图表','补充统计分析','论文方法部分写作','撰写实验方法描述','结果部分初稿完成','方法部分初稿完成']},
+  {w:'第4周',s:'',d:['Paper1引言部分写作','文献引用整理','讨论部分写作','结论部分撰写','全文初稿整合','检查逻辑连贯性','完成论文初稿']},
+  {w:'第5周',s:'',d:['论文格式与参考文献调整','全文语言润色','交给导师审阅','按导师意见第一轮修改','第二轮修改','图表细节完善','终稿定稿']},
+  {w:'第6周',s:'',d:['准备投稿材料清单','撰写Cover Letter','推荐审稿人','投出Paper1！','进入投稿系统跟踪','整理投稿确认邮件','本周总结与下阶段计划']},
+  {w:'第7周',s:'',d:['整理专利技术交底书','调研相关已有专利','与导师讨论专利点','确定专利保护范围','撰写专利权利要求','绘制专利示意图','准备专利申请材料']},
+  {w:'第8周',s:'',d:['提交专利1申请','整理专利申请回执','总结博二上半年工作','制定下半年计划','文献阅读更新','实验平台维护','准备组会汇报材料']},
 ];
 const Y3A = [
-  {w:'第1周',s:'',d:['Paper1审稿意见逐条整理','制定修改计划','与导师讨论回复策略']},
-  {w:'第2周',s:'',d:['逐条修改论文','撰写修改说明','提交修改稿']},
-  {w:'第3周',s:'',d:['重新投出或改投','开始Paper2实验设计','跑Paper2预实验']},
-  {w:'第4周',s:'',d:['分析预实验结果','优化实验方案','整理实验材料与SOP']},
-  {w:'第5周',s:'',d:['Paper2正式实验数据采集','记录每日实验数据','数据质量检查']},
-  {w:'第6周',s:'',d:['数据初步分析','制作实验结果图','验证实验结论']},
-  {w:'第7周',s:'',d:['Paper2写作开始','撰写引言与方法部分','完成结果与讨论']},
-  {w:'第8周',s:'',d:['完成Paper2初稿','修改后投出','专利2申请材料整理']},
-  {w:'第9周',s:'',d:['提交专利2','博士论文开题报告撰写','阅读开题相关文献']},
-  {w:'第10周',s:'',d:['文献综述章节完成','研究内容与技术路线确定','开题报告初稿完成']},
-  {w:'第11周',s:'',d:['开题PPT制作','开题答辩预演','正式开题答辩']},
-  {w:'第12周',s:'',d:['开题通过后整理专家意见','修改研究方案','制定下阶段计划']},
+  {w:'第1周',s:'',d:['Paper1审稿意见逐条整理','制定修改计划','与导师讨论回复策略','逐条修改论文','撰写修改说明','提交修改稿','确认投稿状态']},
+  {w:'第2周',s:'',d:['重新投出或改投','选择目标期刊','调整论文格式','更新Cover Letter','提交修改稿','确认投稿状态','整理投稿记录']},
+  {w:'第3周',s:'',d:['开始Paper2实验设计','阅读相关最新文献','确定实验方案','设计对照实验','准备实验材料','跑Paper2预实验','分析预实验结果']},
+  {w:'第4周',s:'',d:['优化实验参数','整理实验材料','完善实验SOP','学习新实验技术','校准实验设备','制定正式实验计划','向导师汇报实验方案']},
+  {w:'第5周',s:'',d:['Paper2正式实验数据采集','记录实验数据','每日实验日志','数据初步分析','检查数据质量','补充重复实验','整理实验数据表']},
+  {w:'第6周',s:'',d:['完成实验数据采集','数据统计分析','制作实验结果图','验证实验结论','总结实验发现','撰写实验方法部分','完成实验部分']},
+  {w:'第7周',s:'',d:['Paper2写作开始','撰写引言部分','构建论文框架','文献综述更新','撰写结果与讨论','绘制论文图表','完成方法部分']},
+  {w:'第8周',s:'',d:['完成Paper2初稿','全文通读修改','语言润色','格式调整','修改后投出','追踪投稿状态','确认投稿成功']},
+  {w:'第9周',s:'',d:['专利2申请材料整理','调研相关专利','撰写专利文件','提交专利2','博士论文开题报告撰写','阅读开题相关文献','确定论文选题方向']},
+  {w:'第10周',s:'',d:['文献综述章节完成','研究内容与技术路线确定','撰写开题报告','创新点提炼','研究计划时间表','开题PPT制作','预演开题汇报']},
+  {w:'第11周',s:'',d:['开题答辩预演','模拟问答准备','正式开题答辩','记录专家意见','答辩总结','整理修改建议','庆祝开题通过']},
+  {w:'第12周',s:'',d:['开题通过后整理专家意见','修改研究方案','更新研究计划','整理开题材料归档','制定下一阶段研究计划','与导师讨论反馈','更新实验时间表']},
 ];
 const Y4A = [
-  {w:'第1周',s:'',d:['博士论文第一章定稿','完善绪论部分', '补充最新研究背景']},
-  {w:'第2周',s:'',d:['博士论文第二章写作','文献综述深化','论文框架优化']},
-  {w:'第3周',s:'',d:['第三章实验数据整理','实验结果补全','制作实验结果图表']},
-  {w:'第4周',s:'',d:['第四章初稿','第五章初稿','全文进度检查']},
-  {w:'第5周',s:'',d:['论文初稿完成发给导师','逐条整理导师修改意见','制定修改计划']},
-  {w:'第6周',s:'',d:['按导师意见第一轮修改','第二轮修改','论文格式规范化']},
-  {w:'第7周',s:'',d:['参考文献整理','论文摘要与结论定稿','全文通读检查']},
-  {w:'第8周',s:'',d:['最终修改定稿','填写送审表格','提交预审']},
-  {w:'第9周',s:'',d:['送盲审','等待盲审结果','准备备考/充实的任务']},
-  {w:'第10周',s:'',d:['盲审意见返回','逐条阅读评审意见','按盲审意见修改']},
-  {w:'第11周',s:'',d:['修改说明撰写','预答辩PPT制作','预答辩预演']},
-  {w:'第12周',s:'',d:['预答辩','记录专家意见','论文最终修改定稿']},
+  {w:'第1周',s:'',d:['博士论文第一章定稿','完善绪论部分','补充最新文献','更新研究背景','明确研究意义','确定论文框架','第一章格式规范']},
+  {w:'第2周',s:'',d:['博士论文第二章写作','文献综述深化','理论框架建立','研究方法描述','章节衔接连贯','第二章初稿完成','交叉检查引用']},
+  {w:'第3周',s:'',d:['第三章实验数据整理','实验结果补全','数据统计分析','制作实验结果图表','撰写实验章节','验证实验结论','第三章初稿']},
+  {w:'第4周',s:'',d:['第四章初稿','第五章初稿','全文进度检查','检查章节逻辑','补充缺失内容','论文结构优化','完成初稿整合']},
+  {w:'第5周',s:'',d:['论文初稿完成发给导师','等待导师审阅','准备修改计划','按导师意见第一轮修改','修改重点章节','补充实验数据','修改说明记录']},
+  {w:'第6周',s:'',d:['第二轮修改','论文格式规范化','参考文献整理','图表编号核对','论文摘要撰写','结论部分定稿','完成全文修改']},
+  {w:'第7周',s:'',d:['论文格式最终检查','页眉页脚设置','目录更新','参考文献格式统一','论文封面制作','论文摘要与结论定稿','提交预审申请']},
+  {w:'第8周',s:'',d:['提交预审材料','等待预审结果','按预审意见修改','准备送审材料','填写送审表格','办理送审手续','提交盲审']},
+  {w:'第9周',s:'',d:['送盲审','等待盲审结果','备考相关准备','修改论文备用','准备答辩材料','关注盲审进度','与导师保持沟通']},
+  {w:'第10周',s:'',d:['盲审意见返回','逐条阅读评审意见','按盲审意见修改','修改说明撰写','重点修改问题章节','补充数据或论证','完成修改稿']},
+  {w:'第11周',s:'',d:['预答辩PPT制作','汇报内容排练','模拟问答准备','预答辩预演','邀请导师预听','修改PPT','准备讲稿']},
+  {w:'第12周',s:'',d:['预答辩','记录专家意见','按意见修改论文','更新论文终稿','整理答辩材料','准备正式答辩','论文最终定稿']},
 ];
 const Y5A = [
-  {w:'第1周',s:'',d:['检查毕业要求完成情况','核对学分与发表要求','补齐剩余实验数据']},
-  {w:'第2周',s:'',d:['补写论文缺失章节','完善数据分析','论文初稿完成']},
-  {w:'第3周',s:'',d:['发给导师修改','按意见修改','修改说明撰写']},
-  {w:'第4周',s:'',d:['导师确认修改','论文定稿','查重与格式最终检查']},
-  {w:'第5周',s:'',d:['送审材料准备','提交盲审','答辩PPT初稿制作']},
-  {w:'第6周',s:'',d:['盲审意见返回','按意见修改','答辩PPT完善']},
-  {w:'第7周',s:'',d:['答辩演讲练习','模拟答辩','正式答辩']},
-  {w:'第8周',s:'',d:['毕业材料提交','学位申请','毕业！🎓']},
+  {w:'第1周',s:'',d:['检查毕业要求完成情况','核对学分与发表要求','补齐剩余实验数据','分析缺失数据','补充实验','完善实验记录','整理毕业论文材料']},
+  {w:'第2周',s:'',d:['补写论文缺失章节','完善论文细节','数据补充分析','论文初稿完成','通读全文检查','格式统一调整','发给导师修改']},
+  {w:'第3周',s:'',d:['等待导师审阅','按意见修改','逐条修改标注','修改说明撰写','导师二次审阅','再次修改完善','论文定稿']},
+  {w:'第4周',s:'',d:['论文查重检测','降低重复率修改','格式最终检查','封面目录制作','页眉页脚检查','参考文献核对','论文打印装订']},
+  {w:'第5周',s:'',d:['送审材料准备','办理送审手续','提交盲审','等待盲审结果','准备答辩PPT初稿','阅读相关最新文献','准备答辩问题']},
+  {w:'第6周',s:'',d:['盲审意见返回','盲审修改','修改说明撰写','导师确认修改','答辩PPT完善','答辩演讲练习','模拟答辩']},
+  {w:'第7周',s:'',d:['答辩材料准备','答辩场地确认','正式答辩','记录答辩意见','答辩后修改','提交终稿','庆祝答辩通过！']},
+  {w:'第8周',s:'',d:['毕业材料提交','学位申请','办理离校手续','整理研究生期间资料','感谢导师与同学','毕业典礼','毕业！🎓']},
 ];
 
 // ======================== STATE ========================
@@ -1178,7 +1173,7 @@ function renderWeeks(cardId) {
   weeks.forEach((week, wi) => {
     const dd = week.d || [];
     let done = 0, total = 0;
-    dd.forEach(t => { var txt=typeof t==='object'?t.text:(t||'');var lines=txt.split('\n').filter(function(l){return l.trim()});total+=Math.max(1,lines.length);if(typeof t==='object'&&t.done)done+=Math.max(1,lines.length)});
+    dd.forEach(t => { total+=1; if(typeof t==='object'&&t.done) done+=1 });
     const wkOpen = openState[cardId][wi] || false;
 
     html += `<div class="week" data-wi="${wi}">
@@ -1195,14 +1190,12 @@ function renderWeeks(cardId) {
       const txt = isObj ? t.text : (t||'');
       const chk = isObj ? t.done : false;
       const dayLabel = DAYS[di] || 'Day'+(di+1);
-      const isToday = dayLabel === todayCN;
+      var isToday = dayLabel === todayCN;
       var journalKey=cardId+'-w'+wi,journalVal='';if(data._journal&&data._journal[journalKey]&&data._journal[journalKey][di])journalVal=data._journal[journalKey][di];
-      var lines=txt.split('\n').filter(function(l){return l.trim()});var hasLines=lines.length>1
       html += `<div class="dr${chk?' done':''}${isToday?' today':''}" data-di="${di}">
         <span class="dl">${dayLabel}</span>
         <textarea class="di" rows="1" data-c="${cardId}" data-wi="${wi}" data-di="${di}" placeholder="今天做什么" draggable="true">${esc(txt)}</textarea>
         <div class="md-preview" id="mdp-${cardId}-${wi}-${di}"></div>
-        ${hasLines?'<ul class="st-list">'+lines.map(function(l){return'<li>'+esc(l.trim())+'</li>'}).join('')+'</ul>':''}
         <button class="md-btn" data-c="${cardId}" data-wi="${wi}" data-di="${di}">MD</button>
         <input class="dc" type="checkbox" ${chk?'checked':''} data-c="${cardId}" data-wi="${wi}" data-di="${di}" />
         <button class="journal-btn" data-c="${cardId}" data-wi="${wi}" data-di="${di}" title="随笔">&#128221;</button>
@@ -1240,11 +1233,11 @@ function autoResize(el) {
   el.style.height = Math.max(el.scrollHeight, 22) + 'px';
 }
 
-function countLines(t){var txt=typeof t==='object'?t.text:(t||'');return Math.max(1,txt.split('\n').filter(function(l){return l.trim()}).length||1)}
+function countLines(){return 1}
 function updateMeta(cardId) {
   const weeks = data[cardId] || [];
   let total=0,done=0;
-  weeks.forEach(w=>(w.d||[]).forEach(t=>{total+=countLines(t);if(typeof t==='object'&&t.done)done+=countLines(t)}));
+  weeks.forEach(w=>(w.d||[]).forEach(t=>{total+=1;if(typeof t==='object'&&t.done)done+=1}));
   const pct=total===0?0:Math.round((done/total)*100);
   const bar=document.querySelector(`.bar[data-c="${cardId}"]`);
   if(bar) bar.style.width=pct+'%';
@@ -1428,7 +1421,11 @@ document.addEventListener('click', e => {
     // Toggle contentEditable on overview text, heading icon, category label, and motto
     document.querySelectorAll('.tb, .tc .ti, .tc .tt > span:first-child, .tc .tm').forEach(el => {
       el.contentEditable = isEdit;
-      el.style.cursor = isEdit ? 'text' : 'default';
+    });
+    // In edit mode: text cursor on daily textareas; disable drag
+    document.querySelectorAll('.di').forEach(el => {
+      el.draggable = !isEdit;
+      el.style.cursor = isEdit ? 'text' : '';
     });
     document.getElementById('edBadge').classList.toggle('s', isEdit);
     document.querySelectorAll('#editToggle,#editToggle2').forEach(b => {
