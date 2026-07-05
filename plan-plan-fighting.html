@@ -379,6 +379,157 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}.sec{opacity:1;transform:none}#pc{display:none}body::after{display:none}}
 @media print{body{background:white;color:#000}#pc,.gr-overlay,.ynw,.ft,.btm-bar,.nav-rail{display:none}body::after{display:none}.tc{break-inside:avoid;border:1px solid #ddd}.hero{min-height:auto}}
+
+/* ===== Feature: Markdown Preview ===== */
+.md-btn{position:absolute;top:.05rem;right:.05rem;z-index:5;background:rgba(255,255,255,.04);border:1px solid var(--line-2);border-radius:4px;color:var(--muted);font-size:.45rem;padding:.02rem .25rem;cursor:pointer;transition:all .2s;line-height:1.2;font-family:var(--font-sans);letter-spacing:.08em;opacity:0}
+.dr:hover .md-btn{opacity:1}.md-btn:hover{color:var(--accent);border-color:var(--accent)}
+.md-preview{display:none;padding:.1rem .35rem;font-size:clamp(.62rem,1vw,.68rem);line-height:1.6;color:var(--fg);min-height:1.5em}
+.md-preview.s{display:block}
+.md-preview strong{color:var(--fg);font-weight:500}
+.md-preview em{font-style:italic;color:var(--accent)}
+.md-preview a{color:var(--accent-3);text-decoration:none;border-bottom:1px solid rgba(74,124,140,.3)}
+.md-preview a:hover{border-bottom-color:var(--accent-3)}
+.md-preview ul{padding-left:1rem;margin:.1rem 0}
+.md-preview ul li{list-style:disc;color:var(--fg-dim)}
+.md-preview hr{border:none;height:1px;background:var(--line);margin:.2rem 0}
+
+/* ===== Feature: Full Text Search ===== */
+.search-overlay{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .25s}
+.search-overlay.s{opacity:1;pointer-events:auto}
+.search-panel{position:fixed;top:clamp(2rem,5vh,4rem);left:50%;transform:translateX(-50%);z-index:410;width:clamp(320px,80vw,560px);background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 20px 60px rgba(0,0,0,.5);max-height:clamp(300px,70vh,600px);display:flex;flex-direction:column;opacity:0;transform:translateX(-50%) translateY(-10px);transition:all .25s;pointer-events:none}
+.search-panel.s{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto}
+.search-input-wrap{display:flex;align-items:center;gap:.3rem;padding:.4rem .5rem;border-bottom:1px solid var(--line)}
+.search-input-wrap input{flex:1;background:rgba(255,255,255,.04);border:1px solid var(--line-2);border-radius:6px;padding:.25rem .4rem;color:var(--fg);font-family:var(--font-sans);font-size:clamp(.7rem,1.2vw,.8rem);outline:none;transition:border-color .2s}
+.search-input-wrap input:focus{border-color:var(--accent)}
+.search-input-wrap input::placeholder{color:var(--muted)}
+.search-close{background:none;border:none;color:var(--muted);font-size:1rem;cursor:pointer;padding:.1rem;line-height:1;transition:color .2s}
+.search-close:hover{color:var(--accent)}
+.search-results{flex:1;overflow-y:auto;padding:.3rem .5rem}
+.search-results::-webkit-scrollbar{width:4px}.search-results::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:4px}
+.search-hit{padding:.25rem 0;border-bottom:1px solid var(--line);cursor:pointer;transition:background .15s;border-radius:4px;padding:.2rem .3rem}
+.search-hit:hover{background:rgba(255,255,255,.02)}
+.search-hit:last-child{border-bottom:none}
+.sh-loc{font-size:clamp(.5rem,.8vw,.55rem);color:var(--accent-3);letter-spacing:.1em;margin-bottom:.05rem}
+.sh-text{font-size:clamp(.62rem,1vw,.68rem);color:var(--fg-dim);line-height:1.4}
+.sh-text em{font-style:italic;color:var(--accent);background:rgba(212,165,116,.12);padding:0 .1rem;border-radius:2px}
+.sh-empty{text-align:center;padding:1rem;color:var(--muted);font-size:clamp(.65rem,1vw,.72rem)}
+.sh-count{font-size:clamp(.5rem,.8vw,.55rem);color:var(--muted);margin-left:auto}
+.search-input-wrap .sh-count{white-space:nowrap}
+
+/* ===== Feature: Pomodoro ===== */
+.pomo-btn{position:fixed;right:clamp(3.2rem,5vw,4.2rem);bottom:clamp(3rem,5vw,4rem);z-index:249;width:clamp(1.4rem,2.2vw,1.8rem);height:clamp(1.4rem,2.2vw,1.8rem);border-radius:50%;border:1px solid var(--line-2);background:var(--bg2);color:var(--muted);font-size:clamp(.6rem,1vw,.7rem);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .25s;font-family:var(--font-sans)}
+.pomo-btn:hover{border-color:var(--accent);color:var(--accent)}
+.pomo-btn.r{color:var(--accent-2);border-color:var(--accent-2);animation:pomoPulse 1s infinite}
+@keyframes pomoPulse{0%,100%{box-shadow:0 0 0 0 rgba(232,93,47,.2)}50%{box-shadow:0 0 0 8px rgba(232,93,47,0)}}
+.pomo-panel{position:fixed;right:clamp(.6rem,2vw,1.2rem);bottom:clamp(6rem,10vw,8rem);z-index:260;width:clamp(180px,28vw,240px);background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 12px 40px rgba(0,0,0,.5);padding:clamp(.6rem,1.2vw,.9rem);display:none;flex-direction:column;align-items:center;gap:clamp(.3rem,.6vw,.5rem)}
+.pomo-panel.s{display:flex}
+.pomo-time{font-family:var(--font-serif);font-size:clamp(1.8rem,3vw,2.4rem);color:var(--fg);letter-spacing:-.02em;line-height:1}
+.pomo-time.r{color:var(--accent-2)}
+.pomo-label{font-size:clamp(.5rem,.8vw,.55rem);color:var(--muted);letter-spacing:.15em;text-transform:uppercase}
+.pomo-progress{width:100%;height:2px;background:var(--line);border-radius:2px;overflow:hidden}
+.pomo-progress .bar{height:100%;width:0%;background:var(--accent);border-radius:2px;transition:width .5s}
+.pomo-progress .bar.r{background:var(--accent-2)}
+.pomo-actions{display:flex;gap:.3rem}
+.pomo-act{background:rgba(255,255,255,.04);border:1px solid var(--line-2);border-radius:6px;padding:.15rem .4rem;color:var(--muted);font-size:clamp(.5rem,.8vw,.55rem);cursor:pointer;transition:all .2s;font-family:var(--font-sans);white-space:nowrap}
+.pomo-act:hover{border-color:var(--accent);color:var(--accent)}
+.pomo-act.d:hover{border-color:var(--accent-2);color:var(--accent-2)}
+
+/* ===== Feature: Weekly Templates ===== */
+.tpl-btn{background:none;border:none;color:var(--muted);font-size:clamp(.5rem,.8vw,.55rem);cursor:pointer;padding:.05rem .2rem;border-radius:4px;transition:all .2s;font-family:var(--font-sans);letter-spacing:.05em;margin-left:.2rem;white-space:nowrap}
+.tpl-btn:hover{color:var(--accent);background:rgba(212,165,116,.06)}
+
+/* ===== Feature: Weekly OKR ===== */
+.okr-area{margin:.1rem 0 .15rem .4rem;display:flex;gap:.2rem;flex-wrap:wrap}
+.okr-item{display:flex;align-items:center;gap:.2rem;background:rgba(212,165,116,.06);border:1px solid rgba(212,165,116,.12);border-radius:4px;padding:.06rem .3rem;font-size:clamp(.55rem,.9vw,.62rem);color:var(--fg-dim);position:relative}
+.okr-item.done{background:rgba(212,165,116,.03);border-color:transparent;color:var(--muted);text-decoration:line-through}
+.okr-key{color:var(--accent);font-weight:400;margin-right:.15rem;font-size:clamp(.45rem,.7vw,.5rem)}
+.okr-del{background:none;border:none;color:var(--muted);font-size:clamp(.45rem,.7vw,.5rem);cursor:pointer;padding:0 .08rem;line-height:1;transition:color .2s}
+.okr-del:hover{color:var(--accent-2)}
+.okr-add{background:none;border:1px dashed var(--line-2);border-radius:4px;color:var(--muted);font-size:clamp(.5rem,.8vw,.55rem);padding:.04rem .3rem;cursor:pointer;transition:all .2s;font-family:var(--font-sans);white-space:nowrap}
+.okr-add:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ===== Feature: Daily Journal ===== */
+.journal-btn{background:none;border:none;color:var(--muted);font-size:clamp(.45rem,.7vw,.5rem);cursor:pointer;padding:.02rem .2rem;border-radius:3px;transition:all .2s;opacity:0;line-height:1;margin-left:.1rem;flex-shrink:0}
+.dr:hover .journal-btn{opacity:.5}.journal-btn:hover{opacity:1!important;color:var(--accent)!important}
+.journal-box{display:none;margin:.05rem 0 .05rem 1.2rem}
+.journal-box.s{display:block}
+.journal-box textarea{width:100%;background:rgba(255,255,255,.015);border:1px solid var(--line);border-radius:4px;padding:.15rem .3rem;color:var(--fg-dim);font-family:var(--font-sans);font-size:clamp(.55rem,.85vw,.6rem);outline:none;resize:none;min-height:1.4em;line-height:1.4;transition:border-color .2s;font-weight:300;font-style:italic}
+.journal-box textarea:focus{border-color:var(--accent-3);background:rgba(74,124,140,.03)}
+.journal-box textarea::placeholder{color:var(--muted);font-size:clamp(.5rem,.75vw,.55rem)}
+
+/* ===== Feature: Heatmap ===== */
+.heat-toggle{background:none;border:1px solid var(--line-2);border-radius:100px;color:var(--muted);font-size:clamp(.5rem,.8vw,.55rem);padding:.08rem .35rem;cursor:pointer;transition:all .2s;font-family:var(--font-sans);letter-spacing:.08em;margin-left:auto;white-space:nowrap}
+.heat-toggle:hover{border-color:var(--accent);color:var(--accent)}
+.heatmap-wrap{max-height:0;overflow:hidden;transition:max-height .4s ease-out}
+.heatmap-wrap.s{max-height:300px}
+.heatmap-inner{padding:.5rem .2rem .2rem;overflow-x:auto}
+.heat-svg{display:block;margin:0 auto;width:100%;height:auto;max-width:720px}
+.heat-label{font-size:8px;fill:var(--muted);font-family:var(--font-sans)}
+.heat-day{stroke:rgba(255,255,255,.03);stroke-width:.5;rx:1.5;ry:1.5;transition:fill .2s}
+.heat-l{font-size:7px;fill:var(--muted);font-family:var(--font-sans)}
+
+/* ===== Feature: Reading Tracker ===== */
+.rd-section{border-top:1px solid var(--line);padding-top:.5rem;margin-top:.5rem}
+.rd-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.3rem}
+.rd-header h3{font-family:var(--font-serif);font-size:clamp(.75rem,1.3vw,.85rem);font-weight:400;color:var(--fg)}
+.rd-add{background:none;border:1px solid var(--line-2);border-radius:100px;color:var(--muted);font-size:clamp(.5rem,.8vw,.55rem);padding:.06rem .3rem;cursor:pointer;transition:all .2s;font-family:var(--font-sans)}
+.rd-add:hover{border-color:var(--accent);color:var(--accent)}
+.rd-item{display:flex;align-items:center;gap:.25rem;padding:.12rem 0;border-bottom:1px solid rgba(255,255,255,.015);font-size:clamp(.6rem,1vw,.68rem)}
+.rd-status{width:clamp(10px,1.5vw,12px);height:clamp(10px,1.5vw,12px);border-radius:50%;border:1.5px solid var(--line-2);flex-shrink:0;cursor:pointer;transition:all .2s}
+.rd-status.done{background:var(--accent);border-color:var(--accent)}
+.rd-status.reading{background:var(--accent-3);border-color:var(--accent-3)}
+.rd-title{flex:1;color:var(--fg-dim);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rd-title.done{text-decoration:line-through;color:var(--muted)}
+.rd-meta{font-size:clamp(.45rem,.7vw,.5rem);color:var(--muted);letter-spacing:.05em}
+.rd-del{background:none;border:none;color:var(--muted);font-size:clamp(.5rem,.8vw,.55rem);cursor:pointer;padding:0 .1rem;line-height:1;transition:color .2s}
+.rd-del:hover{color:var(--accent-2)}
+.rd-input{display:none;gap:.2rem;margin-top:.15rem}
+.rd-input.s{display:flex}
+.rd-input input{flex:1;background:rgba(255,255,255,.04);border:1px solid var(--line-2);border-radius:4px;padding:.1rem .3rem;color:var(--fg);font-family:var(--font-sans);font-size:clamp(.6rem,1vw,.68rem);outline:none}
+.rd-input input:focus{border-color:var(--accent)}
+.rd-input .rd-save{background:var(--gold-dim);border:1px solid var(--accent);border-radius:4px;color:var(--accent);padding:.08rem .3rem;font-size:clamp(.5rem,.8vw,.55rem);cursor:pointer;font-family:var(--font-sans);white-space:nowrap}
+.rd-input .rd-save:hover{background:rgba(212,165,116,.25)}
+
+/* ===== Feature: Milestone Timeline ===== */
+.ms-area{margin-top:.4rem;position:relative}
+.ms-line{position:relative;padding:0;display:flex;gap:0;overflow-x:auto;padding-bottom:.3rem}
+.ms-line::-webkit-scrollbar{height:2px}.ms-line::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:2px}
+.ms-track{position:relative;height:clamp(2rem,3vw,2.5rem);flex:1;min-width:clamp(50px,8vw,80px)}
+.ms-track::before{content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:var(--line);transform:translateY(-50%)}
+.ms-dot{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:clamp(8px,1.2vw,10px);height:clamp(8px,1.2vw,10px);border-radius:50%;border:2px solid var(--accent);background:var(--bg2);cursor:pointer;transition:all .3s;z-index:2}
+.ms-dot:hover,.ms-dot.a{background:var(--accent);transform:translate(-50%,-50%) scale(1.3);box-shadow:0 0 12px rgba(212,165,116,.4)}
+.ms-dot.done{background:var(--accent);border-color:var(--accent)}
+.ms-dot.ms-2{border-color:var(--accent-3)}.ms-dot.ms-2:hover,.ms-dot.ms-2.a{background:var(--accent-3);box-shadow:0 0 12px rgba(74,124,140,.4)}.ms-dot.ms-2.done{background:var(--accent-3)}
+.ms-dot.ms-3{border-color:var(--accent-2)}.ms-dot.ms-3:hover,.ms-dot.ms-3.a{background:var(--accent-2);box-shadow:0 0 12px rgba(232,93,47,.4)}.ms-dot.ms-3.done{background:var(--accent-2)}
+.ms-label{position:absolute;top:calc(50% + clamp(10px,1.5vw,14px));left:50%;transform:translateX(-50%);font-size:clamp(.45rem,.7vw,.5rem);color:var(--muted);white-space:nowrap;letter-spacing:.05em;pointer-events:none;font-weight:300}
+.ms-date{position:absolute;top:calc(-50% - clamp(12px,1.8vw,16px));left:50%;transform:translateX(-50%);font-size:clamp(.4rem,.6vw,.45rem);color:var(--muted);white-space:nowrap;letter-spacing:.08em;pointer-events:none}
+.ms-add{background:none;border:1px dashed var(--line-2);border-radius:50%;color:var(--muted);width:clamp(18px,2.5vw,22px);height:clamp(18px,2.5vw,22px);font-size:clamp(.55rem,.9vw,.65rem);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;margin-top:.15rem}
+.ms-add:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ===== Feature: Stats Panel ===== */
+.stat-toggle{position:fixed;right:clamp(3.2rem,5vw,4.2rem);bottom:clamp(6rem,8vw,6.5rem);z-index:249;background:none;border:1px solid var(--line-2);border-radius:100px;color:var(--muted);font-size:clamp(.5rem,.8vw,.55rem);padding:.12rem .35rem;cursor:pointer;transition:all .2s;font-family:var(--font-sans);letter-spacing:.08em;white-space:nowrap}
+.stat-toggle:hover{border-color:var(--accent);color:var(--accent)}
+.stat-panel{position:fixed;right:clamp(.6rem,2vw,1.2rem);top:clamp(3rem,5vh,4rem);z-index:260;width:clamp(280px,40vw,400px);background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 16px 48px rgba(0,0,0,.5);padding:clamp(.6rem,1.2vw,.9rem);display:none;flex-direction:column;gap:.5rem;max-height:clamp(300px,60vh,500px);overflow-y:auto}
+.stat-panel.s{display:flex}
+.stat-panel::-webkit-scrollbar{width:4px}.stat-panel::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:4px}
+.stat-title{font-family:var(--font-serif);font-size:clamp(.75rem,1.2vw,.85rem);color:var(--fg);font-weight:400;letter-spacing:-.01em;border-bottom:1px solid var(--line);padding-bottom:.25rem}
+.stat-row{display:flex;justify-content:space-between;align-items:center;font-size:clamp(.6rem,1vw,.68rem)}
+.stat-row .stat-l{color:var(--fg-dim);font-weight:300}
+.stat-row .stat-v{color:var(--fg);font-weight:400;font-variant-numeric:tabular-nums}
+.stat-bar-wrap{height:3px;background:var(--line);border-radius:2px;overflow:hidden;flex:1;margin:0 .3rem}
+.stat-bar-wrap .bar{height:100%;border-radius:2px;transition:width .8s}
+.stat-chart{display:flex;gap:2px;align-items:flex-end;height:clamp(40px,6vw,60px);padding:.2rem 0}
+.stat-chart .col{flex:1;border-radius:2px 2px 0 0;transition:height .8s;min-height:2px;position:relative;cursor:pointer}
+.stat-chart .col:hover{opacity:.8}
+.stat-chart .col-tip{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);font-size:clamp(.4rem,.6vw,.45rem);color:var(--muted);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .2s}
+.stat-chart .col:hover .col-tip{opacity:1}
+.stat-chart-labels{display:flex;gap:2px;margin-top:.2rem}
+.stat-chart-labels .cl{flex:1;font-size:clamp(.4rem,.6vw,.45rem);color:var(--muted);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ===== Keyboard Shortcuts hint ===== */
+.kbd-hint{position:fixed;bottom:clamp(2.5rem,5vw,3.5rem);left:50%;transform:translateX(-50%);z-index:280;background:rgba(10,9,8,.92);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:var(--rs);padding:.25rem .5rem;font-size:clamp(.5rem,.8vw,.55rem);color:var(--muted);letter-spacing:.08em;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;font-family:var(--font-sans);display:flex;gap:.4rem;align-items:center}
+.kbd-hint.s{opacity:1}
+.kbd-hint kbd{display:inline-block;padding:.04rem .2rem;border-radius:3px;background:var(--line);color:var(--fg-dim);font-size:clamp(.45rem,.7vw,.5rem);font-family:var(--font-sans);border:1px solid var(--line-2);line-height:1.2;margin:0 .08rem}
 </style>
 </head>
 <body>
@@ -493,6 +644,45 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
   <button class="bb" id="gistIndicator" title="数据同步状态">⚡--</button>
   <button class="bb d" id="resetTasks2">🗑 重置</button>
 </div>
+
+<!-- ===== SEARCH OVERLAY ===== -->
+<div class="search-overlay" id="searchOverlay"></div>
+<div class="search-panel" id="searchPanel">
+  <div class="search-input-wrap">
+    <input id="searchInput" type="text" placeholder="搜索关键词…" autocomplete="off">
+    <span class="sh-count" id="searchCount"></span>
+    <button class="search-close" id="searchClose">&times;</button>
+  </div>
+  <div class="search-results" id="searchResults"></div>
+</div>
+
+<!-- ===== POMODORO ===== -->
+<button class="pomo-btn" id="pomoBtn" title="番茄钟">&#9200;</button>
+<div class="pomo-panel" id="pomoPanel">
+  <div class="pomo-label" id="pomoLabel">专注</div>
+  <div class="pomo-time" id="pomoTime">25:00</div>
+  <div class="pomo-progress"><div class="bar" id="pomoBar"></div></div>
+  <div class="pomo-actions">
+    <button class="pomo-act" id="pomoStart">开始</button>
+    <button class="pomo-act d" id="pomoReset">重置</button>
+  </div>
+</div>
+
+<!-- ===== STATS TOGGLE ===== -->
+<button class="stat-toggle" id="statsToggle">&#9776; 统计</button>
+<div class="stat-panel" id="statsPanel">
+  <div class="stat-title">数据统计</div>
+  <div class="stat-row"><span class="stat-l">总任务</span><span class="stat-v" id="sTotal">0</span></div>
+  <div class="stat-row"><span class="stat-l">已完成</span><span class="stat-v" id="sDone">0</span></div>
+  <div class="stat-row"><span class="stat-l">完成率</span><span class="stat-v" id="sRate">0%</span></div>
+  <div class="stat-row"><span class="stat-l">连续完成</span><span class="stat-v" id="sStreak">0 天</span></div>
+  <div class="stat-title" style="font-size:clamp(.65rem,1vw,.72rem);border:none;padding-top:.2rem">每周完成率趋势</div>
+  <div class="stat-chart" id="sChart"></div>
+  <div class="stat-chart-labels" id="sChartLabels"></div>
+</div>
+
+<!-- ===== KEYBOARD HINT ===== -->
+<div class="kbd-hint" id="kbdHint"></div>
 
 <!-- ===== AI PANEL ===== -->
 <button class="ai-fab" id="aiFab">
@@ -750,10 +940,17 @@ function renderWeeks(cardId) {
       const chk = isObj ? t.done : false;
       const dayLabel = DAYS[di] || 'Day'+(di+1);
       const isToday = dayLabel === todayCN;
+      var journalKey=cardId+'-w'+wi,journalVal='';if(data._journal&&data._journal[journalKey]&&data._journal[journalKey][di])journalVal=data._journal[journalKey][di];
       html += `<div class="dr${chk?' done':''}${isToday?' today':''}">
         <span class="dl">${dayLabel}</span>
         <textarea class="di" rows="1" data-c="${cardId}" data-wi="${wi}" data-di="${di}" placeholder="今天做什么">${esc(txt)}</textarea>
+        <div class="md-preview" id="mdp-${cardId}-${wi}-${di}"></div>
+        <button class="md-btn" data-c="${cardId}" data-wi="${wi}" data-di="${di}">MD</button>
         <input class="dc" type="checkbox" ${chk?'checked':''} data-c="${cardId}" data-wi="${wi}" data-di="${di}" />
+        <button class="journal-btn" data-c="${cardId}" data-wi="${wi}" data-di="${di}" title="随笔">&#128221;</button>
+      </div>
+      <div class="journal-box" id="jb-${cardId}-${wi}-${di}">
+        <textarea id="jt-${cardId}-${wi}-${di}" placeholder="今日随笔…" data-wkkey="${cardId}-w${wi}" data-di="${di}">${esc(journalVal)}</textarea>
       </div>`;
     });
     html += `</div><div class="ws-box"><textarea placeholder="本周总结..." data-c="${cardId}" data-wi="${wi}">${esc(week.s||'')}</textarea></div></div></div>`;
@@ -763,6 +960,21 @@ function renderWeeks(cardId) {
   updateMeta(cardId);
   // auto-resize all textareas in this card
   body.querySelectorAll('.di').forEach(autoResize);
+  // Bind MD preview buttons
+  body.querySelectorAll('.md-btn').forEach(function(btn){
+    btn.addEventListener('click',function(e){e.stopPropagation();var ta=btn.closest('.dr').querySelector('.di');if(ta)toggleMd(ta)})
+  });
+  // Bind journal toggle buttons
+  body.querySelectorAll('.journal-btn').forEach(function(btn){
+    btn.addEventListener('click',function(e){e.stopPropagation()
+      var dr=btn.closest('.dr'),di=parseInt(btn.dataset.di),wkKey=btn.dataset.c+'-w'+btn.dataset.wi
+      toggleJournal(dr,di,wkKey)
+    })
+  });
+  // Bind journal textarea save
+  body.querySelectorAll('.journal-box textarea').forEach(function(ta){
+    ta.addEventListener('input',function(){saveJournal(ta.dataset.wkkey,ta.dataset.di,ta.value)})
+  });
 }
 
 function autoResize(el) {
@@ -2238,6 +2450,286 @@ draw();
 window.addEventListener('mousemove',function(e){mouse.x=e.clientX;mouse.y=e.clientY});
 window.addEventListener('mouseleave',function(){mouse.x=-9999;mouse.y=-9999});
 })();
+
+// ======================== FEATURE: Markdown Render ========================
+function mdRender(t){if(!t)return'';var s=esc(t)
+// bold+italic
+s=s.replace(/\*\*\*(.+?)\*\*\*/g,'<strong><em>$1</em></strong>')
+s=s.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+s=s.replace(/\*(.+?)\*/g,'<em>$1</em>')
+// inline code
+s=s.replace(/`(.+?)`/g,'<code style="background:rgba(255,255,255,.05);padding:.05rem .2rem;border-radius:3px;font-size:.9em">$1</code>')
+// links
+s=s.replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>')
+// images
+s=s.replace(/!\[([^\]]*)\]\(([^)]+)\)/g,'<em style="color:var(--muted)">[img: $1]</em>')
+// hr
+s=s.replace(/^---$/gm,'<hr>')
+// headings
+s=s.replace(/^### (.+)$/gm,'<strong style="font-size:1.1em;color:var(--fg);display:block;margin:.2rem 0 .05rem">$1</strong>')
+// lists
+var inUl=false;s=s.split('\n').map(function(l){
+  var m=l.match(/^[*-] (.+)$/);if(m){if(!inUl){inUl=true;return '<ul><li>'+m[1]+'</li>'}return '<li>'+m[1]+'</li>'}
+  if(inUl){inUl=false;return '</ul>'+l}return l
+}).join('\n');if(inUl)s+='</ul>'
+return s}
+function toggleMd(ta){var dr=ta.closest('.dr'),pre=dr?dr.querySelector('.md-preview'):null,btn=dr?dr.querySelector('.md-btn'):null
+  if(!pre||!btn)return;if(pre.classList.contains('s')){pre.classList.remove('s');ta.style.display='block';btn.textContent='MD'}
+  else{pre.innerHTML=mdRender(ta.value);pre.classList.add('s');ta.style.display='none';btn.textContent='✎'}}
+
+// ======================== FEATURE: Weekly OKR ========================
+function renderOKRs(cid){var area=document.getElementById('okr-'+cid);if(!area)return;var okrs=data._okrs||{};var list=okrs[cid]||[]
+  area.innerHTML='';list.forEach(function(o,i){
+    var d=document.createElement('div');d.className='okr-item'+(o.done?' done':'')
+    d.innerHTML='<span class="okr-key">KR'+(i+1)+'</span><span>'+esc(o.text)+'</span><button class="okr-del" data-okr-cid="'+cid+'" data-okr-i="'+i+'">×</button>'
+    d.querySelector('.okr-item')||d.querySelector('.okr-del')&&(d.querySelector('.okr-del').onclick=function(){list.splice(i,1);save();renderOKRs(cid)})
+    if(!o.done)d.onclick=function(){o.done=true;save();renderOKRs(cid)}
+    area.appendChild(d)})
+  var addBtn=document.createElement('button');addBtn.className='okr-add';addBtn.textContent='+ 关键结果'
+  addBtn.onclick=function(){var t=prompt('关键结果：');if(t&&t.trim()){list.push({text:t.trim(),done:false});save();renderOKRs(cid)}}
+  area.appendChild(addBtn)
+  // Re-bind delete
+  area.querySelectorAll('.okr-del').forEach(function(b){b.onclick=function(e){e.stopPropagation();var idx=parseInt(b.dataset.okr-i);list.splice(idx,1);save();renderOKRs(cid)}})
+}
+function initOKRs(){if(!data._okrs)data._okrs={};;var cids=[];document.querySelectorAll('.wp').forEach(function(w){var cid=w.id.replace('plan-body-','');cids.push(cid)})
+  cids.forEach(function(cid){if(!data._okrs[cid])data._okrs[cid]=[]});}
+
+// ======================== FEATURE: Daily Journal ========================
+function initJournalsForWeek(cid,wkIdx){if(!data._journal)data._journal={};var key=cid+'-w'+wkIdx;if(!data._journal[key])data._journal[key]={}}
+function toggleJournal(dr,dayIdx,wkKey){var jb=dr.querySelector('.journal-box');if(!jb)return;jb.classList.toggle('s')
+  var ta=jb.querySelector('textarea');if(ta&&jb.classList.contains('s'))setTimeout(function(){ta.focus()},50)}
+function saveJournal(wkKey,dayIdx,val){if(!data._journal)data._journal={};if(!data._journal[wkKey])data._journal[wkKey]={};data._journal[wkKey][dayIdx]=val;save()}
+
+// ======================== FEATURE: Weekly Templates ========================
+function saveTemplate(cid){var weeks=data.weeks[cid];if(!weeks||!weeks.length){showToast('⚠️ 没有周数据');return}
+  var tpl={days:[],summary:''};weeks.forEach(function(w){
+    w.days.forEach(function(d,i){if(!tpl.days[i])tpl.days[i]='';if(d&&d.trim())tpl.days[i]=d.trim()});if(w.summary&&w.summary.trim())tpl.summary=w.summary.trim()})
+  var name=prompt('模板名称：');if(!name||!name.trim())return;if(!data._templates)data._templates={}
+  data._templates[name.trim()]=tpl;save();showToast('✓ 已保存模板 "'+name.trim()+'"')
+  renderTemplates()}
+function applyTemplate(cid){if(!data._templates||!Object.keys(data._templates).length){showToast('⚠️ 没有可用模板');return}
+  var names=Object.keys(data._templates);if(names.length===1)loadTemplate(cid,names[0]);else{
+    var html='<div style="display:flex;flex-direction:column;gap:.3rem;padding:.2rem 0">'
+    names.forEach(function(n){html+='<button class="fb" data-tpl="'+n+'" style="text-align:left;justify-content:flex-start">'+esc(n)+'</button>'})
+    html+='</div>';showToast(html)}}
+function loadTemplate(cid,name){var tpl=data._templates[name];if(!tpl){showToast('⚠️ 模板不存在');return}
+  var weeks=data.weeks[cid];if(!weeks||!weeks.length){showToast('⚠️ 请先添加周');return}
+  weeks.forEach(function(w){w.days.forEach(function(d,i){if(tpl.days[i])w.days[i]=tpl.days[i]});if(tpl.summary)w.summary=tpl.summary})
+  save();renderAll();showToast('✓ 已应用模板 "'+name+'"')}
+function renderTemplates(){document.querySelectorAll('.tpl-list').forEach(function(el){
+  var names=data._templates?Object.keys(data._templates):[]
+  el.innerHTML=names.length?names.map(function(n){return'<span class="tpl-item" data-tpl="'+n+'">'+esc(n)+'</span>'}).join(''):'<span style="color:var(--muted);font-size:.55rem">无模板</span>'
+  el.querySelectorAll('.tpl-item').forEach(function(s){s.onclick=function(){loadTemplate(s.closest('.wp')?.id?.replace('plan-body-','')||'',s.dataset.tpl)}})})}
+
+// ======================== FEATURE: Pomodoro ========================
+var pomo={running:false,time:25*60,left:25*60,interval:null,label:'focus',date:null,cb:null}
+function pomoInit(){var saved=localStorage.getItem('phd_v4_pomo');if(saved)try{var p=JSON.parse(saved);pomo.time=p.time||25*60;pomo.left=p.left||pomo.time;pomo.label=p.label||'focus'}catch(e){}
+  var today=new Date().toDateString();if(pomo.date!==today)pomo.date=today
+  document.getElementById('pomoTime').textContent=fmtTime(pomo.left);updatePomoUI()}
+function pomoStart(){if(pomo.running){clearInterval(pomo.interval);pomo.running=false;document.getElementById('pomoStart').textContent='继续';return}
+  pomo.running=true;document.getElementById('pomoStart').textContent='暂停';pomo.date=new Date().toDateString()
+  pomo.interval=setInterval(function(){pomo.left--;document.getElementById('pomoTime').textContent=fmtTime(pomo.left)
+    document.getElementById('pomoBar').style.width=((1-pomo.left/pomo.time)*100)+'%'
+    if(pomo.left<=0){clearInterval(pomo.interval);pomo.running=false;pomoDone()}},1000);updatePomoUI()}
+function pomoDone(){document.getElementById('pomoStart').textContent='完成';showToast('✅ 番茄完成！')
+  // Record in today's task
+  var today=new Date();var dayNames=['日','一','二','三','四','五','六'];var dayLabel='周'+dayNames[today.getDay()]
+  // Find current year section and first week
+  var cids=Object.keys(data.weeks);if(cids.length){var cid=cids[0];var weeks=data.weeks[cid];if(weeks&&weeks.length){
+    var w=weeks[0];var todayStr=today.toLocaleDateString('zh-CN');var fi=today.getDay()===0?6:today.getDay()-1
+    if(!data._pomoLog)data._pomoLog=[];data._pomoLog.push({date:todayStr,time:new Date().toLocaleTimeString()});save()
+  }}
+  localStorage.setItem('phd_v4_pomo',JSON.stringify({time:pomo.time,left:pomo.time,label:pomo.label,date:pomo.date}));updatePomoUI()}
+function pomoReset(){clearInterval(pomo.interval);pomo.running=false;pomo.left=pomo.time
+  document.getElementById('pomoTime').textContent=fmtTime(pomo.time);document.getElementById('pomoStart').textContent='开始'
+  document.getElementById('pomoBar').style.width='0%';updatePomoUI()}
+function pomoSet(n){clearInterval(pomo.interval);pomo.running=false;pomo.time=n*60;pomo.left=pomo.time
+  document.getElementById('pomoTime').textContent=fmtTime(pomo.time);document.getElementById('pomoStart').textContent='开始'
+  document.getElementById('pomoBar').style.width='0%';updatePomoUI()}
+function fmtTime(s){var m=Math.floor(s/60);return String(m).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+function updatePomoUI(){var p=document.getElementById('pomoTime');p.classList.toggle('r',pomo.running)
+  document.getElementById('pomoBar').classList.toggle('r',pomo.running)
+  document.getElementById('pomoBtn').classList.toggle('r',pomo.running)
+  localStorage.setItem('phd_v4_pomo',JSON.stringify({time:pomo.time,left:pomo.left,label:pomo.label,date:pomo.date}))}
+// Bind pomodoro UI
+document.getElementById('pomoBtn').addEventListener('click',function(){document.getElementById('pomoPanel').classList.toggle('s')})
+document.getElementById('pomoStart').addEventListener('click',pomoStart)
+document.getElementById('pomoReset').addEventListener('click',pomoReset)
+pomoInit()
+
+// ======================== FEATURE: Milestone Timeline ========================
+function renderMilestones(cid){var area=document.getElementById('ms-'+cid);if(!area)return;var ms=data._milestones||{};var list=ms[cid]||[]
+  area.innerHTML='<div class="ms-line">'
+  if(!list.length)area.innerHTML+='<div style="color:var(--muted);font-size:.55rem;padding:.2rem 0">暂无里程碑，点击 + 添加</div>'
+  else{list.forEach(function(m,i){
+    var cls='ms-dot'+(m.done?' done':'')+(m.type>1?' ms-'+m.type:'')
+    var label=m.label||'M'+(i+1);var dateStr=m.date||''
+    area.innerHTML+='<div class="ms-track"><div class="'+cls+'" title="'+esc(label)+'"></div><div class="ms-date">'+esc(dateStr)+'</div><div class="ms-label">'+esc(label)+'</div></div>'
+  })}
+  area.innerHTML+='<button class="ms-add" id="msAdd-'+cid+'" title="添加里程碑">+</button></div>'
+  document.getElementById('msAdd-'+cid).onclick=function(){addMilestone(cid)}}
+function addMilestone(cid){var label=prompt('里程碑名称：');if(!label||!label.trim())return
+  var date=prompt('日期（如 2026-06）：')||''
+  if(!data._milestones)data._milestones={};if(!data._milestones[cid])data._milestones[cid]=[]
+  data._milestones[cid].push({label:label.trim(),date:date,done:false,type:1});save();renderMilestones(cid)}
+// Init milestone areas for all years
+function initMilestones(){if(!data._milestones)data._milestones={}
+  ;['y1','y2','y3','y4','y5'].forEach(function(cid){if(!data._milestones[cid])data._milestones[cid]=[]})}
+
+// ======================== FEATURE: Full Text Search ========================
+function searchOpen(){document.getElementById('searchOverlay').classList.add('s');document.getElementById('searchPanel').classList.add('s')
+  setTimeout(function(){document.getElementById('searchInput').focus()},100)}
+function searchClose(){document.getElementById('searchOverlay').classList.remove('s');document.getElementById('searchPanel').classList.remove('s')
+  document.getElementById('searchInput').value='';document.getElementById('searchResults').innerHTML='';document.getElementById('searchCount').textContent=''}
+function searchDo(q){q=q.trim().toLowerCase();var res=document.getElementById('searchResults'),cnt=document.getElementById('searchCount')
+  if(!q){res.innerHTML='';cnt.textContent='';return}
+  var hits=[];Object.keys(data.weeks).forEach(function(cid){
+    var yearLabel=cid.replace('y','第').replace('1','一').replace('2','二').replace('3','三').replace('4','四').replace('5','五')+'年'
+    ;(data.weeks[cid]||[]).forEach(function(w,wi){
+      var wNum=wi+1;(w.days||[]).forEach(function(d,di){
+        if(d&&d.toLowerCase().includes(q)){var dayNames=['周一','周二','周三','周四','周五','周六','周日'];hits.push({loc:yearLabel+' 第'+wNum+'周 '+dayNames[di],text:d,cid:cid,wi:wi,di:di})}})
+      if(w.summary&&w.summary.toLowerCase().includes(q))hits.push({loc:yearLabel+' 第'+wNum+'周 总结',text:w.summary,cid:cid,wi:wi,di:-1})
+    })})
+  // Search OKRs
+  var okrs=data._okrs||{};Object.keys(okrs).forEach(function(cid){var yearLabel=cid.replace('y','第').replace('1','一').replace('2','二').replace('3','三').replace('4','四').replace('5','五');(okrs[cid]||[]).forEach(function(o,i){if(o.text.toLowerCase().includes(q))hits.push({loc:yearLabel+' KR'+(i+1),text:o.text,cid:cid,wi:-1,di:-2})})})
+  // Search journal
+  var jrn=data._journal||{};Object.keys(jrn).forEach(function(key){var parts=key.split('-w');var cid=parts[0];var wi=parseInt(parts[1])||0;var yearLabel=cid.replace('y','第').replace('1','一').replace('2','二').replace('3','三').replace('4','四').replace('5','五')+'年';Object.keys(jrn[key]).forEach(function(di){var v=jrn[key][di];if(v&&v.toLowerCase().includes(q))hits.push({loc:yearLabel+' 周随笔',text:v,cid:cid,wi:wi,di:parseInt(di)})})})
+  // Search milestones
+  var ms=data._milestones||{};Object.keys(ms).forEach(function(cid){(ms[cid]||[]).forEach(function(m,i){if(m.label&&m.label.toLowerCase().includes(q))hits.push({loc:cid.replace('y','第').replace('1','一').replace('2','二').replace('3','三').replace('4','四').replace('5','五')+'年 里程碑',text:m.label,cid:cid,wi:-1,di:-3})})})
+  cnt.textContent=hits.length+' 条结果'
+  if(!hits.length){res.innerHTML='<div class="sh-empty">未找到匹配 "'+esc(q)+'"</div>';return}
+  res.innerHTML=hits.slice(0,50).map(function(h){
+    var idx=h.text.toLowerCase().indexOf(q),start=Math.max(0,idx-20),end=Math.min(h.text.length,idx+q.length+30)
+    var ctx=esc(h.text.slice(start,end)).replace(new RegExp(esc(q),'gi'),'<em>$&</em>')
+    return'<div class="search-hit" data-cid="'+h.cid+'" data-wi="'+h.wi+'" data-di="'+h.di+'"><div class="sh-loc">'+esc(h.loc)+'</div><div class="sh-text">'+ctx+'</div></div>'
+  }).join('')
+  res.querySelectorAll('.search-hit').forEach(function(el){el.onclick=function(){searchGoTo(el.dataset.cid,parseInt(el.dataset.wi),parseInt(el.dataset.di))}})}
+function searchGoTo(cid,wi,di){searchClose()
+  var sec=document.getElementById(cid);if(sec)sec.scrollIntoView({behavior:'smooth',block:'start'})
+  if(wi>=0){var body=document.getElementById('plan-body-'+cid+'-academic');if(body&&!body.classList.contains('o')){var t=body.closest('.tc')||body.previousElementSibling;if(t&&t.classList.contains('wt'))t.click()}
+    // scroll to week
+    setTimeout(function(){var weeks=document.querySelectorAll('#plan-body-'+cid+'-academic .week');if(weeks[wi])weeks[wi].scrollIntoView({behavior:'smooth',block:'center'})},400)}}
+// Search bindings
+document.getElementById('searchOverlay').onclick=searchClose;document.getElementById('searchClose').onclick=searchClose
+document.getElementById('searchInput').addEventListener('input',function(){searchDo(this.value)})
+document.getElementById('searchInput').addEventListener('keydown',function(e){if(e.key==='Escape')searchClose()})
+
+// ======================== FEATURE: Reading Tracker ========================
+function renderReadings(){var el=document.getElementById('readingSection');if(!el)return;var items=data._readings||[]
+  el.innerHTML='<div class="rd-header"><h3>📖 阅读追踪</h3><button class="rd-add" id="rdAddBtn">+ 添加</button></div>'
+  if(!items.length)el.innerHTML+='<div style="color:var(--muted);font-size:.55rem;padding:.2rem 0">暂无阅读条目</div>'
+  else{items.forEach(function(r,i){
+    var sc='rd-status'+(r.status==='done'?' done':r.status==='reading'?' reading':'')
+    var tc='rd-title'+(r.status==='done'?' done':'')
+    var meta=r.status==='done'?'✓ 读完':r.status==='reading'?'📖 在读':'📌 待读'
+    el.innerHTML+='<div class="rd-item"><div class="'+sc+'" data-ri="'+i+'"></div><span class="'+tc+'">'+esc(r.title)+'</span><span class="rd-meta">'+meta+'</span><button class="rd-del" data-ri="'+i+'">×</button></div>'
+  })}
+  el.innerHTML+='<div class="rd-input" id="rdInput"><input id="rdTitleInput" placeholder="书名/论文标题…"><button class="rd-save" id="rdSaveBtn">添加</button></div>'
+  // Bind status toggle
+  el.querySelectorAll('.rd-status').forEach(function(d){d.onclick=function(){var i=parseInt(d.dataset.ri),r=data._readings[i];if(r){r.status=r.status==='done'?'todo':r.status==='reading'?'done':'reading';save();renderReadings()}}})
+  el.querySelectorAll('.rd-del').forEach(function(d){d.onclick=function(){var i=parseInt(d.dataset.ri);data._readings.splice(i,1);save();renderReadings()}})
+  document.getElementById('rdAddBtn').onclick=function(){document.getElementById('rdInput').classList.toggle('s');document.getElementById('rdTitleInput').focus()}
+  document.getElementById('rdSaveBtn').onclick=function(){var v=document.getElementById('rdTitleInput').value.trim();if(v){if(!data._readings)data._readings=[];data._readings.push({title:v,status:'todo'});save();renderReadings();document.getElementById('rdTitleInput').value='';document.getElementById('rdInput').classList.remove('s')}}
+  document.getElementById('rdTitleInput').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('rdSaveBtn').click()})}
+
+// ======================== FEATURE: Heatmap ========================
+function renderHeatmap(cid){var wrap=document.getElementById('hm-'+cid);if(!wrap)return;var weeks=data.weeks[cid];if(!weeks||!weeks.length){wrap.innerHTML='';return}
+  var totalDays=0,doneDays=0;var dayData=[];weeks.forEach(function(w,i){(w.days||[]).forEach(function(d,di){
+    totalDays++;var done=w.done&&w.done[di]||false;var hasContent=d&&d.trim();dayData.push({done:done,hasContent:hasContent,wi:i,di:di})})})
+  if(!totalDays){wrap.innerHTML='';return}
+  var cols=Math.ceil(totalDays/7),cellSize=12,gap=3,padding=20,labelW=30,labelH=18
+  var w=labelW+cols*(cellSize+gap)+padding,h=labelH+7*(cellSize+gap)+padding
+  var svg='<svg class="heat-svg" viewBox="0 0 '+w+' '+h+'" xmlns="http://www.w3.org/2000/svg">'
+  // month labels
+  svg+='<text x="'+labelW+'" y="12" class="heat-l">1月</text>'
+  dayData.forEach(function(d,i){
+    var col=Math.floor(i/7),row=i%7
+    var x=labelW+col*(cellSize+gap),y=labelH+row*(cellSize+gap)
+    var fill='rgba(255,255,255,.02)';if(d.done)fill='rgba(212,165,116,.5)';else if(d.hasContent)fill='rgba(212,165,116,.15)'
+    var title=(d.done?'✓ ':'')+(d.hasContent?'有内容':'空')+' · 第'+(d.wi+1)+'周 周'+(d.di+1)
+    svg+='<rect class="heat-day" x="'+x+'" y="'+y+'" width="'+cellSize+'" height="'+cellSize+'" fill="'+fill+'"><title>'+title+'</title></rect>'
+  })
+  // day labels
+  ;['一','三','五'].forEach(function(l,i){svg+='<text x="4" y="'+(labelH+i*2*(cellSize+gap)+cellSize)+'" class="heat-l">'+l+'</text>'})
+  svg+='</svg>';wrap.innerHTML=svg}
+
+// ======================== FEATURE: Stats Panel ========================
+function computeStats(){var total=0,done=0,streak=0,allDays=[],weeklyRates=[]
+  Object.keys(data.weeks).forEach(function(cid){(data.weeks[cid]||[]).forEach(function(w,wi){
+    var wTotal=0,wDone=0;(w.days||[]).forEach(function(d,di){
+      if(d&&d.trim()){wTotal++;if(w.done&&w.done[di])wDone++;allDays.push({done:w.done&&w.done[di]||false,date:null})}})
+    if(wTotal){weeklyRates.push({label:cid.replace('y','').replace('1','Y1').replace('2','Y2').replace('3','Y3').replace('4','Y4').replace('5','Y5')+'W'+(wi+1),rate:Math.round(wDone/wTotal*100),total:wTotal,done:wDone})}
+    total+=wTotal;done+=wDone})})
+  // Streak
+  var cur=0;allDays.forEach(function(d){if(d.done){cur++;streak=Math.max(streak,cur)}else cur=0})
+  document.getElementById('sTotal').textContent=total
+  document.getElementById('sDone').textContent=done
+  document.getElementById('sRate').textContent=total?Math.round(done/total*100)+'%':'0%'
+  document.getElementById('sStreak').textContent=streak+' 天'
+  // Chart
+  var chart=document.getElementById('sChart'),labels=document.getElementById('sChartLabels')
+  var recent=weeklyRates.slice(-12)
+  chart.innerHTML=recent.map(function(r){return'<div class="col" style="height:'+Math.max(2,r.rate*0.6)+'px;background:'+(r.rate>70?'rgba(212,165,116,.7)':r.rate>40?'rgba(212,165,116,.4)':'rgba(212,165,116,.2)')+'" title="'+r.label+': '+r.rate+'%"><span class="col-tip">'+r.rate+'%</span></div>'}).join('')
+  labels.innerHTML=recent.map(function(r){return'<span class="cl">'+r.label+'</span>'}).join('')}
+
+// ======================== FEATURE: Keyboard Shortcuts ========================
+var kbdBindings={}
+function showKbdHint(msg){var el=document.getElementById('kbdHint');if(!el)return;el.textContent=msg;el.classList.add('s');clearTimeout(el._t);el._t=setTimeout(function(){el.classList.remove('s')},2000)}
+document.addEventListener('keydown',function(e){
+  // Ctrl+F / Cmd+F: search
+  if((e.ctrlKey||e.metaKey)&&e.key==='f'){e.preventDefault();searchOpen();showKbdHint('搜索已打开');return}
+  // Escape: close panels
+  if(e.key==='Escape'){searchClose();document.getElementById('pomoPanel').classList.remove('s');document.getElementById('statsPanel').classList.remove('s');return}
+  // ?: show all shortcuts
+  if(e.key==='?'&&!e.ctrlKey&&!e.metaKey){e.preventDefault()
+    showKbdHint('[Ctrl+F] 搜索 · [W] 展开周 · [Space] 勾选 · [Escape] 关闭 · [?] 帮助')
+    return}
+  // Only if not in input/textarea
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.isContentEditable)return
+  // W: expand first collapsible week
+  if(e.key==='w'||e.key==='W'){var wt=document.querySelector('.wt:not(.o)');if(wt){wt.click();showKbdHint('已展开一周')}return}
+  // Space: toggle first undone checkbox in view
+  if(e.key===' '){e.preventDefault();var dc=document.querySelector('.dc:not(:checked)');if(dc){dc.click();showKbdHint('已勾选')}return}
+  // 1-5: jump to year
+  if(['1','2','3','4','5'].includes(e.key)){var sec=document.getElementById('y'+e.key);if(sec)sec.scrollIntoView({behavior:'smooth',block:'start'});return}
+})
+
+// ======================== FEATURE: Init all new features ========================
+function initFeatures(){
+  initOKRs();initMilestones()
+  // Add OKR areas to week bodies
+  document.querySelectorAll('.wk-body').forEach(function(wb){
+    var oa=wb.querySelector('.okr-area');if(!oa){oa=document.createElement('div');oa.className='okr-area';wb.insertBefore(oa,wb.firstChild)}
+    var cid=wb.closest('.wp')?.id?.replace('plan-body-','')||'';oa.id='okr-'+cid
+    renderOKRs(cid)
+  })
+  // Add heatmap areas after each year section
+  document.querySelectorAll('.sec').forEach(function(sec){
+    var cid=sec.id;if(!cid||cid==='sum')return
+    var hm=document.createElement('div');hm.className='heatmap-wrap';hm.id='hm-'+cid
+    var inner=document.createElement('div');inner.className='heatmap-inner';hm.appendChild(inner)
+    var toggle=document.createElement('button');toggle.className='heat-toggle';toggle.textContent='📊 热力图'
+    toggle.onclick=function(){hm.classList.toggle('s');renderHeatmap(cid)}
+    sec.querySelector('.sh')?.appendChild(toggle)
+    sec.querySelector('.sh')?.after(hm)
+  })
+  // Add milestone areas after each year section's sh
+  document.querySelectorAll('.sec').forEach(function(sec){
+    var cid=sec.id;if(!cid||cid==='sum')return
+    var ms=document.createElement('div');ms.className='ms-area';ms.id='ms-'+cid
+    sec.querySelector('.sh')?.after(ms);renderMilestones(cid)
+  })
+  // Add reading section to summary
+  var sumSec=document.getElementById('sum');if(sumSec){var rd=document.createElement('div');rd.className='rd-section';rd.id='readingSection';sumSec.appendChild(rd);renderReadings()}
+  // Render templates
+  renderTemplates()
+  // Compute stats
+  computeStats()
+}
+// Bind stats toggle
+document.getElementById('statsToggle').addEventListener('click',function(){document.getElementById('statsPanel').classList.toggle('s')})
+// Init on load
+setTimeout(initFeatures,500)
 
 // ======================== UTIL ========================
 function esc(s) { if(typeof s!=='string')return s||'';const d=document.createElement('div');d.textContent=s;return d.innerHTML; }
