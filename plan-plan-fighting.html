@@ -253,8 +253,14 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 .btm-bar .bb .bb-icon{font-size:clamp(.5rem,.8vw,.55rem)}
 
 /* edit mode */
-.tb[contentEditable="true"]{outline:none;border-radius:4px;padding:.05rem .15rem;transition:background .15s}
-.tb[contentEditable="true"]:focus{background:rgba(255,255,255,.04)}
+.tb[contentEditable="true"],
+.ti[contentEditable="true"],
+.tc .tt > span[contentEditable="true"],
+.tc .tm[contentEditable="true"]{outline:none;border-radius:4px;padding:.05rem .15rem;transition:background .15s;min-width:2em}
+.tb[contentEditable="true"]:focus,
+.ti[contentEditable="true"]:focus,
+.tc .tt > span[contentEditable="true"]:focus,
+.tc .tm[contentEditable="true"]:focus{background:rgba(255,255,255,.04)}
 .ed-badge{position:fixed;top:.3rem;right:.3rem;z-index:210;padding:.15rem .4rem;border-radius:100px;font-size:clamp(.5rem,.85vw,.55rem);border:1px solid var(--accent);background:rgba(212,165,116,.08);color:var(--accent);pointer-events:none;opacity:0;transition:opacity .25s;letter-spacing:.1em;font-weight:300}
 .ed-badge.s{opacity:1}
 
@@ -1419,7 +1425,11 @@ document.addEventListener('click', e => {
   // Edit toggle (both buttons)
   if (t.id==='editToggle'||t.closest('#editToggle')||t.id==='editToggle2'||t.closest('#editToggle2')) {
     const isEdit = !document.querySelector('.tb[contentEditable="true"]');
-    document.querySelectorAll('.tb').forEach(el => { el.contentEditable = isEdit; el.style.cursor = isEdit ? 'text' : 'default'; });
+    // Toggle contentEditable on overview text, heading icon, category label, and motto
+    document.querySelectorAll('.tb, .tc .ti, .tc .tt > span:first-child, .tc .tm').forEach(el => {
+      el.contentEditable = isEdit;
+      el.style.cursor = isEdit ? 'text' : 'default';
+    });
     document.getElementById('edBadge').classList.toggle('s', isEdit);
     document.querySelectorAll('#editToggle,#editToggle2').forEach(b => {
       b.textContent = isEdit ? '🔒 编辑' : '✎ 编辑';
@@ -3138,12 +3148,25 @@ function saveDragOrder(container){var cardId=container.closest('.wp')?.dataset?.
 function esc(s) { if(typeof s!=='string')return s||'';const d=document.createElement('div');d.textContent=s;return d.innerHTML; }
 
 // ======================== INIT ========================
-// Restore saved overviews
+// Restore saved overviews + card headings
 if (data._overviews) {
+  // Restore overview text (.tb)
   for (const [cid, html] of Object.entries(data._overviews)) {
-    const el = document.getElementById('ov-' + cid);
-    if (el) el.innerHTML = html;
+    if (typeof html === 'string') {
+      const el = document.getElementById('ov-' + cid);
+      if (el) el.innerHTML = html;
+    }
   }
+  // Restore card heading icon, category label, motto (stored as object)
+  document.querySelectorAll('.tc[data-c]').forEach(function(card){
+    var cid = card.dataset.c;
+    var obj = data._overviews[cid];
+    if (obj && typeof obj === 'object') {
+      if (obj.ti) { var ti = card.querySelector('.ti'); if (ti) ti.textContent = obj.ti; }
+      if (obj.tt) { var tt = card.querySelector('.tt > span:first-child'); if (tt) tt.textContent = obj.tt; }
+      if (obj.tm) { var tm = card.querySelector('.tm'); if (tm) tm.innerHTML = obj.tm; }
+    }
+  });
 }
 renderAll();
 // Auto-expand y1-academic on load
@@ -3161,11 +3184,49 @@ setTimeout(trySyncOnLoad, 2000);
 
 // Save overviews on edit mode blur
 document.addEventListener('blur', e => {
-  const tb = e.target.closest('.tb[id^="ov-"]');
+  var el = e.target;
+  // Overview text (.tb)
+  var tb = el.closest('.tb[id^="ov-"]');
   if (tb && tb.contentEditable === 'true') {
     if (!data._overviews) data._overviews = {};
     data._overviews[tb.id.replace('ov-', '')] = tb.innerHTML;
-    save();
+    save(); return;
+  }
+  // Card heading icon (.ti)
+  var ti = el.closest('.tc .ti');
+  if (ti && ti.contentEditable === 'true') {
+    var card = ti.closest('.tc');
+    if (!card) return;
+    var cid = card.dataset.c;
+    if (!cid) return;
+    if (!data._overviews) data._overviews = {};
+    if (!data._overviews[cid]) data._overviews[cid] = {};
+    data._overviews[cid].ti = ti.textContent;
+    save(); return;
+  }
+  // Card category label (.tt > span:first-child)
+  var tt = el.closest('.tc .tt > span:first-child');
+  if (tt && tt.contentEditable === 'true') {
+    var card = tt.closest('.tc');
+    if (!card) return;
+    var cid = card.dataset.c;
+    if (!cid) return;
+    if (!data._overviews) data._overviews = {};
+    if (!data._overviews[cid]) data._overviews[cid] = {};
+    data._overviews[cid].tt = tt.textContent;
+    save(); return;
+  }
+  // Card motto (.tm)
+  var tm = el.closest('.tc .tm');
+  if (tm && tm.contentEditable === 'true') {
+    var card = tm.closest('.tc');
+    if (!card) return;
+    var cid = card.dataset.c;
+    if (!cid) return;
+    if (!data._overviews) data._overviews = {};
+    if (!data._overviews[cid]) data._overviews[cid] = {};
+    data._overviews[cid].tm = tm.innerHTML;
+    save(); return;
   }
 }, true);
 
