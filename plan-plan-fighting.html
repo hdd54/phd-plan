@@ -2669,6 +2669,7 @@ function pomoSetType(el){var m=el.dataset;if(!m.pomoTime)return
   updatePomoDisplay();document.getElementById('pomoStartBtn').textContent='▶ 开始'
   document.getElementById('pomoProgressBar').style.width='0%'
   pomoSaveState()}
+function fmtTime(s){var m=Math.floor(s/60);var sec=s%60;return(m<10?'0':'')+m+':'+(sec<10?'0':'')+sec}
 function updatePomoDisplay(){var el=document.getElementById('pomoTimerDisplay');el.textContent=fmtTime(pomo.left)
   el.className='pomo-timer-display'+(pomo.running?' r':'')+(pomo.sessionType==='break'?' break':'')
   document.getElementById('pomoSessionLabel').textContent=pomo.label||'专注'
