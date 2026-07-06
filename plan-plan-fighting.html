@@ -332,6 +332,7 @@
   #coverSection #coverCanvas{display:none}
 }
 /* Hide fixed UI elements while cover section is visible */
+body.cp{overflow:hidden}
 body.cp .nav-rail,
 body.cp .ed-badge,
 body.cp .noise-btn,
@@ -575,26 +576,7 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 .btm-bar .bb.d:hover{border-color:var(--accent-2);color:var(--accent-2);background:rgba(232,93,47,.04)}
 .btm-bar .bb.x{background:rgba(212,165,116,.1);border-color:var(--accent);color:var(--accent)}
 .btm-bar .bb .bb-icon{font-size:clamp(.5rem,.8vw,.55rem)}
-.btm-bar .chapter-info{
-  position:absolute;left:clamp(.4rem,1.2vw,.8rem);top:50%;transform:translateY(-50%);
-  display:flex;align-items:center;gap:clamp(.25rem,.6vw,.5rem);
-  font-size:clamp(.45rem,.75vw,.55rem);letter-spacing:.15em;font-weight:300;
-  color:var(--muted);cursor:pointer;
-  font-family:var(--font-sans);
-  padding:clamp(.15rem,.3vw,.25rem) clamp(.2rem,.4vw,.35rem);
-  border-radius:var(--rs);
-  transition:background .25s;
-}
-.btm-bar .chapter-info:hover{
-  background:rgba(212,165,116,.06);
-}
-.btm-bar .chapter-info:active{
-  background:rgba(212,165,116,.1);
-}
-.btm-bar .chapter-info .ci-current{color:var(--accent);text-transform:uppercase}
-.btm-bar .chapter-info .ci-page{display:none}
-.btm-bar .chapter-info .ci-divider{width:1px;height:clamp(8px,1.2vw,12px);background:var(--line-2)}
-.btm-bar .chapter-info .ci-jump{
+.btm-bar .chapter-info{display:none}
   font-size:clamp(.4rem,.6vw,.45rem);color:var(--muted);
   transition:transform .25s, color .25s;
 }
@@ -1745,7 +1727,6 @@ window.enterPlan = function(){
   var book = cover && cover.querySelector('.book');
   if (!cover || !book || cover.classList.contains('entering') || cover.classList.contains('entered')) return;
   cover.classList.add('entering');
-  document.body.classList.remove('cp');
 
   // Build all hero entrance targets
   var heroTitle = document.getElementById('heroTitle');
@@ -1766,6 +1747,7 @@ window.enterPlan = function(){
     onComplete: function(){
       cover.classList.remove('entering');
       cover.classList.add('entered');
+      document.body.classList.remove('cp');
       // Remove hero-entrance state so normal scroll visibility takes over
       heroEls.forEach(function(el){ el.classList.remove('hero-entrance'); });
       // Scroll to content after a tiny delay for paint
