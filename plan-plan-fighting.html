@@ -1214,8 +1214,8 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 
 <!-- ===== FOOTER ===== -->
 <footer class="ft">
-  <p style="margin-bottom:.2rem">数据自动保存在浏览器 · 每天自动高亮当天 · 每日支持多行输入</p>
-  <p>北京航空航天大学 · 生物医学光子学 · 2026–2030</p>
+  <p id="footerLine1" style="margin-bottom:.2rem"></p>
+  <p id="footerLine2"></p>
 </footer>
 
 <script>
@@ -1698,6 +1698,7 @@ function initPages() {
     }];
     save();
   }
+  renderFooter();
   renderPageToolbar();
   // Ensure page 0 is active and visible
   const p0 = document.getElementById('page0Content');
@@ -1707,12 +1708,29 @@ function initPages() {
   activePageId = 'p0';
 }
 
+function renderFooter() {
+  if (!data._footer || !Array.isArray(data._footer)) {
+    data._footer = ['数据自动保存在浏览器 · 每天自动高亮当天 · 每日支持多行输入', '北京航空航天大学 · 生物医学光子学 · 2026–2030'];
+  }
+  var f1 = document.getElementById('footerLine1');
+  var f2 = document.getElementById('footerLine2');
+  if (f1) f1.textContent = data._footer[0] || '';
+  if (f2) f2.textContent = data._footer[1] || '';
+}
+
 function renderPageToolbar() {
   const bar = document.getElementById('pageBar');
   if (!bar) return;
   const pages = data._pages || [];
   // Rebuild: keep only the add button or recreate all
   bar.innerHTML = '';
+  // Always add the first page (page0) button
+  var p0btn = document.createElement('button');
+  p0btn.className = 'pbi' + (activePageId === 'p0' ? ' a' : '');
+  p0btn.dataset.page = 'p0';
+  p0btn.textContent = '🎓 博士计划';
+  bar.appendChild(p0btn);
+  // Add dynamic page buttons
   pages.forEach(function(p) {
     var b = document.createElement('button');
     b.className = 'pbi' + (p.id === activePageId ? ' a' : '');
@@ -1927,6 +1945,9 @@ function addPageSection(pageId) {
   renderDynamicPage(pageId);
   showToast('＋ 已添加「' + secLabel + '」');
 }
+
+// Expose for inline onclick in dynamically generated HTML
+window.addPageSection = addPageSection;
 
 // Wire page toolbar clicks
 document.addEventListener('click', function(e) {
@@ -2883,7 +2904,7 @@ function buildSystemPrompt() {
 
   prompt += '\n## 你的能力\n1. **读取数据** - 你拥有完整的规划数据，可以直接回答用户关于数据的问题\n2. **编辑规划** - 如果需要修改，请在回复末尾添加JSON代码块（用 ```json ... ``` 包裹）\n\n';
   prompt += '## 编辑JSON格式\n```json\n{\n  "edits": [\n    {\n      "type": "update_day",\n      "card": "y1-academic",\n      "week_index": 0,\n      "day_index": 0,\n      "new_text": "周一的新任务内容（支持多行，用\\n换行）",\n      "description": "修改第1周周一任务"\n    }\n  ]\n}\n```\n\n';
-  prompt += '## 支持的操作类型\n| type | 参数 | 说明 |\n|------|------|------|\n| update_day | card, week_index(0开始), day_index(0-6), new_text | 修改某天任务（支持多行，\\n换行） |\n| update_week_text | card, week_index, new_text | 修改某天任务为纯文本（不标记完成状态） |\n| update_summary | card, week_index, new_text | 修改周总结 |\n| add_week | card, week_name(如"第X周") | 在卡片末尾添加新的一周（含7天空字符串） |\n| add_weeks | card, week_names(数组如["第5周","第6周"]) | 批量添加多周 |\n| update_overview | card, new_text | 修改卡片概述内容 |\n\n';
+  prompt += '## 支持的操作类型\n| type | 参数 | 说明 |\n|------|------|------|\n| update_day | card, week_index(0开始), day_index(0-6), new_text | 修改某天任务（支持多行，\\n换行） |\n| update_week_text | card, week_index, new_text | 修改某天任务为纯文本（不标记完成状态） |\n| update_summary | card, week_index, new_text | 修改周总结 |\n| add_week | card, week_name(如"第X周") | 在卡片末尾添加新的一周（含7天空字符串） |\n| add_weeks | card, week_names(数组如["第5周","第6周"]) | 批量添加多周 |\n| update_overview | card, new_text | 修改卡片概述内容 |\n| update_footer | line(0-1), new_text | 修改页脚文字（line=0第一行, line=1第二行） |\n\n';
   prompt += '## 重要规则\n1. week_index 从0开始。第1周=0，第2周=1，以此类推。\n2. day_index: 0=周一, 1=周二, ... 6=周日。\n3. new_text支持多行内容，用\\n表示换行。\n4. 如果没有需要修改的内容，直接正常回答即可，不要添加编辑JSON。\n5. 每次回复最多提出5个编辑操作。\n6. 编辑操作必须精确，一次修改一件事。\n7. 用户确认后才会执行修改，所以你只需要提出建议。\n8. 回答要用中文，风格亲切专业。\n9. 当用户问及数据内容时，直接基于你看到的数据回答，不需要编辑。';
 
   return prompt;
@@ -3088,6 +3109,15 @@ function applyEditProposal(proposal, btnEl) {
           ovEl.innerHTML = '<ul><li>' + edit.new_text.split('\n').join('</li><li>') + '</li></ul>';
           if (!data._overviews) data._overviews = {};
           data._overviews[edit.card] = ovEl.innerHTML;
+          applied++;
+          break;
+        }
+        case 'update_footer': {
+          var lineIdx = parseInt(edit.line);
+          if (isNaN(lineIdx) || lineIdx < 0 || lineIdx > 1) { errors.push('footer line 必须为 0 或 1'); return; }
+          if (!data._footer || !Array.isArray(data._footer)) data._footer = ['', ''];
+          data._footer[lineIdx] = edit.new_text;
+          renderFooter();
           applied++;
           break;
         }
@@ -4171,8 +4201,9 @@ document.addEventListener('blur', e => {
   // Footer text
   var ftp = el.closest('.ft p');
   if (ftp && ftp.contentEditable === 'true') {
-    if (!data._overviews) data._overviews = {};
-    data._overviews['ft'] = ftp.textContent;
+    if (!data._footer || !Array.isArray(data._footer)) data._footer = ['', ''];
+    if (ftp.id === 'footerLine1') data._footer[0] = ftp.textContent;
+    else if (ftp.id === 'footerLine2') data._footer[1] = ftp.textContent;
     save(); return;
   }
 }, true);
