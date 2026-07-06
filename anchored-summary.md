@@ -40,6 +40,11 @@
 - 「进入规划」按钮锚定到 `plan-plan-fighting.html`
 - 响应式适配 + prefers-reduced-motion 支持
 
+### 动态页面大标题格式统一（commit `d7f8991`）
+- `renderDynamicPage()` 新增 hero 节区：hmark（大标题）、hline（装饰分隔线）、hsub（副标题）、hstats（统计行），格式与 博士计划（page0）完全一致
+- 动态页面 hero 内容通过 `data[pageId + '-hmark']` 等 per-page key 独立持久化，编辑后刷新保留
+- 全局 blur 处理程序增加 `data-dyn-page` 判断：动态页面 hero 编辑存 per-page key，page0 hero 编辑沿用原 `data._overviews`
+
 ## 设计系统
 - **配色**：`#0a0908`（墨黑底）、`#d4a574`（金色主题）、`#CC2936`（朱砂红）、`#3b7a5c`（翡翠绿）、`#f4f1ea`（暖白文字）
 - **字体**：Fraunces（衬线展示）、Space Grotesk（无衬线正文）、Songti SC（中文字体）
