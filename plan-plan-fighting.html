@@ -42,11 +42,11 @@
   --paper:#f4f1ea;      /* 宣纸 */
   --gold-leaf:#C9A96E;  /* 金箔 */
 }
-html{scroll-behavior:smooth;font-size:15px}
+html{scroll-behavior:smooth;font-size:var(--font-size-root,15px)}
 body{
-  font-family:var(--font-sans);
+  font-family:var(--font-family-body,var(--font-sans));
   background:var(--bg);color:var(--fg);
-  font-weight:300;line-height:1.5;
+  font-weight:300;line-height:var(--line-height-base,1.5);
   -webkit-font-smoothing:antialiased;overflow-x:hidden
 }
 /* Chinese-style scrollbar */
@@ -329,6 +329,24 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 .help-body ul li{padding:.1rem 0 .1rem .75rem;position:relative;font-size:clamp(.6rem,.9vw,.66rem);color:var(--fg-dim);line-height:1.5;font-weight:300}
 .help-body ul li::before{content:'›';position:absolute;left:0;color:var(--accent);font-weight:400}
 .help-body code{font-family:'SF Mono','Cascadia Code',monospace;font-size:.9em;background:rgba(255,255,255,.05);padding:.05rem .3rem;border-radius:4px;color:var(--accent);border:1px solid rgba(212,165,116,.15)}
+
+/* ===== settings modal ===== */
+.stg-overlay{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .25s}
+.stg-overlay.s{opacity:1;pointer-events:auto}
+.stg-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.92);z-index:410;width:clamp(320px,70vw,500px);background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 24px 80px rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:all .3s cubic-bezier(.2,.9,.3,1);overflow:hidden}
+.stg-modal.s{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+.stg-header{display:flex;align-items:center;justify-content:space-between;padding:clamp(.55rem,1vw,.7rem) clamp(.6rem,1.2vw,.9rem);border-bottom:1px solid var(--line)}
+.stg-header h3{margin:0;font-size:clamp(.75rem,1.1vw,.85rem);font-weight:400;color:var(--accent);letter-spacing:.04em;font-family:var(--font-sans)}
+.stg-close{background:none;border:none;color:var(--muted);font-size:clamp(1rem,1.5vw,1.2rem);cursor:pointer;padding:.15rem;line-height:1;border-radius:4px;transition:color .2s}
+.stg-close:hover{color:var(--accent)}
+.stg-body{padding:clamp(.6rem,1.2vw,.9rem)}
+.stg-group{margin-bottom:clamp(.6rem,1vw,.8rem)}
+.stg-group:last-child{margin-bottom:0}
+.stg-label{font-size:clamp(.55rem,.9vw,.6rem);color:var(--muted);letter-spacing:.15em;text-transform:uppercase;margin-bottom:.35rem;font-weight:300}
+.stg-row{display:flex;gap:.35rem;flex-wrap:wrap}
+.stg-btn{flex:1;min-width:clamp(50px,10vw,70px);padding:clamp(.3rem,.5vw,.4rem) clamp(.2rem,.4vw,.3rem);border:1px solid var(--line);border-radius:100px;background:transparent;color:var(--muted);font-family:var(--font-sans);font-size:clamp(.6rem,1vw,.65rem);cursor:pointer;transition:all .2s;text-align:center;letter-spacing:.05em;font-weight:300}
+.stg-btn:hover{border-color:var(--line-2);color:var(--fg-dim)}
+.stg-btn.a{border-color:var(--accent);color:var(--accent);background:rgba(212,165,116,.1)}
 
 #fileInput{display:none}
 
@@ -863,6 +881,8 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
   <button id="addYearBtn" class="bb" style="max-width:280px;margin:0 auto;padding:.35rem .6rem;font-size:clamp(.6rem,1.2vw,.75rem)">＋ 添加新计划年</button>
 </div>
 
+</div><!-- /page0Content -->
+
 <!-- ===== DYNAMIC PAGES CONTENT ===== -->
 <div id="pageContent" class="page-content"></div>
 
@@ -877,6 +897,7 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
   <button class="bb d" id="resetTasks2">🗑 重置</button>
   <button class="bb" id="installBtn" title="安装到桌面" style="display:none">📥 安装</button>
   <button class="bb" id="helpBtn" title="使用说明">📖</button>
+  <button class="bb" id="stgBtn" title="设置">⚙</button>
 </div>
 
 <!-- ===== HELP MODAL ===== -->
@@ -947,6 +968,43 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
         <li><strong>🗑 重置</strong> — 清空所有数据恢复默认</li>
       </ul>
     </section>
+  </div>
+</div>
+
+<!-- ===== SETTINGS MODAL ===== -->
+<div class="stg-overlay" id="stgOverlay"></div>
+<div class="stg-modal" id="stgModal">
+  <div class="stg-header">
+    <h3>⚙ 显示设置</h3>
+    <button class="stg-close" id="stgClose">✕</button>
+  </div>
+  <div class="stg-body" id="stgBody">
+    <div class="stg-group">
+      <div class="stg-label">字 号</div>
+      <div class="stg-row" id="stgFontSize">
+        <button class="stg-btn" data-v="0">小</button>
+        <button class="stg-btn a" data-v="1">中</button>
+        <button class="stg-btn" data-v="2">大</button>
+        <button class="stg-btn" data-v="3">超大</button>
+      </div>
+    </div>
+    <div class="stg-group">
+      <div class="stg-label">字 体</div>
+      <div class="stg-row" id="stgFontFamily">
+        <button class="stg-btn a" data-v="0">默认</button>
+        <button class="stg-btn" data-v="1">衬线</button>
+        <button class="stg-btn" data-v="2">无衬线</button>
+        <button class="stg-btn" data-v="3">等宽</button>
+      </div>
+    </div>
+    <div class="stg-group">
+      <div class="stg-label">行 距</div>
+      <div class="stg-row" id="stgLineHeight">
+        <button class="stg-btn" data-v="0">紧凑</button>
+        <button class="stg-btn a" data-v="1">标准</button>
+        <button class="stg-btn" data-v="2">宽松</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1262,6 +1320,8 @@ function ensure(p) {
   ['y1','y2','y3','y4','y5'].forEach(y=>['exam','finance','life'].forEach(t=>{const c=y+'-'+t;if(!p[c])p[c]=[]}));
   // Ensure overviews storage
   if (!p._overviews) p._overviews = {};
+  // Ensure settings defaults
+  if (!p._settings) p._settings = {fontSize:1,fontFamily:0,lineHeight:1};
   // Migration: expand ranged week labels (e.g. '第1-4周' → individual weeks)
   var expanded=0;
   ['y1-academic','y2-academic','y3-academic','y4-academic','y5-academic'].forEach(function(cid){
@@ -3699,6 +3759,59 @@ document.addEventListener('keydown',function(e){
   if(e.key==='Escape'&&document.getElementById('helpModal').classList.contains('s'))helpClose_()
 })
 
+// ===== Settings =====
+var _SETTINGS_CFG={
+  fontSize:[13,15,17,20],
+  fontFamily:[
+    "'STSong','华文宋楷','Songti SC','Noto Serif CJK SC',serif",
+    "'STSong','华文宋楷','Songti SC','Noto Serif CJK SC',serif",
+    "'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif",
+    "'Cascadia Code','SF Mono','Consolas',monospace"
+  ],
+  lineHeight:[1.4,1.6,1.9]
+}
+function applySettings(s){
+  var root=document.documentElement
+  root.style.setProperty('--font-size-root',_SETTINGS_CFG.fontSize[s.fontSize]+'px')
+  root.style.setProperty('--font-family-body',_SETTINGS_CFG.fontFamily[s.fontFamily])
+  root.style.setProperty('--line-height-base',_SETTINGS_CFG.lineHeight[s.lineHeight])
+}
+function stgHighlight(grp,v){
+  document.querySelectorAll('#stg'+grp+' .stg-btn').forEach(function(b){b.classList.toggle('a',parseInt(b.dataset.v)===v)})
+}
+function stgOpen(){
+  var s=data._settings||{fontSize:1,fontFamily:0,lineHeight:1}
+  stgHighlight('FontSize',s.fontSize)
+  stgHighlight('FontFamily',s.fontFamily)
+  stgHighlight('LineHeight',s.lineHeight)
+  document.getElementById('stgOverlay').classList.add('s')
+  document.getElementById('stgModal').classList.add('s')
+}
+function stgClose(){
+  document.getElementById('stgOverlay').classList.remove('s')
+  document.getElementById('stgModal').classList.remove('s')
+}
+document.getElementById('stgBtn').onclick=stgOpen
+document.getElementById('stgOverlay').onclick=stgClose
+document.getElementById('stgClose').onclick=stgClose
+document.querySelectorAll('.stg-row').forEach(function(row){
+  row.querySelectorAll('.stg-btn').forEach(function(btn){
+    btn.onclick=function(){
+      var grp=row.id.replace('stg',''),v=parseInt(btn.dataset.v)
+      var s=data._settings||{fontSize:1,fontFamily:0,lineHeight:1}
+      if(grp==='FontSize')s.fontSize=v
+      else if(grp==='FontFamily')s.fontFamily=v
+      else if(grp==='LineHeight')s.lineHeight=v
+      data._settings=s;save()
+      stgHighlight(grp,v)
+      applySettings(s)
+    }
+  })
+})
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'&&document.getElementById('stgModal').classList.contains('s'))stgClose()
+})
+
 // ======================== FEATURE: Reading Tracker ========================
 function renderReadings(){var el=document.getElementById('readingSection');if(!el)return;var items=data._readings||[]
   el.innerHTML='<div class="rd-header"><h3>📖 阅读追踪</h3><button class="rd-add" id="rdAddBtn">+ 添加</button></div>'
@@ -3915,6 +4028,7 @@ if (data._overviews) {
 }
 initPages();
 renderAll();
+applySettings(data._settings);
 // Auto-expand y1-academic on load
 setTimeout(() => {
   const body = document.getElementById('plan-body-y1-academic');
