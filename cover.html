@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>博士四年 · 全景规划</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,400&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0908; --bg2:#14110f;
+  --fg:#f4f1ea; --fg-dim:#a8a29a; --muted:#5a5550;
+  --accent:#d4a574; --accent-2:#e85d2f;
+  --gold-leaf:#C9A96E; --cinnabar:#CC2936; --jade:#3b7a5c;
+  --line:#2a2724;
+  --font-serif:'Fraunces',Georgia,'Songti SC','Noto Serif SC',serif;
+  --font-sans:'Space Grotesk','PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;
+}
+html,body{height:100%}
+body{
+  background:var(--bg);color:var(--fg);
+  font-family:var(--font-sans);font-weight:300;
+  -webkit-font-smoothing:antialiased;
+  overflow:hidden;cursor:default;
+}
+
+/* Canvas background */
+#coverCanvas{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  z-index:0;pointer-events:none;
+}
+
+/* Central content */
+.cover-wrap{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;
+  justify-content:center;align-items:center;
+  height:100vh;padding:2rem;
+  text-align:center;
+}
+
+/* Decorative top rule */
+.top-line{
+  width:clamp(60px,8vw,120px);
+  height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);
+  margin-bottom:clamp(2rem,5vh,4rem);
+  opacity:0;animation:revealUp 1.2s .3s forwards;
+}
+
+/* Main title */
+.title{
+  position:relative;
+  font-family:var(--font-serif);
+  font-size:clamp(2.2rem,7vw,5.5rem);
+  font-weight:300;line-height:1;
+  letter-spacing:-.03em;
+  opacity:0;animation:revealUp 1.2s .1s forwards;
+}
+.title em{
+  font-style:italic;color:var(--accent);
+}
+
+/* Chinese seal/stamp */
+.title::after{
+  content:'研';
+  position:absolute;top:-.25em;right:-.85em;
+  font-size:clamp(.4rem,1.4vw,.6rem);
+  font-family:'Songti SC','Noto Serif SC',serif;
+  color:var(--cinnabar);
+  border:1.5px solid var(--cinnabar);
+  padding:.08em .18em;line-height:1;letter-spacing:0;
+  opacity:0;transform:rotate(8deg);
+  border-radius:2px;
+  animation:fadeInStamp 1s .8s forwards;
+}
+
+/* Accent bar under title */
+.title-bar{
+  width:clamp(30px,4vw,60px);
+  height:1px;background:var(--accent);
+  margin:clamp(1rem,2.5vh,2rem) auto;
+  opacity:0;animation:revealUp 1s .5s forwards;
+  position:relative;
+}
+.title-bar::before{
+  content:'◇';
+  position:absolute;left:50%;top:50%;
+  transform:translate(-50%,-50%);
+  font-size:clamp(.3rem,.5vw,.35rem);
+  color:var(--accent);background:var(--bg);
+  padding:0 .4rem;
+}
+
+/* Subtitle */
+.subtitle{
+  font-size:clamp(.65rem,1.1vw,.85rem);
+  color:var(--fg-dim);
+  letter-spacing:.35em;
+  font-weight:300;text-transform:uppercase;
+  margin-bottom:clamp(2.5rem,6vh,4rem);
+  opacity:0;animation:revealUp 1s .6s forwards;
+}
+.subtitle span{
+  display:inline-block;
+}
+.subtitle .dot{
+  color:var(--muted);margin:0 .5rem;
+}
+
+/* Stats row */
+.stats{
+  display:flex;gap:clamp(1.5rem,4vw,3rem);
+  flex-wrap:wrap;justify-content:center;
+  opacity:0;animation:revealUp 1s .8s forwards;
+}
+.stat{
+  text-align:center;
+}
+.stat .n{
+  font-family:var(--font-serif);
+  font-size:clamp(1.1rem,2.5vw,1.6rem);
+  font-weight:400;color:var(--accent);
+  letter-spacing:-.02em;
+}
+.stat .l{
+  font-size:clamp(.5rem,.9vw,.6rem);
+  color:var(--muted);margin-top:.05rem;
+  letter-spacing:.15em;text-transform:uppercase;
+}
+
+/* Enter button */
+.enter-btn{
+  display:inline-flex;align-items:center;gap:.5rem;
+  margin-top:clamp(2rem,5vh,3.5rem);
+  padding:clamp(.5rem,1vw,.75rem) clamp(1.5rem,3vw,2.5rem);
+  border:1px solid var(--accent);
+  border-radius:100px;
+  background:rgba(212,165,116,.06);
+  color:var(--accent);
+  font-family:var(--font-serif);
+  font-size:clamp(.7rem,1.2vw,.95rem);
+  font-weight:300;letter-spacing:.2em;
+  cursor:pointer;text-decoration:none;
+  transition:all .4s cubic-bezier(.25,.46,.45,.94);
+  opacity:0;animation:revealUp 1s 1s forwards;
+  position:relative;overflow:hidden;
+}
+.enter-btn::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(212,165,116,.12),transparent);
+  opacity:0;transition:opacity .4s;
+}
+.enter-btn:hover{
+  background:rgba(212,165,116,.12);
+  transform:translateY(-2px);
+  box-shadow:0 8px 32px rgba(212,165,116,.1);
+}
+.enter-btn:hover::before{opacity:1}
+.enter-btn:active{transform:translateY(0)}
+.enter-btn .arrow{
+  display:inline-block;
+  transition:transform .3s;
+  font-size:.8em;
+}
+.enter-btn:hover .arrow{
+  transform:translateX(4px);
+}
+
+/* Bottom decoration */
+.bottom-line{
+  position:absolute;bottom:clamp(1.5rem,4vh,3rem);
+  left:50%;transform:translateX(-50%);
+  font-size:clamp(.45rem,.7vw,.5rem);
+  color:var(--muted);
+  letter-spacing:.3em;
+  opacity:0;animation:fadeIn 1.5s 1.8s forwards;
+  font-weight:300;
+}
+
+/* Animations */
+@keyframes revealUp{
+  from{opacity:0;transform:translateY(24px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes fadeIn{
+  from{opacity:0}
+  to{opacity:1}
+}
+@keyframes fadeInStamp{
+  from{opacity:0;transform:rotate(8deg) scale(.6)}
+  to{opacity:.7;transform:rotate(8deg) scale(1)}
+}
+
+/* Responsive */
+@media(max-width:600px){
+  .title{font-size:clamp(1.8rem,8vw,2.5rem)}
+  .title::after{font-size:.5rem;top:-.2em;right:-.8em}
+  .stats{gap:1rem}
+}
+@media(max-width:400px){
+  .title{font-size:1.5rem}
+  .subtitle{letter-spacing:.15em;font-size:.6rem}
+  .subtitle .dot{margin:0 .25rem}
+}
+
+/* Reduced motion */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  #coverCanvas{display:none}
+}
+</style>
+</head>
+<body>
+
+<canvas id="coverCanvas"></canvas>
+
+<div class="cover-wrap">
+  <div class="top-line"></div>
+
+  <h1 class="title">博士四年 · <em>全景规划</em></h1>
+
+  <div class="title-bar"></div>
+
+  <p class="subtitle">
+    <span>北京航空航天大学</span>
+    <span class="dot">✦</span>
+    <span>生物医学光子学</span>
+    <span class="dot">✦</span>
+    <span>2026–2030</span>
+  </p>
+
+  <div class="stats">
+    <div class="stat"><div class="n">3</div><div class="l">SCI 目标</div></div>
+    <div class="stat"><div class="n">2</div><div class="l">专利</div></div>
+    <div class="stat"><div class="n">5</div><div class="l">存款 /万</div></div>
+    <div class="stat"><div class="n">4</div><div class="l">考公年限</div></div>
+  </div>
+
+  <a class="enter-btn" href="plan-plan-fighting.html">
+    进入规划
+    <span class="arrow">→</span>
+  </a>
+
+  <div class="bottom-line">◇ 君子生非异也，善假于物也 ◇</div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+var canvas = document.getElementById('coverCanvas');
+var ctx = canvas.getContext('2d');
+var W, H;
+var particles = [];
+var mouse = { x: -9999, y: -9999 };
+var time = 0;
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resize);
+resize();
+
+// ── Particle factory ──
+function createParticle() {
+  return {
+    x: Math.random() * W,
+    y: Math.random() * H + H * 0.3,
+    size: Math.random() * 2.2 + 0.4,
+    speedY: -(Math.random() * 0.35 + 0.08),
+    speedX: (Math.random() - 0.5) * 0.15,
+    opacity: Math.random() * 0.5 + 0.12,
+    life: 0,
+    maxLife: Math.random() * 600 + 400,
+    // Types: gold, cinnabar, jade, ink
+    type: ['gold','gold','gold','cinnabar','jade','ink'][Math.floor(Math.random() * 6)]
+  };
+}
+
+function getColor(p, opacity) {
+  var o = p.opacity * opacity;
+  switch(p.type) {
+    case 'gold':    return 'rgba(212,165,116,' + o + ')';
+    case 'cinnabar': return 'rgba(204,41,54,' + (o * 0.6) + ')';
+    case 'jade':    return 'rgba(59,122,92,' + (o * 0.5) + ')';
+    case 'ink':     return 'rgba(161,154,140,' + (o * 0.3) + ')';
+    default:        return 'rgba(212,165,116,' + o + ')';
+  }
+}
+
+var count = Math.min(Math.floor(W * H / 12000), 100);
+for (var i = 0; i < count; i++) {
+  particles.push(createParticle());
+}
+
+// ── Draw ──
+function draw() {
+  time++;
+  // Trail effect
+  ctx.fillStyle = 'rgba(10,9,8,0.12)';
+  ctx.fillRect(0, 0, W, H);
+
+  // Soft ambient glow at center
+  var grad = ctx.createRadialGradient(W/2, H*0.4, 0, W/2, H*0.4, Math.max(W,H)*0.4);
+  grad.addColorStop(0, 'rgba(212,165,116,0.03)');
+  grad.addColorStop(1, 'transparent');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, H);
+
+  // Weak horizontal line glow
+  if (time % 120 < 60) {
+    var g2 = ctx.createRadialGradient(W/2, H*0.42, 0, W/2, H*0.42, W*0.25);
+    g2.addColorStop(0, 'rgba(212,165,116,0.015)');
+    g2.addColorStop(1, 'transparent');
+    ctx.fillStyle = g2;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  // Update and draw particles
+  for (var i = particles.length - 1; i >= 0; i--) {
+    var p = particles[i];
+    p.x += p.speedX;
+    p.y += p.speedY;
+    p.life++;
+
+    // Mouse repulsion
+    var dx = mouse.x - p.x;
+    var dy = mouse.y - p.y;
+    var dist = Math.sqrt(dx*dx + dy*dy);
+    if (dist < 150 && dist > 0) {
+      var f = (150 - dist) / 150;
+      p.x -= (dx / dist) * f * 0.5;
+      p.y -= (dy / dist) * f * 0.5;
+    }
+
+    var fadeIn = Math.min(p.life / 100, 1);
+    var fadeOut = Math.min((p.maxLife - p.life) / 150, 1);
+    var op = Math.max(0, Math.min(fadeIn, fadeOut));
+    if (op <= 0) { particles.splice(i, 1); continue; }
+
+    // Draw particle
+    var color = getColor(p, op);
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, Math.max(0.1, p.size), 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.fill();
+
+    // Draw glow for larger particles
+    if (p.size > 0.9 && p.type === 'gold') {
+      var hr = p.size * 4;
+      var g3 = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, hr);
+      g3.addColorStop(0, 'rgba(212,165,116,' + (op * 0.15) + ')');
+      g3.addColorStop(1, 'rgba(212,165,116,0)');
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, hr, 0, Math.PI * 2);
+      ctx.fillStyle = g3;
+      ctx.fill();
+    }
+  }
+
+  // Replenish
+  while (particles.length < count) {
+    particles.push(createParticle());
+  }
+
+  requestAnimationFrame(draw);
+}
+
+draw();
+
+// Mouse tracking
+window.addEventListener('mousemove', function(e) {
+  mouse.x = e.clientX;
+  mouse.y = e.clientY;
+});
+window.addEventListener('mouseleave', function() {
+  mouse.x = -9999;
+  mouse.y = -9999;
+});
+
+})();
+</script>
+
+</body>
+</html>

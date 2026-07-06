@@ -1798,45 +1798,63 @@ function renderDynamicPage(pageId) {
   }
   var sections = Object.keys(sectionSet).sort();
   
+  // Build hero section (same style as page0)
+  var pageIcon = page.icon || '📄';
+  var defaultTitle = esc(pageIcon + ' ' + (page.label || '新计划'));
+  var hmarkVal = data[pageId + '-hmark'] || defaultTitle;
+  var hsubVal = data[pageId + '-hsub'] || '';
+  var hstatN1 = data[pageId + '-hstat-n1'] || '0';
+  var hstatL1 = data[pageId + '-hstat-l1'] || '任务';
+  var hstatN2 = data[pageId + '-hstat-n2'] || '0';
+  var hstatL2 = data[pageId + '-hstat-l2'] || '已完成';
+  
+  var html = '<header class="hero" data-dyn-page="'+pageId+'">';
+  html += '<div class="hmark reveal in" data-dyn-page="'+pageId+'" contenteditable="true">'+hmarkVal+'</div>';
+  html += '<div class="hline"></div>';
+  html += '<p class="hsub" data-dyn-page="'+pageId+'" contenteditable="true">'+esc(hsubVal)+'</p>';
+  html += '<div class="hstats">';
+  html += '<div class="hstat"><div class="n" data-dyn-page="'+pageId+'" contenteditable="true">'+esc(hstatN1)+'</div><div class="l" data-dyn-page="'+pageId+'" contenteditable="true">'+esc(hstatL1)+'</div></div>';
+  html += '<div class="hstat"><div class="n" data-dyn-page="'+pageId+'" contenteditable="true">'+esc(hstatN2)+'</div><div class="l" data-dyn-page="'+pageId+'" contenteditable="true">'+esc(hstatL2)+'</div></div>';
+  html += '</div>';
+  html += '</header>';
+  
   if (sections.length === 0) {
-    container.innerHTML = '<div class="sec reveal in" style="text-align:center;padding:3rem 1rem"><p style="color:var(--txt3);font-size:.9rem;margin-bottom:1.5rem">暂无计划</p><button class="bb" onclick="addPageSection(\''+pageId+'\')">＋ 添加'+(page.type==='month'?'月份':'年份')+'</button></div>';
-    return;
-  }
-  
-  // Build section labels
-  var secLabels = {};
-  for (var si = 0; si < sections.length; si++) {
-    var s = sections[si];
-    if (page.type === 'month') {
-      var num = parseInt(s.replace('m','')) || 1;
-      var mn = ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
-      secLabels[s] = mn[num-1] || (num+'月');
-    } else {
-      var num2 = parseInt(s.replace('y','')) || 1;
-      secLabels[s] = '第'+num2+'年';
-    }
-  }
-  
-  var html = '';
-  for (var si2 = 0; si2 < sections.length; si2++) {
-    var secId = sections[si2];
-    var label = secLabels[secId] || secId;
-    
-    html += '<section class="sec reveal" id="'+pageId+'-'+secId+'"><div class="sh"><div class="ey">'+esc(label)+'</div><h2>'+esc(label)+'</h2><p class="sub"></p></div><div class="tg">';
-    
-    for (var ci3 = 0; ci3 < page.categories.length; ci3++) {
-      var cat = page.categories[ci3];
-      var cardId = pageId + '-' + secId + '-' + cat.id;
-      var letters = ['a','b','c','d','e','f','g','h'];
-      var letter = letters[ci3 % letters.length];
-      html += '<div class="tc '+letter+'" data-c="'+cardId+'"><div class="ti">'+cat.icon+'</div><div class="tt"><span>'+esc(cat.label)+'</span><span class="ttg">0%</span></div><div class="tb" id="ov-'+cardId+'"><ul><li>待规划</li></ul></div><div class="wp" data-c="'+cardId+'"></div><div class="tp"><div class="bar" data-c="'+cardId+'"></div></div><div class="tm"><span>📋 展开制定周计划</span></div></div>';
+    html += '<div class="sec reveal in" style="text-align:center;padding:3rem 1rem"><p style="color:var(--txt3);font-size:.9rem;margin-bottom:1.5rem">暂无计划</p><button class="bb" onclick="addPageSection(\''+pageId+'\')">＋ 添加'+(page.type==='month'?'月份':'年份')+'</button></div>';
+  } else {
+    // Build section labels
+    var secLabels = {};
+    for (var si = 0; si < sections.length; si++) {
+      var s = sections[si];
+      if (page.type === 'month') {
+        var num = parseInt(s.replace('m','')) || 1;
+        var mn = ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
+        secLabels[s] = mn[num-1] || (num+'月');
+      } else {
+        var num2 = parseInt(s.replace('y','')) || 1;
+        secLabels[s] = '第'+num2+'年';
+      }
     }
     
-    html += '</div></section><div class="sec-divider"><hr></div>';
+    for (var si2 = 0; si2 < sections.length; si2++) {
+      var secId = sections[si2];
+      var label = secLabels[secId] || secId;
+      
+      html += '<section class="sec reveal" id="'+pageId+'-'+secId+'"><div class="sh"><div class="ey">'+esc(label)+'</div><h2>'+esc(label)+'</h2><p class="sub"></p></div><div class="tg">';
+      
+      for (var ci3 = 0; ci3 < page.categories.length; ci3++) {
+        var cat = page.categories[ci3];
+        var cardId = pageId + '-' + secId + '-' + cat.id;
+        var letters = ['a','b','c','d','e','f','g','h'];
+        var letter = letters[ci3 % letters.length];
+        html += '<div class="tc '+letter+'" data-c="'+cardId+'"><div class="ti">'+cat.icon+'</div><div class="tt"><span>'+esc(cat.label)+'</span><span class="ttg">0%</span></div><div class="tb" id="ov-'+cardId+'"><ul><li>待规划</li></ul></div><div class="wp" data-c="'+cardId+'"></div><div class="tp"><div class="bar" data-c="'+cardId+'"></div></div><div class="tm"><span>📋 展开制定周计划</span></div></div>';
+      }
+      
+      html += '</div></section><div class="sec-divider"><hr></div>';
+    }
+    
+    // Add section button
+    html += '<div class="sec reveal" style="text-align:center;padding:1rem"><button class="bb" onclick="addPageSection(\''+pageId+'\')">＋ 添加'+(page.type==='month'?'月份':'年份')+'</button></div>';
   }
-  
-  // Add section button
-  html += '<div class="sec reveal" style="text-align:center;padding:1rem"><button class="bb" onclick="addPageSection(\''+pageId+'\')">＋ 添加'+(page.type==='month'?'月份':'年份')+'</button></div>';
   
   container.innerHTML = html;
   
@@ -4167,34 +4185,68 @@ document.addEventListener('blur', e => {
     data._overviews['scli-'+Date.now()] = scLi.textContent;
     save(); return;
   }
-  // Hero title
+  // Hero title (page0 or dynamic page)
   var hm = el.closest('.hmark');
   if (hm && hm.contentEditable === 'true') {
-    if (!data._overviews) data._overviews = {};
-    data._overviews['hmark'] = hm.innerHTML;
+    var dynPageId = hm.dataset.dynPage;
+    if (dynPageId) {
+      data[dynPageId + '-hmark'] = hm.innerHTML;
+    } else {
+      if (!data._overviews) data._overviews = {};
+      data._overviews['hmark'] = hm.innerHTML;
+    }
     save(); return;
   }
-  // Hero subtitle
+  // Hero subtitle (page0 or dynamic page)
   var hs = el.closest('.hsub');
   if (hs && hs.contentEditable === 'true') {
-    if (!data._overviews) data._overviews = {};
-    data._overviews['hsub'] = hs.textContent;
+    var dynPageId = hs.dataset.dynPage;
+    if (dynPageId) {
+      data[dynPageId + '-hsub'] = hs.textContent;
+    } else {
+      if (!data._overviews) data._overviews = {};
+      data._overviews['hsub'] = hs.textContent;
+    }
     save(); return;
   }
-  // Hero stats
+  // Hero stats (page0 or dynamic page)
   var hstat = el.closest('.hstat');
   if (hstat) {
     var nEl = hstat.querySelector('.n');
     var lEl = hstat.querySelector('.l');
-    if (nEl && nEl.contentEditable === 'true') {
-      if (!data._overviews) data._overviews = {};
-      data._overviews['hstat-n'] = nEl.textContent;
-      save();
-    }
-    if (lEl && lEl.contentEditable === 'true') {
-      if (!data._overviews) data._overviews = {};
-      data._overviews['hstat-l'] = lEl.textContent;
-      save();
+    var dynPageId = null;
+    if (nEl) dynPageId = nEl.dataset.dynPage;
+    if (!dynPageId && lEl) dynPageId = lEl.dataset.dynPage;
+    if (dynPageId) {
+      // Dynamic page: save all four stat fields individually (up to 2 pairs)
+      var allStats = hstat.closest('.hstats');
+      if (allStats) {
+        var statEls = allStats.querySelectorAll('.hstat');
+        var idx = 0;
+        statEls.forEach(function(st) {
+          var sn = st.querySelector('.n');
+          var sl = st.querySelector('.l');
+          if (sn && sn.contentEditable === 'true') {
+            data[dynPageId + '-hstat-n' + (idx+1)] = sn.textContent;
+          }
+          if (sl && sl.contentEditable === 'true') {
+            data[dynPageId + '-hstat-l' + (idx+1)] = sl.textContent;
+          }
+          idx++;
+        });
+        save();
+      }
+    } else {
+      if (nEl && nEl.contentEditable === 'true') {
+        if (!data._overviews) data._overviews = {};
+        data._overviews['hstat-n'] = nEl.textContent;
+        save();
+      }
+      if (lEl && lEl.contentEditable === 'true') {
+        if (!data._overviews) data._overviews = {};
+        data._overviews['hstat-l'] = lEl.textContent;
+        save();
+      }
     }
     return;
   }
