@@ -590,6 +590,7 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
   opacity:0;transition:opacity 2s ease;
 }
 #threeScene.loaded{opacity:1}
+#threeScene canvas{display:block}
 
 /* edit mode */
 .tb[contentEditable="true"],
@@ -5255,6 +5256,8 @@ if ('serviceWorker' in navigator) {
     renderer.render(scene, camera);
   }
 
+  // Force first paint BEFORE showing, to prevent compositor drop on initial load
+  renderer.render(scene, camera);
   animate();
   container.classList.add('loaded');
 })();
