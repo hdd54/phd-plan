@@ -1045,15 +1045,10 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
     <div class="book-left">
       <div class="book-cover">
         <div class="cover-top-line"></div>
-        <div class="cover-label">博士四年</div>
         <h1 class="cover-title">计划书</h1>
         <div class="cover-divider">◇ ◇ ◇</div>
         <div class="cover-subtitle">全景规划</div>
-        <div class="cover-meta">
-          <span>北京航空航天大学</span>
-          <span class="ct">生物医学光子学</span>
-          <span>2026–2030</span>
-        </div>
+        <div class="cover-quote">不积跬步，无以至千里</div>
         <div class="cover-stamp">研</div>
       </div>
     </div>
@@ -1609,7 +1604,7 @@ if(!list)return;
 var PER=8,pg=0,items=[];
 function getPages(){
   var r=[{id:'p0',icon:'🎓',label:'博士计划'}];
-  try{var d=JSON.parse(localStorage.getItem('pbp')||'{}');if(d&&d._pages)d._pages.forEach(function(p){r.push({id:p.id,icon:p.icon||'📄',label:p.label})})}catch(e){}
+  try{var d=JSON.parse(localStorage.getItem('phd_v4')||'{}');if(d&&d._pages)d._pages.forEach(function(p){r.push({id:p.id,icon:p.icon||'📄',label:p.label})})}catch(e){}
   return r;
 }
 function render(){
