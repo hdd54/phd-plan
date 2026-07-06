@@ -42,6 +42,274 @@
   --paper:#f4f1ea;      /* 宣纸 */
   --gold-leaf:#C9A96E;  /* 金箔 */
 }
+
+/* ── Cover: Open-Book Layout ── */
+#coverSection{
+  position:relative;width:100%;min-height:100vh;overflow:hidden;
+  background:var(--bg);z-index:10;
+  font-family:var(--font-sans);font-weight:300;
+  -webkit-font-smoothing:antialiased;
+  display:flex;justify-content:center;align-items:center;
+  padding:clamp(.6rem,2vw,1.5rem);
+}
+#coverSection #coverCanvas{
+  position:absolute;top:0;left:0;width:100%;height:100%;
+  z-index:0;pointer-events:none;
+}
+.scroll-hint{
+  position:absolute;bottom:clamp(.8rem,2vh,1.5rem);left:50%;
+  transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:.25rem;
+  color:var(--muted);font-size:.5rem;letter-spacing:.2em;
+  font-weight:300;cursor:pointer;z-index:2;border:none;background:none;
+  font-family:var(--font-sans);
+  opacity:0;animation:coverFadeIn 1.5s 2.5s forwards;
+}
+.scroll-hint .arrow-down{display:inline-block;font-size:.6rem;line-height:1;animation:coverBounceDown 2.4s infinite}
+@keyframes coverBounceDown{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+
+/* ── Book ── */
+.book{
+  position:relative;z-index:1;
+  display:flex;align-items:stretch;
+  width:clamp(340px,90vw,1200px);
+  min-height:clamp(350px,68vh,620px);
+  background:var(--bg);
+  perspective:1200px;
+}
+.book-left,.book-right{
+  flex:1;position:relative;
+  background:linear-gradient(135deg,#1a1612 0%,#14110f 50%,#0f0d0a 100%);
+  border:1px solid rgba(212,165,116,.08);
+  box-shadow:inset 0 0 30px rgba(0,0,0,.3);
+  display:flex;flex-direction:column;
+  justify-content:center;align-items:center;
+  padding:clamp(.6rem,1.5vw,1.2rem);
+  overflow:hidden;
+}
+.book-left{
+  border-right:none;
+  border-radius:4px 0 0 4px;
+  box-shadow:inset 0 0 30px rgba(0,0,0,.3),
+              -4px 0 20px rgba(0,0,0,.3);
+}
+.book-right{
+  border-left:none;
+  border-radius:0 4px 4px 0;
+  box-shadow:inset 0 0 30px rgba(0,0,0,.3),
+              4px 0 20px rgba(0,0,0,.3);
+}
+/* Book spine */
+.book-spine{
+  width:clamp(14px,1.8vw,24px);
+  position:relative;z-index:2;
+  background:linear-gradient(90deg,#14110f,#1f1a16,#14110f);
+  box-shadow:2px 0 8px rgba(0,0,0,.4), -2px 0 8px rgba(0,0,0,.4);
+  flex-shrink:0;
+}
+.book-spine::before{
+  content:'';position:absolute;top:clamp(1rem,3vh,2rem);left:50%;
+  transform:translateX(-50%);
+  height:clamp(60%,40vh,70%);
+  width:1px;
+  background:linear-gradient(to bottom,transparent,rgba(212,165,116,.12),transparent);
+}
+/* Page curl shadow on left page right edge */
+.book-left::after{
+  content:'';position:absolute;top:0;right:-4px;bottom:0;width:8px;
+  background:linear-gradient(to right,rgba(0,0,0,.25),transparent);
+  pointer-events:none;
+}
+
+/* ── Left Page: Book Cover ── */
+.book-cover{
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;gap:clamp(.4rem,1vh,.6rem);
+  padding:clamp(.5rem,1vw,1rem);
+}
+.cover-top-line{
+  width:clamp(30px,4vw,60px);height:1px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);
+  margin-bottom:clamp(.3rem,.5vh,.5rem);
+  opacity:0;animation:coverFadeIn .8s .3s forwards;
+}
+.cover-label{
+  font-size:clamp(.5rem,.8vw,.65rem);
+  color:var(--muted);letter-spacing:.25em;text-transform:uppercase;
+  font-weight:300;
+  opacity:0;animation:coverFadeIn .8s .5s forwards;
+}
+.cover-title{
+  font-family:var(--font-serif);
+  font-size:clamp(2.2rem,5.5vw,4rem);
+  font-weight:300;color:var(--fg);
+  letter-spacing:.12em;line-height:1;
+  opacity:0;animation:coverRevealUp 1s .7s forwards;
+}
+.cover-title em{font-style:italic;color:var(--accent)}
+.cover-divider{
+  font-size:clamp(.35rem,.5vw,.4rem);
+  color:var(--muted);letter-spacing:.5em;
+  margin:clamp(.3rem,.6vh,.5rem) 0;
+  opacity:0;animation:coverFadeIn .8s .9s forwards;
+}
+.cover-subtitle{
+  font-size:clamp(.6rem,1vw,.75rem);
+  color:var(--fg-dim);letter-spacing:.3em;
+  font-weight:300;
+  opacity:0;animation:coverFadeIn .8s 1s forwards;
+}
+.cover-meta{
+  display:flex;flex-direction:column;gap:clamp(.2rem,.4vh,.35rem);
+  margin-top:clamp(.6rem,1.2vh,1rem);
+  font-size:clamp(.5rem,.8vw,.65rem);
+  color:var(--muted);letter-spacing:.1em;
+  font-weight:300;
+  opacity:0;animation:coverFadeIn .8s 1.2s forwards;
+}
+.cover-meta .ct{color:var(--fg-dim)}
+.cover-stamp{
+  position:absolute;top:clamp(.8rem,2vw,1.5rem);right:clamp(.8rem,2vw,1.5rem);
+  font-size:clamp(.5rem,1vw,.65rem);
+  font-family:'Songti SC','Noto Serif SC',serif;
+  color:var(--cinnabar);border:1.5px solid var(--cinnabar);
+  padding:.08em .2em;line-height:1;border-radius:2px;
+  opacity:0;animation:coverFadeInStamp 1s 1.5s forwards;
+}
+@keyframes coverFadeInStamp{from{opacity:0;transform:rotate(6deg) scale(.6)}to{opacity:.6;transform:rotate(6deg) scale(1)}}
+
+/* ── Right Page: TOC ── */
+.toc{
+  display:flex;flex-direction:column;
+  width:100%;height:100%;
+  padding:clamp(.5rem,1.2vw,1.2rem) 0;
+}
+.toc-title{
+  font-family:var(--font-serif);
+  font-size:clamp(1rem,1.8vw,1.5rem);
+  font-weight:300;color:var(--fg);
+  letter-spacing:.5em;text-align:center;
+  opacity:0;animation:coverRevealUp .8s .6s forwards;
+}
+.toc-divider{
+  width:clamp(20px,3vw,50px);height:1px;
+  background:var(--accent);margin:clamp(.4rem,.8vh,.8rem) auto;
+  opacity:0;animation:coverFadeIn .6s .8s forwards;
+}
+.toc-list{
+  flex:1;overflow-y:auto;
+  padding:clamp(.2rem,.4vw,.4rem) clamp(.4rem,.8vw,1rem);
+  display:flex;flex-direction:column;gap:clamp(.2rem,.4vh,.35rem);
+  min-height:0;
+  opacity:0;animation:coverFadeIn 1s 1s forwards;
+}
+.toc-item{
+  display:flex;align-items:center;gap:clamp(.4rem,.6vw,.7rem);
+  padding:clamp(.4rem,.6vw,.7rem) clamp(.5rem,.8vw,1rem);
+  border-radius:8px;
+  color:var(--fg-dim);
+  font-size:clamp(.6rem,1vw,.8rem);
+  font-weight:300;letter-spacing:.08em;
+  cursor:pointer;text-decoration:none;
+  transition:all .25s;
+  border:1px solid transparent;
+}
+.toc-item:hover{
+  background:rgba(212,165,116,.06);
+  border-color:rgba(212,165,116,.12);
+  color:var(--fg);
+  transform:translateX(3px);
+}
+.toc-item .ti-icon{flex-shrink:0;font-size:1.1em}
+.toc-item .ti-label{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.toc-item .ti-arrow{flex-shrink:0;font-size:.7em;color:var(--muted);transition:transform .25s}
+.toc-item:hover .ti-arrow{color:var(--accent);transform:translateX(3px)}
+.toc-item.a{
+  color:var(--accent);
+  background:rgba(212,165,116,.08);
+  border-color:rgba(212,165,116,.15);
+}
+.toc-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:clamp(.3rem,.5vw,.5rem) clamp(.4rem,.7vw,.7rem);
+  border-top:1px solid var(--line);
+  margin-top:auto;
+  opacity:0;animation:coverFadeIn .8s 1.4s forwards;
+}
+.toc-pages{
+  display:flex;align-items:center;gap:clamp(.2rem,.3vw,.35rem);
+}
+.toc-page-btn{
+  background:transparent;border:1px solid var(--line-2);
+  border-radius:4px;color:var(--fg-dim);
+  font-size:clamp(.45rem,.7vw,.5rem);
+  padding:clamp(.1rem,.15vw,.15rem) clamp(.25rem,.4vw,.35rem);
+  cursor:pointer;transition:all .2s;
+  font-family:var(--font-sans);
+}
+.toc-page-btn:hover:not(:disabled){
+  border-color:var(--accent);color:var(--accent);
+}
+.toc-page-btn:disabled{opacity:.3;cursor:default}
+.toc-page-info{
+  font-size:clamp(.45rem,.7vw,.5rem);
+  color:var(--muted);min-width:2.5em;text-align:center;
+  font-weight:300;
+}
+.toc-enter-btn{
+  display:inline-flex;align-items:center;gap:.4rem;
+  padding:clamp(.25rem,.4vw,.4rem) clamp(.7rem,1.2vw,1rem);
+  border:1px solid var(--accent);border-radius:100px;
+  background:rgba(212,165,116,.06);
+  color:var(--accent);
+  font-family:var(--font-serif);
+  font-size:clamp(.55rem,.9vw,.7rem);
+  font-weight:300;letter-spacing:.15em;
+  cursor:pointer;text-decoration:none;
+  transition:all .35s;
+}
+.toc-enter-btn:hover{
+  background:rgba(212,165,116,.12);
+  transform:translateY(-1px);
+  box-shadow:0 4px 16px rgba(212,165,116,.1);
+}
+
+@keyframes coverRevealUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes coverFadeIn{from{opacity:0}to{opacity:1}}
+
+/* ── Responsive ── */
+@media(max-width:680px){
+  .book{flex-direction:column;width:clamp(300px,92vw,400px);min-height:auto}
+  .book-left{border-right:1px solid rgba(212,165,116,.08);border-radius:4px 4px 0 0;padding:clamp(1rem,4vw,2rem)}
+  .book-right{border-left:1px solid rgba(212,165,116,.08);border-radius:0 0 4px 4px;padding:clamp(.8rem,3vw,1.5rem)}
+  .book-spine{width:100%;height:clamp(4px,.8vh,8px)}
+  .book-spine::before{display:none}
+  .cover-title{font-size:clamp(1.8rem,7vw,2.4rem)}
+  .cover-stamp{top:clamp(.5rem,1.5vw,1rem);right:clamp(.5rem,1.5vw,1rem)}
+  .toc-title{font-size:clamp(.8rem,3vw,1rem)}
+}
+@media(max-width:400px){
+  .book{width:96vw}
+  .cover-title{font-size:1.5rem}
+  .toc-title{font-size:.75rem}
+}
+@media(prefers-reduced-motion:reduce){
+  #coverSection *,#coverSection *::before,#coverSection *::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  #coverSection #coverCanvas{display:none}
+}
+/* Hide fixed UI elements while cover section is visible */
+body.cp .nav-rail,
+body.cp .ed-badge,
+body.cp .noise-btn,
+body.cp .csv-btn,
+body.cp .pomo-btn,
+body.cp .pomo-float,
+body.cp .stat-toggle,
+body.cp .kbd-hint,
+body.cp .ai-fab,
+body.cp .btm-bar{opacity:0;pointer-events:none;transition:opacity .4s}
+
 html{scroll-behavior:smooth;font-size:var(--font-size-root,15px)}
 body{
   font-family:var(--font-family-body,var(--font-sans));
@@ -769,6 +1037,51 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 </style>
 </head>
 <body>
+<!-- COVER: OPEN BOOK -->
+<section id="coverSection">
+  <canvas id="coverCanvas"></canvas>
+  <div class="book">
+    <!-- Left page: Book Cover -->
+    <div class="book-left">
+      <div class="book-cover">
+        <div class="cover-top-line"></div>
+        <div class="cover-label">博士四年</div>
+        <h1 class="cover-title">计划书</h1>
+        <div class="cover-divider">◇ ◇ ◇</div>
+        <div class="cover-subtitle">全景规划</div>
+        <div class="cover-meta">
+          <span>北京航空航天大学</span>
+          <span class="ct">生物医学光子学</span>
+          <span>2026–2030</span>
+        </div>
+        <div class="cover-stamp">研</div>
+      </div>
+    </div>
+    <!-- Spine -->
+    <div class="book-spine"></div>
+    <!-- Right page: Table of Contents -->
+    <div class="book-right">
+      <div class="toc">
+        <h2 class="toc-title">目 录</h2>
+        <div class="toc-divider"></div>
+        <div class="toc-list" id="tocList"></div>
+        <div class="toc-footer">
+          <div class="toc-pages" id="tocPages">
+            <button class="toc-page-btn" id="tocPrev" disabled>◀</button>
+            <span class="toc-page-info" id="tocPageInfo">1/1</span>
+            <button class="toc-page-btn" id="tocNext" disabled>▶</button>
+          </div>
+          <a class="toc-enter-btn" href="#planAppStart">进入规划 →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button class="scroll-hint" onclick="document.getElementById('planAppStart').scrollIntoView({behavior:'smooth'})">
+    <span>向下滚动</span>
+    <span class="arrow-down">⌄</span>
+  </button>
+</section>
+<!-- /COVER -->
 <div id="progress"></div>
 <canvas id="pc"></canvas>
 <div class="gr-overlay"></div>
@@ -786,6 +1099,7 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 <div class="toast" id="toast">✓ 已保存</div>
 <input type="file" id="fileInput" accept=".json" />
 
+<span id="planAppStart"></span>
 <!-- PAGE TOOLBAR -->
 <div class="pb" id="pageBar">
   <button class="pbi a" data-page="p0">🎓 博士计划</button>
@@ -1222,9 +1536,114 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
   <p id="footerLine2"></p>
 </footer>
 
+<!-- Cover particle animation -->
+<script>
+(function(){
+var canvas = document.getElementById('coverCanvas');
+if (!canvas) return;
+var ctx = canvas.getContext('2d');
+var W, H, particles = [], mouse = {x:-9999,y:-9999}, time = 0;
+function resize(){W=canvas.width=canvas.parentElement.clientWidth;H=canvas.height=canvas.parentElement.clientHeight}
+window.addEventListener('resize',resize); resize();
+function createParticle(){
+  return {
+    x:Math.random()*W, y:Math.random()*H+H*0.3,
+    size:Math.random()*2.2+0.4, speedY:-(Math.random()*0.35+0.08),
+    speedX:(Math.random()-0.5)*0.15, opacity:Math.random()*0.5+0.12,
+    life:0, maxLife:Math.random()*600+400,
+    type:['gold','gold','gold','cinnabar','jade','ink'][Math.floor(Math.random()*6)]
+  };
+}
+function getColor(p,op){
+  var o=p.opacity*op;
+  switch(p.type){
+    case'gold':return'rgba(212,165,116,'+o+')';
+    case'cinnabar':return'rgba(204,41,54,'+(o*0.6)+')';
+    case'jade':return'rgba(59,122,92,'+(o*0.5)+')';
+    case'ink':return'rgba(161,154,140,'+(o*0.3)+')';
+    default:return'rgba(212,165,116,'+o+')';
+  }
+}
+var count=Math.min(Math.floor(W*H/12000),100);
+for(var i=0;i<count;i++)particles.push(createParticle());
+function draw(){
+  time++;
+  ctx.fillStyle='rgba(10,9,8,0.12)';ctx.fillRect(0,0,W,H);
+  var grad=ctx.createRadialGradient(W/2,H*0.4,0,W/2,H*0.4,Math.max(W,H)*0.4);
+  grad.addColorStop(0,'rgba(212,165,116,0.03)');grad.addColorStop(1,'transparent');
+  ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);
+  if(time%120<60){
+    var g2=ctx.createRadialGradient(W/2,H*0.42,0,W/2,H*0.42,W*0.25);
+    g2.addColorStop(0,'rgba(212,165,116,0.015)');g2.addColorStop(1,'transparent');
+    ctx.fillStyle=g2;ctx.fillRect(0,0,W,H);
+  }
+  for(var i=particles.length-1;i>=0;i--){
+    var p=particles[i];p.x+=p.speedX;p.y+=p.speedY;p.life++;
+    var dx=mouse.x-p.x,dy=mouse.y-p.y,dist=Math.sqrt(dx*dx+dy*dy);
+    if(dist<150&&dist>0){var f=(150-dist)/150;p.x-=(dx/dist)*f*0.5;p.y-=(dy/dist)*f*0.5}
+    var fadeIn=Math.min(p.life/100,1),fadeOut=Math.min((p.maxLife-p.life)/150,1);
+    var op=Math.max(0,Math.min(fadeIn,fadeOut));
+    if(op<=0){particles.splice(i,1);continue}
+    var color=getColor(p,op);
+    ctx.beginPath();ctx.arc(p.x,p.y,Math.max(0.1,p.size),0,Math.PI*2);ctx.fillStyle=color;ctx.fill();
+    if(p.size>0.9&&p.type==='gold'){
+      var hr=p.size*4,g3=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,hr);
+      g3.addColorStop(0,'rgba(212,165,116,'+(op*0.15)+')');g3.addColorStop(1,'rgba(212,165,116,0)');
+      ctx.beginPath();ctx.arc(p.x,p.y,hr,0,Math.PI*2);ctx.fillStyle=g3;ctx.fill();
+    }
+  }
+  while(particles.length<count)particles.push(createParticle());
+  requestAnimationFrame(draw);
+}
+draw();
+window.addEventListener('mousemove',function(e){mouse.x=e.clientX;mouse.y=e.clientY});
+window.addEventListener('mouseleave',function(){mouse.x=-9999;mouse.y=-9999});
+})();
+</script>
+
+<!-- TOC render -->
+<script>
+(function(){
+var list=document.getElementById('tocList'),prev=document.getElementById('tocPrev'),next=document.getElementById('tocNext'),info=document.getElementById('tocPageInfo');
+if(!list)return;
+var PER=8,pg=0,items=[];
+function getPages(){
+  var r=[{id:'p0',icon:'🎓',label:'博士计划'}];
+  try{var d=JSON.parse(localStorage.getItem('pbp')||'{}');if(d&&d._pages)d._pages.forEach(function(p){r.push({id:p.id,icon:p.icon||'📄',label:p.label})})}catch(e){}
+  return r;
+}
+function render(){
+  items=getPages();var t=Math.max(1,Math.ceil(items.length/PER));if(pg>=t)pg=t-1;
+  var s=pg*PER,e=Math.min(s+PER,items.length),html='';
+  for(var i=s;i<e;i++){var it=items[i];
+    html+='<a class="toc-item'+(it.id==='p0'?' a':'')+'" data-page="'+it.id+'" href="#planAppStart">'
+      +'<span class="ti-icon">'+(it.icon||'📄')+'</span>'
+      +'<span class="ti-label">'+it.label+'</span>'
+      +'<span class="ti-arrow">→</span></a>';}
+  list.innerHTML=html;info.textContent=(pg+1)+'/'+t;
+  prev.disabled=pg<=0;next.disabled=pg>=t-1;
+  list.querySelectorAll('.toc-item').forEach(function(el){el.addEventListener('click',function(){sessionStorage.setItem('tocPage',this.dataset.page)})});
+}
+prev.addEventListener('click',function(){if(pg>0){pg--;render()}});
+next.addEventListener('click',function(){if(pg<Math.ceil(items.length/PER)-1){pg++;render()}});
+render();
+window.addEventListener('hashchange',function(){if(location.hash==='')render()});
+})();
+</script>
+
 <script>
 (function(){
 'use strict';
+
+// ── Cover visibility toggle ──
+(function(){
+  var cover = document.getElementById('coverSection');
+  if (!cover) return;
+  function check(){document.body.classList.toggle('cp',cover.getBoundingClientRect().bottom > 0)}
+  window.addEventListener('scroll',check,{passive:true});
+  window.addEventListener('resize',check);
+  check();
+})();
 
 const DAYS = ['周一','周二','周三','周四','周五','周六','周日'];
 const WEEKDAY_MAP = {1:'周一',2:'周二',3:'周三',4:'周四',5:'周五',6:'周六',0:'周日'};
@@ -4129,6 +4548,13 @@ if (data._overviews) {
   });
 }
 initPages();
+// Handle TOC navigation (from cover page)
+var tocTarget = sessionStorage.getItem('tocPage');
+if (tocTarget) {
+  sessionStorage.removeItem('tocPage');
+  // Small delay to let DOM settle, then switch
+  setTimeout(function(){ switchPage(tocTarget); }, 100);
+}
 renderAll();
 applySettings(data._settings);
 // Auto-expand y1-academic on load
