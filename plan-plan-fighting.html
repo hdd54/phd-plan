@@ -667,6 +667,11 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 .stg-btn{flex:1;min-width:clamp(50px,10vw,70px);padding:clamp(.3rem,.5vw,.4rem) clamp(.2rem,.4vw,.3rem);border:1px solid var(--line);border-radius:100px;background:transparent;color:var(--muted);font-family:var(--font-sans);font-size:clamp(.6rem,1vw,.65rem);cursor:pointer;transition:all .2s;text-align:center;letter-spacing:.05em;font-weight:300}
 .stg-btn:hover{border-color:var(--line-2);color:var(--fg-dim)}
 .stg-btn.a{border-color:var(--accent);color:var(--accent);background:rgba(212,165,116,.1)}
+.stg-custom-wrap{display:flex;align-items:center;gap:.3rem;margin-top:.25rem}
+.stg-custom-wrap .stg-input{flex:1;min-width:0;padding:.2rem .35rem;border:1px solid var(--line);border-radius:100px;background:transparent;color:var(--text);font-size:clamp(.55rem,.8vw,.6rem);font-family:var(--font-sans);outline:none;transition:border-color .2s}
+.stg-custom-wrap .stg-input:focus{border-color:var(--accent)}
+.stg-custom-wrap .stg-input::placeholder{color:var(--muted)}
+.stg-custom-wrap .stg-unit{font-size:clamp(.5rem,.75vw,.55rem);color:var(--muted);white-space:nowrap}
 
 #fileInput{display:none}
 
@@ -1355,6 +1360,10 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
         <button class="stg-btn" data-v="2">大</button>
         <button class="stg-btn" data-v="3">超大</button>
       </div>
+      <div class="stg-custom-wrap">
+        <input class="stg-input" id="stgFontSizeCustom" type="number" placeholder="自定义字号" min="8" max="48" step="1">
+        <span class="stg-unit">px</span>
+      </div>
     </div>
     <div class="stg-group">
       <div class="stg-label">字 体</div>
@@ -1364,6 +1373,9 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
         <button class="stg-btn" data-v="2">无衬线</button>
         <button class="stg-btn" data-v="3">等宽</button>
       </div>
+      <div class="stg-custom-wrap">
+        <input class="stg-input" id="stgFontFamilyCustom" type="text" placeholder="自定义字体 (font-family)">
+      </div>
     </div>
     <div class="stg-group">
       <div class="stg-label">行 距</div>
@@ -1371,6 +1383,9 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
         <button class="stg-btn" data-v="0">紧凑</button>
         <button class="stg-btn a" data-v="1">标准</button>
         <button class="stg-btn" data-v="2">宽松</button>
+      </div>
+      <div class="stg-custom-wrap">
+        <input class="stg-input" id="stgLineHeightCustom" type="number" placeholder="自定义行距" min="0.8" max="4" step="0.1">
       </div>
     </div>
   </div>
@@ -1943,6 +1958,9 @@ function ensure(p) {
   if (!p._overviews) p._overviews = {};
   // Ensure settings defaults
   if (!p._settings) p._settings = {fontSize:1,fontFamily:0,lineHeight:1};
+  if (p._settings.fontSizeCustom===undefined) p._settings.fontSizeCustom='';
+  if (p._settings.fontFamilyCustom===undefined) p._settings.fontFamilyCustom='';
+  if (p._settings.lineHeightCustom===undefined) p._settings.lineHeightCustom='';
   // Migration: expand ranged week labels (e.g. '第1-4周' → individual weeks)
   var expanded=0;
   ['y1-academic','y2-academic','y3-academic','y4-academic','y5-academic'].forEach(function(cid){
@@ -4492,9 +4510,12 @@ var _SETTINGS_CFG={
 }
 function applySettings(s){
   var root=document.documentElement
-  root.style.setProperty('--font-size-root',_SETTINGS_CFG.fontSize[s.fontSize]+'px')
-  root.style.setProperty('--font-family-body',_SETTINGS_CFG.fontFamily[s.fontFamily])
-  root.style.setProperty('--line-height-base',_SETTINGS_CFG.lineHeight[s.lineHeight])
+  var fs = s.fontSizeCustom ? parseFloat(s.fontSizeCustom) : _SETTINGS_CFG.fontSize[s.fontSize]
+  if (!isNaN(fs) && fs>0) root.style.setProperty('--font-size-root',fs+'px')
+  var ff = s.fontFamilyCustom || _SETTINGS_CFG.fontFamily[s.fontFamily]
+  root.style.setProperty('--font-family-body',ff)
+  var lh = s.lineHeightCustom ? parseFloat(s.lineHeightCustom) : _SETTINGS_CFG.lineHeight[s.lineHeight]
+  if (!isNaN(lh) && lh>0) root.style.setProperty('--line-height-base',lh)
 }
 function stgHighlight(grp,v){
   document.querySelectorAll('#stg'+grp+' .stg-btn').forEach(function(b){b.classList.toggle('a',parseInt(b.dataset.v)===v)})
@@ -4504,6 +4525,9 @@ function stgOpen(){
   stgHighlight('FontSize',s.fontSize)
   stgHighlight('FontFamily',s.fontFamily)
   stgHighlight('LineHeight',s.lineHeight)
+  document.getElementById('stgFontSizeCustom').value=s.fontSizeCustom||''
+  document.getElementById('stgFontFamilyCustom').value=s.fontFamilyCustom||''
+  document.getElementById('stgLineHeightCustom').value=s.lineHeightCustom||''
   document.getElementById('stgOverlay').classList.add('s')
   document.getElementById('stgModal').classList.add('s')
 }
@@ -4519,14 +4543,27 @@ document.querySelectorAll('.stg-row').forEach(function(row){
     btn.onclick=function(){
       var grp=row.id.replace('stg',''),v=parseInt(btn.dataset.v)
       var s=data._settings||{fontSize:1,fontFamily:0,lineHeight:1}
-      if(grp==='FontSize')s.fontSize=v
-      else if(grp==='FontFamily')s.fontFamily=v
-      else if(grp==='LineHeight')s.lineHeight=v
+      if(grp==='FontSize'){s.fontSize=v;s.fontSizeCustom=''}
+      else if(grp==='FontFamily'){s.fontFamily=v;s.fontFamilyCustom=''}
+      else if(grp==='LineHeight'){s.lineHeight=v;s.lineHeightCustom=''}
       data._settings=s;save()
       stgHighlight(grp,v)
       applySettings(s)
     }
   })
+})
+;['FontSize','FontFamily','LineHeight'].forEach(function(grp){
+  var input=document.getElementById('stg'+grp+'Custom')
+  if(!input)return
+  input.oninput=function(){
+    var s=data._settings||{fontSize:1,fontFamily:0,lineHeight:1}
+    var val=input.value.trim()
+    if(grp==='FontSize'){s.fontSizeCustom=val;stgHighlight('FontSize',-1)}
+    else if(grp==='FontFamily'){s.fontFamilyCustom=val;stgHighlight('FontFamily',-1)}
+    else if(grp==='LineHeight'){s.lineHeightCustom=val;stgHighlight('LineHeight',-1)}
+    data._settings=s;save()
+    applySettings(s)
+  }
 })
 document.addEventListener('keydown',function(e){
   if(e.key==='Escape'&&document.getElementById('stgModal').classList.contains('s'))stgClose()
