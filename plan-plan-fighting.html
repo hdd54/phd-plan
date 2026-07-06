@@ -282,8 +282,8 @@
 
 /* ── Line reveal for text (inspired by deepforge deck) ── */
 .line{display:block;overflow:hidden;vertical-align:top}
-.line > span{display:block;transform:translateY(110%);transition:transform 0.9s cubic-bezier(.16,1,.3,1)}
-.line.revealed > span{transform:translateY(0)}
+.line > span{display:block;transform:translateY(0);transition:transform 0.9s cubic-bezier(.16,1,.3,1)}
+/* When GSAP controls the reveal, it sets yPercent:110 inline; visible by default otherwise */
 
 /* ── Hero entrance state (hidden until GSAP triggers it) ── */
 #heroTitle.hero-entrance,
@@ -1173,10 +1173,10 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 
 <!-- HERO -->
 <header class="hero" id="mainHero">
-  <h1 class="hmark" id="heroTitle"><span class="line"><span>博士四年 · <em>全景规划</em></span></span></h1>
-  <div class="hline" id="heroHline"></div>
-  <p class="hsub" id="heroSub">北京航空航天大学 · 生物医学光子学</p>
-  <div class="hstats" id="heroStats">
+  <h1 class="hmark reveal in" id="heroTitle"><span class="line"><span>博士四年 · <em>全景规划</em></span></span></h1>
+  <div class="hline reveal in" id="heroHline"></div>
+  <p class="hsub reveal in" id="heroSub">北京航空航天大学 · 生物医学光子学</p>
+  <div class="hstats reveal in" id="heroStats">
     <div class="hstat"><div class="n">3</div><div class="l">SCI</div></div>
     <div class="hstat"><div class="n">2</div><div class="l">专利</div></div>
     <div class="hstat"><div class="n" id="statTotal">0</div><div class="l">任务</div></div>
