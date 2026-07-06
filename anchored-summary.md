@@ -27,23 +27,35 @@
 
 ## 最近变更
 
-### Bug 修复（commit `0ea4ad0`）
-1. **页面工具栏博士计划按钮丢失** — `renderPageToolbar()` 中 page0（"🎓 博士计划"）在切换到其他页面再切回时会消失。修复：在循环外独立渲染 page0 按钮，确保始终显示。
-2. **新页面底部显示残留内容** — 实为 footer 文本从默认页泄漏到新页面。修复：footer 内容存储于 `data._footer`，新增页面默认空字符串，可独立编辑。
-3. **addPageSection 未暴露全局** — 该函数定义在 IIFE 内，inline onclick 处理程序无法调用，导致新页面无法添加月份/年份。修复：通过 `window.addPageSection = addPageSection` 暴露到全局。
+### Cover 翻页书 + 动画过渡（commits `e24bda6` → `bf97830` → `281774d` → `46d59eb`）
+- **翻页书布局**：左侧书封面（计划书/全景规划/印章），右侧 TOC 目录（可翻页，每页 8 条）
+- **Three.js 交互式 3D 背景**：线框几何体（torus knot/icosahedron/dodecahedron/ring）+ 连接线 + 粒子系统 + 辉光精灵 + 滚动视差
+- **底部章节栏**：显示当前章节名和页码，IntersectionObserver 追踪
+- **TOC 点击跳转**：`switchPage` 暴露到全局，从目录直接跳转到目标页面
+- **删除独立 `cover.html`**：封面整合进主 HTML
 
-### 入口封面页（新增 `cover.html`）
-- 暗色学者主题，匹配主工具视觉风格（#0a0908 背景、#d4a574 金色、朱砂红印章）
-- 粒子画布背景：金色、朱砂红、翡翠绿、墨色四类粒子漂浮，鼠标悬停产生斥力效果
-- 渐入动画标题「博士四年 · 全景规划」+「研」字印章装饰
-- 统计数字行（SCI 目标 / 专利 / 存款 / 考公年限）
-- 「进入规划」按钮锚定到 `plan-plan-fighting.html`
-- 响应式适配 + prefers-reduced-motion 支持
+### Cover 进入动画（本次新增）
+- **点击「进入规划」触发书页翻动画**：右页（目录）沿书脊 Y 轴翻转 → 左页（封面）翻转 → 书整体缩小 → cover 上滑消失
+- **TOC 导航滑入动画**：翻页时 `.page-left` / `.page-right` 使新列表从正确方向滑入
+- **延迟暴露 UI**：翻页过程中底部栏/导航逐渐淡入，完成后自动滚动到内容区
 
-### 动态页面大标题格式统一（commit `d7f8991`）
-- `renderDynamicPage()` 新增 hero 节区：hmark（大标题）、hline（装饰分隔线）、hsub（副标题）、hstats（统计行），格式与 博士计划（page0）完全一致
-- 动态页面 hero 内容通过 `data[pageId + '-hmark']` 等 per-page key 独立持久化，编辑后刷新保留
-- 全局 blur 处理程序增加 `data-dyn-page` 判断：动态页面 hero 编辑存 per-page key，page0 hero 编辑沿用原 `data._overviews`
+### Three.js 场景增强（本次新增）
+- **连接线**：几何体之间的金色细线，随呼吸脉冲
+- **粒子系统**：400 颗浮动光点，缓慢漂移并反弹边界
+- **辉光精灵**：主几何体背后的径向渐变光晕，随脉冲缩放
+- **颜色呼吸**：四个几何体透明度错峰脉冲
+- **滚动视差**：场景旋转速度随滚动位置变化
+
+### 底栏交互增强（本次新增）
+- **点击跳转章节**：章节信息区（`chapter-info`）改为可点击，点击滚动到对应 section
+- **可视化指示**：↕ 方向图标悬浮时变色 + 标题 tooltip
+- **封面状态联动**：若在封面上点击底栏，优先触发 enterPlan() 进入
+
+### 功能修复（前期 commits）
+1. **页面工具栏博士计划按钮丢失** — page0 在切换后消失，修复为独立渲染
+2. **新页面底部显示残留内容** — footer 改为 `data._footer` 可编辑存储
+3. **addPageSection 未暴露全局** — 通过 `window.addPageSection` 修复
+4. **动态页面大标题格式统一** — hero 节区 per-page key 持久化
 
 ## 设计系统
 - **配色**：`#0a0908`（墨黑底）、`#d4a574`（金色主题）、`#CC2936`（朱砂红）、`#3b7a5c`（翡翠绿）、`#f4f1ea`（暖白文字）

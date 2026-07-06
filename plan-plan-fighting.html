@@ -86,6 +86,8 @@
   justify-content:center;align-items:center;
   padding:clamp(.6rem,1.5vw,1.2rem);
   overflow:hidden;
+  -webkit-backface-visibility:hidden;
+  backface-visibility:hidden;
 }
 .book-left{
   border-right:none;
@@ -277,6 +279,37 @@
 
 @keyframes coverRevealUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
 @keyframes coverFadeIn{from{opacity:0}to{opacity:1}}
+
+/* ── Line reveal for text (inspired by deepforge deck) ── */
+.line{display:block;overflow:hidden;vertical-align:top}
+.line > span{display:block;transform:translateY(110%);transition:transform 0.9s cubic-bezier(.16,1,.3,1)}
+.line.revealed > span{transform:translateY(0)}
+
+/* ── Hero entrance state (hidden until GSAP triggers it) ── */
+#heroTitle.hero-entrance,
+#heroHline.hero-entrance,
+#heroSub.hero-entrance,
+#heroStats.hero-entrance{opacity:0;transform:translateY(18px);filter:blur(4px);animation:none!important}
+
+/* ── Cover Enter Animation States ── */
+#coverSection.entering{z-index:20}
+#coverSection.entered{display:none}
+
+/* ── TOC page slide transition ── */
+.toc-list.page-left{
+  animation:tocSlideLeft .35s ease-out forwards;
+}
+.toc-list.page-right{
+  animation:tocSlideRight .35s ease-out forwards;
+}
+@keyframes tocSlideLeft{
+  0%{transform:translateX(30px);opacity:0}
+  100%{transform:translateX(0);opacity:1}
+}
+@keyframes tocSlideRight{
+  0%{transform:translateX(-30px);opacity:0}
+  100%{transform:translateX(0);opacity:1}
+}
 
 /* ── Responsive ── */
 @media(max-width:680px){
@@ -546,12 +579,28 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
   position:absolute;left:clamp(.4rem,1.2vw,.8rem);top:50%;transform:translateY(-50%);
   display:flex;align-items:center;gap:clamp(.25rem,.6vw,.5rem);
   font-size:clamp(.45rem,.75vw,.55rem);letter-spacing:.15em;font-weight:300;
-  color:var(--muted);pointer-events:none;
+  color:var(--muted);cursor:pointer;
   font-family:var(--font-sans);
+  padding:clamp(.15rem,.3vw,.25rem) clamp(.2rem,.4vw,.35rem);
+  border-radius:var(--rs);
+  transition:background .25s;
+}
+.btm-bar .chapter-info:hover{
+  background:rgba(212,165,116,.06);
+}
+.btm-bar .chapter-info:active{
+  background:rgba(212,165,116,.1);
 }
 .btm-bar .chapter-info .ci-current{color:var(--accent);text-transform:uppercase}
 .btm-bar .chapter-info .ci-page{font-family:var(--font-serif);color:var(--fg-dim)}
 .btm-bar .chapter-info .ci-divider{width:1px;height:clamp(8px,1.2vw,12px);background:var(--line-2)}
+.btm-bar .chapter-info .ci-jump{
+  font-size:clamp(.4rem,.6vw,.45rem);color:var(--muted);
+  transition:transform .25s, color .25s;
+}
+.btm-bar .chapter-info:hover .ci-jump{
+  color:var(--accent);transform:translateY(1px);
+}
 
 /* Fixed 3D background container */
 #threeScene{
@@ -1083,13 +1132,13 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
             <span class="toc-page-info" id="tocPageInfo">1/1</span>
             <button class="toc-page-btn" id="tocNext" disabled>▶</button>
           </div>
-          <a class="toc-enter-btn" href="#planAppStart">进入规划 →</a>
+          <button class="toc-enter-btn" onclick="enterPlan()">进入规划 →</button>
         </div>
       </div>
     </div>
   </div>
-  <button class="scroll-hint" onclick="document.getElementById('planAppStart').scrollIntoView({behavior:'smooth'})">
-    <span>向下滚动</span>
+  <button class="scroll-hint" onclick="enterPlan()">
+    <span>进入规划</span>
     <span class="arrow-down">⌄</span>
   </button>
 </section>
@@ -1123,11 +1172,11 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 <div id="page0Content" class="page-content a">
 
 <!-- HERO -->
-<header class="hero">
-  <div class="hmark reveal in">博士四年 · <em>全景规划</em></div>
-  <div class="hline"></div>
-  <p class="hsub">北京航空航天大学 · 生物医学光子学</p>
-  <div class="hstats">
+<header class="hero" id="mainHero">
+  <h1 class="hmark" id="heroTitle"><span class="line"><span>博士四年 · <em>全景规划</em></span></span></h1>
+  <div class="hline" id="heroHline"></div>
+  <p class="hsub" id="heroSub">北京航空航天大学 · 生物医学光子学</p>
+  <div class="hstats" id="heroStats">
     <div class="hstat"><div class="n">3</div><div class="l">SCI</div></div>
     <div class="hstat"><div class="n">2</div><div class="l">专利</div></div>
     <div class="hstat"><div class="n" id="statTotal">0</div><div class="l">任务</div></div>
@@ -1219,10 +1268,11 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 
 <!-- ===== STICKY BOTTOM BAR ===== -->
 <div class="btm-bar">
-  <div class="chapter-info">
+  <div class="chapter-info" title="点击跳转至当前章节">
     <span class="ci-current" id="currentSection">封面</span>
     <span class="ci-divider"></span>
     <span class="ci-page" id="pageIndicator">0/0</span>
+    <span class="ci-jump">↕</span>
   </div>
   <button class="bb x" id="editToggle2">✎ 编辑</button>
   <button class="bb" id="expandAll2">📂 展开</button>
@@ -1555,6 +1605,7 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 
 <!-- Cover particle animation -->
 <script>
@@ -1642,18 +1693,43 @@ function render(){
       +'<span class="ti-arrow">→</span></a>';}
   list.innerHTML=html;info.textContent=(pg+1)+'/'+t;
   prev.disabled=pg<=0;next.disabled=pg>=t-1;
+  // Apply slide animation direction
+  list.className = 'toc-list';
+  if (navDir === 'left') { list.classList.add('page-left'); }
+  else if (navDir === 'right') { list.classList.add('page-right'); }
+  navDir = '';
   list.querySelectorAll('.toc-item').forEach(function(el){el.addEventListener('click',function(e){
-    sessionStorage.setItem('tocPage',this.dataset.page);
+    var cover = document.getElementById('coverSection');
+    var page = this.dataset.page;
+    // If cover is still visible, enter first then switch
+    if (cover && !cover.classList.contains('entered')) {
+      e.preventDefault();
+      sessionStorage.setItem('tocPage', page);
+      window.enterPlan();
+      // After enter animation, switch to the page
+      var checkSwitch = setInterval(function(){
+        if (cover.classList.contains('entered')) {
+          clearInterval(checkSwitch);
+          if (typeof window.switchPage === 'function') window.switchPage(page);
+        }
+      }, 100);
+      return;
+    }
+    sessionStorage.setItem('tocPage',page);
     if (typeof window.switchPage === 'function') {
       e.preventDefault();
-      window.switchPage(this.dataset.page);
-      // Also scroll to the app area after switch
+      window.switchPage(page);
       document.getElementById('planAppStart')?.scrollIntoView({behavior:'smooth'});
     }
   })});
 }
-prev.addEventListener('click',function(){if(pg>0){pg--;render()}});
-next.addEventListener('click',function(){if(pg<Math.ceil(items.length/PER)-1){pg++;render()}});
+var navDir = '';
+prev.addEventListener('click',function(){
+  if(pg>0){pg--;navDir='right';render()}
+});
+next.addEventListener('click',function(){
+  if(pg<Math.ceil(items.length/PER)-1){pg++;navDir='left';render()}
+});
 render();
 window.addEventListener('hashchange',function(){if(location.hash==='')render()});
 })();
@@ -1663,11 +1739,123 @@ window.addEventListener('hashchange',function(){if(location.hash==='')render()})
 (function(){
 'use strict';
 
+// ── Cover Enter Animation ──
+window.enterPlan = function(){
+  var cover = document.getElementById('coverSection');
+  var book = cover && cover.querySelector('.book');
+  if (!cover || !book || cover.classList.contains('entering') || cover.classList.contains('entered')) return;
+  cover.classList.add('entering');
+  document.body.classList.remove('cp');
+
+  // Build all hero entrance targets
+  var heroTitle = document.getElementById('heroTitle');
+  var heroTitleLine = heroTitle && heroTitle.querySelector('.line > span');
+  var heroHline = document.getElementById('heroHline');
+  var heroSub = document.getElementById('heroSub');
+  var heroStats = document.getElementById('heroStats');
+  var heroEls = [heroTitle, heroHline, heroSub, heroStats].filter(Boolean);
+
+  // Mark hero elements for entrance animation
+  if (heroTitle) heroTitle.classList.add('hero-entrance');
+  if (heroHline) heroHline.classList.add('hero-entrance');
+  if (heroSub) heroSub.classList.add('hero-entrance');
+  if (heroStats) heroStats.classList.add('hero-entrance');
+
+  // Build the GSAP timeline for a smooth deck-style transition
+  var tl = gsap.timeline({
+    onComplete: function(){
+      cover.classList.remove('entering');
+      cover.classList.add('entered');
+      // Remove hero-entrance state so normal scroll visibility takes over
+      heroEls.forEach(function(el){ el.classList.remove('hero-entrance'); });
+      // Scroll to content after a tiny delay for paint
+      setTimeout(function(){
+        var target = document.getElementById('planAppStart');
+        if (target) target.scrollIntoView({behavior:'smooth'});
+      }, 100);
+    }
+  });
+
+  // Phase 1: Book pages blur+fade+scale out with emphasis timing (like deck page leaving)
+  tl.to(book.querySelectorAll('.book-left, .book-right'), {
+    opacity: 0,
+    scale: 0.85,
+    y: -20,
+    filter: 'blur(8px)',
+    duration: 0.7,
+    stagger: 0.08,
+    ease: 'power2.in'
+  }, 0)
+  // Book spine fades
+  .to(book.querySelector('.book-spine'), {
+    opacity: 0,
+    duration: 0.3
+  }, 0.15);
+
+  // Phase 2: Cover section slides up with blur (like deck page switching out)
+  tl.to(cover, {
+    y: '-100%',
+    opacity: 0,
+    filter: 'blur(6px)',
+    duration: 0.8,
+    ease: 'cubic-bezier(.16,1,.3,1)'
+  }, 0.5);
+
+  // Phase 3: Hero section entrance — blur clears + fade + translate
+  // Reset hero elements to hidden, then animate in
+  tl.call(function(){
+    // Temporarily reset hero elements so they can animate in
+    heroEls.forEach(function(el){
+      gsap.set(el, { opacity: 0, y: 18, filter: 'blur(4px)', clearProps: 'transform,filter,opacity' });
+      gsap.set(el, { opacity: 0, y: 18, filter: 'blur(4px)' });
+    });
+  }, null, null, '+=0.05')
+  .to(heroTitle, {
+    opacity: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    duration: 0.7,
+    ease: 'cubic-bezier(.16,1,.3,1)'
+  }, '+=0.05')
+  .call(function(){
+    // Trigger line reveal after title appears — use yPercent to match CSS translateY(%)
+    if(heroTitleLine) gsap.fromTo(heroTitleLine, { yPercent: 110 }, { yPercent: 0, duration: 0.9, ease: 'power3.out' });
+  }, null, null, '-=0.3')
+  .to(heroHline, {
+    opacity: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    duration: 0.7,
+    ease: 'cubic-bezier(.16,1,.3,1)'
+  }, '-=0.3')
+  .to(heroSub, {
+    opacity: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    duration: 0.7,
+    ease: 'cubic-bezier(.16,1,.3,1)'
+  }, '-=0.25')
+  .to(heroStats, {
+    opacity: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    duration: 0.7,
+    ease: 'cubic-bezier(.16,1,.3,1)'
+  }, '-=0.2');
+
+  // Phase 4: Clean UI state
+  tl.set(cover, { clearProps: 'y,opacity,filter' }, '+=0.1');
+};
+
 // ── Cover visibility toggle ──
 (function(){
   var cover = document.getElementById('coverSection');
   if (!cover) return;
-  function check(){document.body.classList.toggle('cp',cover.getBoundingClientRect().bottom > 0)}
+  function check(){
+    if (!cover.classList.contains('entered')) {
+      document.body.classList.toggle('cp',cover.getBoundingClientRect().bottom > 0);
+    }
+  }
   window.addEventListener('scroll',check,{passive:true});
   window.addEventListener('resize',check);
   check();
@@ -4842,38 +5030,124 @@ if ('serviceWorker' in navigator) {
   var group = new THREE.Group();
   scene.add(group);
 
-  // Torus Knot — main piece, amber wireframe
+  var GOLD = 0xd4a574, TEAL = 0x4a7c8c, VERM = 0xe85d2f, JADE = 0x3b7a5c;
+
+  // Helper: glow sprite via canvas
+  function makeGlow(color, size) {
+    var c = document.createElement('canvas');
+    c.width = c.height = 128;
+    var cx = c.getContext('2d');
+    var g = cx.createRadialGradient(64, 64, 0, 64, 64, 64);
+    var hex = '#' + new THREE.Color(color).getHexString();
+    g.addColorStop(0, hex + '99');
+    g.addColorStop(0.3, hex + '44');
+    g.addColorStop(1, hex + '00');
+    cx.fillStyle = g; cx.fillRect(0, 0, 128, 128);
+    var tex = new THREE.CanvasTexture(c);
+    var mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending });
+    var sp = new THREE.Sprite(mat);
+    sp.scale.set(size, size, 1);
+    return sp;
+  }
+
+  // 1. Main geometries (enhanced with inner fill + wireframe)
   var knot = new THREE.Mesh(
     new THREE.TorusKnotGeometry(1.2, 0.35, 100, 16),
-    new THREE.MeshBasicMaterial({ color: 0xd4a574, wireframe: true, transparent: true, opacity: 0.18 })
+    new THREE.MeshBasicMaterial({ color: GOLD, wireframe: true, transparent: true, opacity: 0.22 })
   );
   knot.position.set(0, 0, 0);
   group.add(knot);
 
-  // Icosahedron — teal
+  // Glow behind knot
+  var knotGlow = makeGlow(GOLD, 4.5);
+  knotGlow.position.set(0, 0, -0.2);
+  group.add(knotGlow);
+
   var ico = new THREE.Mesh(
     new THREE.IcosahedronGeometry(0.6, 0),
-    new THREE.MeshBasicMaterial({ color: 0x4a7c8c, wireframe: true, transparent: true, opacity: 0.12 })
+    new THREE.MeshBasicMaterial({ color: TEAL, wireframe: true, transparent: true, opacity: 0.15 })
   );
   ico.position.set(2.5, -1.2, -1);
   group.add(ico);
 
-  // Dodecahedron — vermilion
   var dod = new THREE.Mesh(
     new THREE.DodecahedronGeometry(0.45, 0),
-    new THREE.MeshBasicMaterial({ color: 0xe85d2f, wireframe: true, transparent: true, opacity: 0.1 })
+    new THREE.MeshBasicMaterial({ color: VERM, wireframe: true, transparent: true, opacity: 0.12 })
   );
   dod.position.set(-2.2, 1.4, -1.5);
   group.add(dod);
 
-  // Small ring — amber
   var ring = new THREE.Mesh(
     new THREE.TorusGeometry(0.5, 0.08, 16, 32),
-    new THREE.MeshBasicMaterial({ color: 0xd4a574, wireframe: true, transparent: true, opacity: 0.08 })
+    new THREE.MeshBasicMaterial({ color: GOLD, wireframe: true, transparent: true, opacity: 0.1 })
   );
   ring.position.set(-1.5, -1.8, 0.5);
   ring.rotation.x = Math.PI / 3;
   group.add(ring);
+
+  // 2. Connecting lines between geometries
+  var positions = [
+    knot.position, ico.position, dod.position, ring.position
+  ];
+  var pairs = [[0,1],[0,2],[0,3],[1,2],[1,3],[2,3]];
+  var lineGeo = new THREE.BufferGeometry();
+  var verts = [];
+  pairs.forEach(function(p){
+    var a = positions[p[0]], b = positions[p[1]];
+    verts.push(a.x, a.y, a.z, b.x, b.y, b.z);
+  });
+  lineGeo.setAttribute('position', new THREE.Float32BufferAttribute(verts, 3));
+  var lineMat = new THREE.LineBasicMaterial({ color: GOLD, transparent: true, opacity: 0.06 });
+  var lines = new THREE.LineSegments(lineGeo, lineMat);
+  group.add(lines);
+
+  // 3. Particle system (300+ small dots)
+  var particleCount = 400;
+  var pGeo = new THREE.BufferGeometry();
+  var pPos = new Float32Array(particleCount * 3);
+  var pSizes = new Float32Array(particleCount);
+  var pSpeeds = [];
+  for (var i = 0; i < particleCount; i++) {
+    pPos[i*3] = (Math.random() - 0.5) * 14;
+    pPos[i*3+1] = (Math.random() - 0.5) * 10;
+    pPos[i*3+2] = (Math.random() - 0.5) * 8 - 1;
+    pSizes[i] = Math.random() * 2 + 0.5;
+    pSpeeds.push({
+      x: (Math.random() - 0.5) * 0.002,
+      y: (Math.random() - 0.5) * 0.002,
+      z: (Math.random() - 0.5) * 0.002
+    });
+  }
+  pGeo.setAttribute('position', new THREE.Float32BufferAttribute(pPos, 3));
+  pGeo.setAttribute('size', new THREE.Float32BufferAttribute(pSizes, 1));
+
+  // Create a dot canvas texture
+  var dotCanvas = document.createElement('canvas');
+  dotCanvas.width = dotCanvas.height = 32;
+  var dotCtx = dotCanvas.getContext('2d');
+  var dg = dotCtx.createRadialGradient(16, 16, 0, 16, 16, 16);
+  dg.addColorStop(0, 'rgba(212,165,116,0.8)');
+  dg.addColorStop(0.3, 'rgba(212,165,116,0.3)');
+  dg.addColorStop(1, 'rgba(212,165,116,0)');
+  dotCtx.fillStyle = dg; dotCtx.fillRect(0, 0, 32, 32);
+  var dotTex = new THREE.CanvasTexture(dotCanvas);
+
+  var pMat = new THREE.PointsMaterial({
+    color: GOLD, map: dotTex, transparent: true,
+    opacity: 0.3, size: 0.08, blending: THREE.AdditiveBlending,
+    depthWrite: false, sizeAttenuation: true
+  });
+  var particles = new THREE.Points(pGeo, pMat);
+  group.add(particles);
+  // Store speeds for animation
+  particles.userData = { speeds: pSpeeds };
+
+  // 4. Subtle ambient glow sphere
+  var ambientGlow = new THREE.Mesh(
+    new THREE.SphereGeometry(2.8, 16, 16),
+    new THREE.MeshBasicMaterial({ color: GOLD, transparent: true, opacity: 0.015, wireframe: false })
+  );
+  group.add(ambientGlow);
 
   // Mouse tracking
   var mouseX = 0, mouseY = 0;
@@ -4881,6 +5155,12 @@ if ('serviceWorker' in navigator) {
     mouseX = (e.clientX / window.innerWidth) * 2 - 1;
     mouseY = (e.clientY / window.innerHeight) * 2 - 1;
   });
+
+  // Scroll tracking for parallax
+  var scrollY = 0;
+  window.addEventListener('scroll', function() {
+    scrollY = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+  }, { passive: true });
 
   window.addEventListener('resize', function() {
     camera.aspect = window.innerWidth / window.innerHeight;
@@ -4894,22 +5174,64 @@ if ('serviceWorker' in navigator) {
     requestAnimationFrame(animate);
     var t = clock.getElapsedTime();
 
-    group.rotation.x = Math.sin(t * 0.08) * 0.15 + mouseY * 0.05;
-    group.rotation.y = t * 0.06 + mouseX * 0.08;
+    // Color pulsing
+    var pulse1 = Math.sin(t * 0.4) * 0.5 + 0.5;
+    var pulse2 = Math.sin(t * 0.3 + 1) * 0.5 + 0.5;
+    var pulse3 = Math.sin(t * 0.5 + 2) * 0.5 + 0.5;
 
+    knot.material.opacity = 0.14 + pulse1 * 0.14;
+    ico.material.opacity = 0.08 + pulse2 * 0.12;
+    dod.material.opacity = 0.06 + pulse3 * 0.10;
+    ring.material.opacity = 0.05 + pulse1 * 0.08;
+
+    // Glow pulsing
+    knotGlow.scale.setScalar(4 + pulse1 * 1.5);
+    knotGlow.material.opacity = 0.15 + pulse1 * 0.15;
+
+    // Particles drift
+    var pPosAttr = particles.geometry.attributes.position;
+    var pArr = pPosAttr.array;
+    var spds = particles.userData.speeds;
+    for (var pi = 0; pi < particleCount; pi++) {
+      pArr[pi*3] += spds[pi].x;
+      pArr[pi*3+1] += spds[pi].y + Math.sin(t * 0.05 + pi) * 0.0003;
+      pArr[pi*3+2] += spds[pi].z;
+      // Bound check
+      if (Math.abs(pArr[pi*3]) > 7) spds[pi].x *= -1;
+      if (Math.abs(pArr[pi*3+1]) > 5) spds[pi].y *= -1;
+      if (Math.abs(pArr[pi*3+2]) > 5) spds[pi].z *= -1;
+    }
+    pPosAttr.needsUpdate = true;
+
+    // Connecting lines pulse
+    lines.material.opacity = 0.03 + pulse2 * 0.06;
+
+    // Ambient glow pulse
+    ambientGlow.material.opacity = 0.01 + pulse3 * 0.015;
+
+    // Parallax: slight vertical shift based on scroll
+    var scrollOffset = scrollY * 0.3;
+
+    // Group rotation — mouse driven with scroll influence
+    var spdFactor = 0.06 + scrollY * 0.04;
+    group.rotation.x = Math.sin(t * 0.08) * 0.15 + mouseY * 0.05 - scrollOffset * 0.05;
+    group.rotation.y = t * spdFactor + mouseX * 0.08;
+
+    // Individual geometry motions (enhanced)
     knot.rotation.x = Math.sin(t * 0.12) * 0.2;
     knot.rotation.z = Math.cos(t * 0.1) * 0.15;
 
-    ico.rotation.x = t * 0.15;
-    ico.rotation.y = t * 0.2;
-    ico.position.y = -1.2 + Math.sin(t * 0.3) * 0.3;
+    ico.rotation.x = t * 0.2 + pulse2 * 0.3;
+    ico.rotation.y = t * 0.25;
+    ico.position.y = -1.2 + Math.sin(t * 0.3) * 0.4 + pulse1 * 0.2;
 
-    dod.rotation.x = t * 0.2;
-    dod.rotation.z = t * 0.15;
-    dod.position.x = -2.2 + Math.sin(t * 0.15) * 0.2;
+    dod.rotation.x = t * 0.25 + pulse3 * 0.2;
+    dod.rotation.z = t * 0.2;
+    dod.position.x = -2.2 + Math.sin(t * 0.15) * 0.3;
+    dod.position.y = 1.4 + Math.cos(t * 0.2) * 0.2;
 
-    ring.rotation.z = t * 0.1;
-    ring.position.y = -1.8 + Math.sin(t * 0.2) * 0.2;
+    ring.rotation.z = t * 0.12;
+    ring.position.y = -1.8 + Math.sin(t * 0.2) * 0.25;
 
     renderer.render(scene, camera);
   }
@@ -4922,16 +5244,27 @@ if ('serviceWorker' in navigator) {
 (function(){
   var secEl = document.getElementById('currentSection');
   var pageEl = document.getElementById('pageIndicator');
+  var chapterInfo = document.querySelector('.chapter-info');
   if (!secEl || !pageEl) return;
 
   var coverSection = document.getElementById('coverSection');
   var allSections = document.querySelectorAll('.sec');
   var total = allSections.length;
+  var currentTarget = null; // DOM element for current section
+
+  // Helper: update display + target
+  function setSection(name, page, targetEl) {
+    secEl.textContent = name;
+    pageEl.textContent = page;
+    currentTarget = targetEl;
+    if (targetEl) secEl.dataset.targetId = targetEl.id || '';
+    else delete secEl.dataset.targetId;
+  }
 
   // Watch cover separately
   if (coverSection) {
     new IntersectionObserver(function(e) {
-      if (e[0].isIntersecting) { secEl.textContent = '封面'; pageEl.textContent = '0/0'; }
+      if (e[0].isIntersecting) { setSection('封面', '0/0', null); }
     }, { threshold: 0.1 }).observe(coverSection);
   }
 
@@ -4942,11 +5275,25 @@ if ('serviceWorker' in navigator) {
         var label = sec.querySelector('.ey');
         var h2 = sec.querySelector('h2');
         var name = label ? label.textContent.trim() : (h2 ? h2.textContent.replace(/[🔬📋💰❤️📊🗂️]/g,'').trim() : '');
-        secEl.textContent = name || '计划';
-        pageEl.textContent = (idx + 1) + '/' + total;
+        setSection(name || '计划', (idx + 1) + '/' + total, sec);
       }
     }, { threshold: 0.3 }).observe(sec);
   });
+
+  // Click to jump
+  if (chapterInfo) {
+    chapterInfo.addEventListener('click', function() {
+      // If cover section, enter plan first
+      if (currentTarget === null) {
+        if (coverSection && !coverSection.classList.contains('entered')) {
+          window.enterPlan && window.enterPlan();
+          return;
+        }
+        return;
+      }
+      currentTarget.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
 })();
 
 })();
