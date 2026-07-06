@@ -1263,6 +1263,22 @@ function ensure(p) {
     }
   });
   if(expanded>0)save();
+  // === FIX: ensure every week across all cards has exactly 7 days (周一~周日) ===
+  var _days7 = ['周一','周二','周三','周四','周五','周六','周日'];
+  Object.entries(p).forEach(function(_a){
+    var _v=_a[1];
+    if(!Array.isArray(_v))return;
+    _v.forEach(function(_w){
+      if(_w&&typeof _w==='object'&&_w.d){
+        if(!Array.isArray(_w.d))_w.d=_days7.map(function(){return ''});
+        else if(_w.d.length<7){
+          var _more=_days7.slice(_w.d.length).map(function(){return ''});
+          _w.d=_w.d.concat(_more);
+        }
+        if(_w.d.length>7)_w.d.length=7;
+      }
+    });
+  });
 }
 function cloneDeep(arr){return arr.map(w=>({w:w.w,s:w.s||'',d:[...w.d]}))}
 function save(){localStorage.setItem(SK,JSON.stringify(data));saveOpenState();}
@@ -1274,6 +1290,18 @@ function renderWeeks(cardId) {
   if (!data[cardId]) data[cardId] = [];
   const weeks = data[cardId];
   if (!openState[cardId]) openState[cardId] = {};
+
+  // === FIX: ensure every week has exactly 7 days (周一~周日) ===
+  weeks.forEach(week => {
+    if (!week.d) week.d = DAYS.map(() => '');
+    else if (week.d.length < 7) {
+      // Pad missing days with empty strings
+      const pad = DAYS.slice(week.d.length).map(() => '');
+      week.d = [...week.d, ...pad];
+    }
+    // Also cap at 7 if somehow longer
+    if (week.d.length > 7) week.d.length = 7;
+  });
 
   // Save current open states before re-render
   container.querySelectorAll('.week').forEach(el => {
