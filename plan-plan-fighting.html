@@ -1642,7 +1642,15 @@ function render(){
       +'<span class="ti-arrow">→</span></a>';}
   list.innerHTML=html;info.textContent=(pg+1)+'/'+t;
   prev.disabled=pg<=0;next.disabled=pg>=t-1;
-  list.querySelectorAll('.toc-item').forEach(function(el){el.addEventListener('click',function(){sessionStorage.setItem('tocPage',this.dataset.page)})});
+  list.querySelectorAll('.toc-item').forEach(function(el){el.addEventListener('click',function(e){
+    sessionStorage.setItem('tocPage',this.dataset.page);
+    if (typeof window.switchPage === 'function') {
+      e.preventDefault();
+      window.switchPage(this.dataset.page);
+      // Also scroll to the app area after switch
+      document.getElementById('planAppStart')?.scrollIntoView({behavior:'smooth'});
+    }
+  })});
 }
 prev.addEventListener('click',function(){if(pg>0){pg--;render()}});
 next.addEventListener('click',function(){if(pg<Math.ceil(items.length/PER)-1){pg++;render()}});
@@ -2222,6 +2230,7 @@ function switchPage(pageId) {
   }
   renderPageToolbar();
 }
+window.switchPage = switchPage; // expose globally for TOC navigation
 
 function renderDynamicPage(pageId) {
   var container = document.getElementById('pageContent');
