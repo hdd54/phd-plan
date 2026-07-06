@@ -1903,16 +1903,25 @@ function addPageSection(pageId) {
   if (!page) return;
   
   var type = page.type;
-  var ans = prompt('输入' + (type === 'month' ? '月份数字（如：3）' : '年份数字（如：1）'), '1');
+  var ans = prompt('输入新' + (type === 'month' ? '月份数字，如 2 表示二月' : '年份数字，如 2 表示第二年'), '');
+  if (ans === null || ans === '') return;
   var num = parseInt(ans);
-  if (isNaN(num) || num < 1) return;
+  if (isNaN(num) || num < 1) { showToast('⚠️ 请输入有效数字'); return; }
   
   var secId = type === 'month' ? 'm' + num : 'y' + num;
   var secLabel = type === 'month' ? (['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'][num-1] || num+'月') : '第'+num+'年';
   
+  // Check if section already exists
+  for (var key in data) {
+    if (key.indexOf(pageId + '-' + secId + '-') === 0) {
+      showToast('⚠️ 「' + secLabel + '」已存在');
+      return;
+    }
+  }
+  
   for (var ci = 0; ci < page.categories.length; ci++) {
     var cardId = pageId + '-' + secId + '-' + page.categories[ci].id;
-    if (!data[cardId]) data[cardId] = [];
+    data[cardId] = [];
   }
   save();
   renderDynamicPage(pageId);
