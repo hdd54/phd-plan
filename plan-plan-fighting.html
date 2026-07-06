@@ -1759,12 +1759,12 @@ function render(){
       var checkSwitch = setInterval(function(){
         if (cover.classList.contains('entered')) {
           clearInterval(checkSwitch);
+          sessionStorage.removeItem('tocPage');
           if (typeof window.switchPage === 'function') window.switchPage(page);
         }
       }, 100);
       return;
     }
-    sessionStorage.setItem('tocPage',page);
     if (typeof window.switchPage === 'function') {
       e.preventDefault();
       window.switchPage(page);
