@@ -1,4 +1,4 @@
-const CACHE = 'phd-plan-v5';
+const CACHE = 'phd-plan-v6';
 const STATIC_URLS = ['manifest.json','icon.svg'];
 
 self.addEventListener('install', e => {
