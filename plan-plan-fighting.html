@@ -438,9 +438,9 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 .yni.a .yl{color:var(--cinnabar);letter-spacing:.18em;text-shadow:0 0 8px rgba(204,41,54,.15)}
 
 /* ===== sections ===== */
-.sec{position:relative;z-index:1;max-width:clamp(600px,90vw,1020px);margin:0 auto;padding:clamp(1.8rem,4.5vw,2.8rem) clamp(.6rem,2vw,1.2rem)}
+.sec{position:relative;z-index:1;max-width:clamp(600px,var(--page-width,90vw),1020px);margin:0 auto;padding:clamp(1.8rem,4.5vw,2.8rem) clamp(.6rem,2vw,1.2rem)}
 .sec:last-of-type{padding-bottom:clamp(3rem,6vw,4.5rem)}
-.sec-divider{position:relative;z-index:1;max-width:clamp(600px,90vw,1020px);margin:0 auto;padding:0 clamp(.6rem,2vw,1.2rem)}
+.sec-divider{position:relative;z-index:1;max-width:clamp(600px,var(--page-width,90vw),1020px);margin:0 auto;padding:0 clamp(.6rem,2vw,1.2rem)}
 .sec-divider hr{border:none;height:1px;background:linear-gradient(90deg,transparent,rgba(212,165,116,.12) 25%,rgba(212,165,116,.12) 75%,transparent);margin:0 auto;max-width:50%}
 .sh{margin-bottom:clamp(1rem,2.5vw,1.4rem)}
 .sh .ey{font-size:clamp(.5rem,1vw,.6rem);letter-spacing:.35em;color:var(--accent);margin-bottom:.2rem;display:flex;align-items:center;gap:.35rem;text-transform:uppercase;font-weight:300}
@@ -889,7 +889,7 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 /* Badge on button showing today's count */
 .pomo-badge{position:absolute;top:-4px;right:-4px;width:14px;height:14px;border-radius:50%;background:var(--accent-2);color:var(--bg);font-size:8px;font-weight:700;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;pointer-events:none;font-family:var(--font-sans)}
 .pomo-badge.s{opacity:1}
-.pomo-float{position:fixed;right:clamp(3.2rem,5vw,4.2rem);bottom:clamp(5.5rem,8vw,6rem);z-index:251;background:rgba(10,9,8,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--line-2);border-radius:var(--r);padding:clamp(.35rem,.6vw,.45rem) clamp(.5rem,.8vw,.6rem);display:none;flex-direction:column;align-items:center;gap:.08rem;cursor:pointer;transition:all .25s;box-shadow:0 8px 32px rgba(0,0,0,.45);min-width:clamp(4rem,7vw,5rem)}
+.pomo-float{position:fixed;right:clamp(3.2rem,5vw,4.2rem);bottom:clamp(5.5rem,8vw,6rem);z-index:251;background:rgba(10,9,8,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--line-2);border-radius:var(--r);padding:clamp(.35rem,.6vw,.45rem) clamp(.5rem,.8vw,.6rem) clamp(.45rem,.7vw,.55rem);display:none;flex-direction:column;align-items:center;gap:.08rem;cursor:pointer;transition:all .25s;box-shadow:0 8px 32px rgba(0,0,0,.45);min-width:clamp(4rem,7vw,5rem)}
 .pomo-float.s{display:flex;animation:floatIn .3s ease}
 .pomo-float:hover{border-color:var(--accent);box-shadow:0 8px 40px rgba(212,165,116,.15)}
 .pomo-float.dragging{cursor:grabbing;user-select:none;opacity:.85;transition:none!important}
@@ -903,6 +903,9 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 .pomo-float.break .pf-time{color:var(--accent-3)}
 .pf-bar{width:100%;height:2px;background:var(--line);border-radius:2px;overflow:hidden;margin-top:.06rem}
 .pf-bar .in{height:100%;border-radius:2px;transition:width .5s}
+.pf-sleep{width:14px;height:14px;border-radius:50%;border:1px solid var(--line-2);background:rgba(10,9,8,.95);color:var(--accent);font-size:8px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;margin-top:.1rem;opacity:0;transition:opacity .2s}
+.pomo-float:hover .pf-sleep{opacity:.6}
+.pf-sleep:hover{opacity:1!important;border-color:var(--accent);background:rgba(212,165,116,.15)}
 /* Modal overlay */
 .pomo-overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .25s}
 .pomo-overlay.s{opacity:1;pointer-events:auto}
@@ -1412,6 +1415,14 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
         <input class="stg-input" id="stgLineHeightCustom" type="number" placeholder="自定义行距" min="0.8" max="4" step="0.1">
       </div>
     </div>
+    <div class="stg-group">
+      <div class="stg-label">页面宽度</div>
+      <div class="stg-row" id="stgPageWidth">
+        <button class="stg-btn a" data-v="0">默认</button>
+        <button class="stg-btn" data-v="1">宽</button>
+        <button class="stg-btn" data-v="2">最宽</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1432,6 +1443,7 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
   <div class="pf-label" id="pfLabel">专注</div>
   <div class="pf-time" id="pfTime">25:00</div>
   <div class="pf-bar" id="pfBar"></div>
+  <button class="pf-sleep" id="pfSleepBtn" title="睡眠模式">🌙</button>
 </div>
 <div class="pomo-overlay" id="pomoOverlay"></div>
 <div class="pomo-modal" id="pomoModal">
@@ -1997,10 +2009,11 @@ function ensure(p) {
   // Ensure overviews storage
   if (!p._overviews) p._overviews = {};
   // Ensure settings defaults
-  if (!p._settings) p._settings = {fontSize:1,fontFamily:0,lineHeight:1};
+  if (!p._settings) p._settings = {fontSize:1,fontFamily:0,lineHeight:1,pageWidth:0};
   if (p._settings.fontSizeCustom===undefined) p._settings.fontSizeCustom='';
   if (p._settings.fontFamilyCustom===undefined) p._settings.fontFamilyCustom='';
   if (p._settings.lineHeightCustom===undefined) p._settings.lineHeightCustom='';
+  if (p._settings.pageWidth===undefined) p._settings.pageWidth=0;
   // Migration: expand ranged week labels (e.g. '第1-4周' → individual weeks)
   var expanded=0;
   ['y1-academic','y2-academic','y3-academic','y4-academic','y5-academic'].forEach(function(cid){
@@ -4487,6 +4500,7 @@ document.getElementById('pomoClose').addEventListener('click',pomoClose)
 document.getElementById('pomoStartBtn').addEventListener('click',pomoStart)
 document.getElementById('pomoResetBtn').addEventListener('click',pomoReset)
 document.getElementById('sleepEntryBtn').addEventListener('click',sleepEnter)
+document.getElementById('pfSleepBtn').addEventListener('click',function(e){e.stopPropagation();sleepEnter()})
 document.getElementById('sleepOverlay').addEventListener('click',function(e){if(e.target===this||e.target.closest('.so-hint'))sleepExit()})
 document.getElementById('soStartBtn').addEventListener('click',function(e){e.stopPropagation();soStart()})
 document.getElementById('soResetBtn').addEventListener('click',function(e){e.stopPropagation();soReset()})
@@ -4593,7 +4607,8 @@ var _SETTINGS_CFG={
     "'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif",
     "'Cascadia Code','SF Mono','Consolas',monospace"
   ],
-  lineHeight:[1.4,1.6,1.9]
+  lineHeight:[1.4,1.6,1.9],
+  pageWidth:[90,95,98]
 }
 function applySettings(s){
   var root=document.documentElement
@@ -4603,15 +4618,18 @@ function applySettings(s){
   root.style.setProperty('--font-family-body',ff)
   var lh = s.lineHeightCustom ? parseFloat(s.lineHeightCustom) : _SETTINGS_CFG.lineHeight[s.lineHeight]
   if (!isNaN(lh) && lh>0) root.style.setProperty('--line-height-base',lh)
+  var pw = _SETTINGS_CFG.pageWidth[s.pageWidth]
+  if(pw)root.style.setProperty('--page-width',pw+'vw')
 }
 function stgHighlight(grp,v){
   document.querySelectorAll('#stg'+grp+' .stg-btn').forEach(function(b){b.classList.toggle('a',parseInt(b.dataset.v)===v)})
 }
 function stgOpen(){
-  var s=data._settings||{fontSize:1,fontFamily:0,lineHeight:1}
+  var s=data._settings||{fontSize:1,fontFamily:0,lineHeight:1,pageWidth:0}
   stgHighlight('FontSize',s.fontSize)
   stgHighlight('FontFamily',s.fontFamily)
   stgHighlight('LineHeight',s.lineHeight)
+  stgHighlight('PageWidth',s.pageWidth)
   document.getElementById('stgFontSizeCustom').value=s.fontSizeCustom||''
   document.getElementById('stgFontFamilyCustom').value=s.fontFamilyCustom||''
   document.getElementById('stgLineHeightCustom').value=s.lineHeightCustom||''
@@ -4629,17 +4647,18 @@ document.querySelectorAll('.stg-row').forEach(function(row){
   row.querySelectorAll('.stg-btn').forEach(function(btn){
     btn.onclick=function(){
       var grp=row.id.replace('stg',''),v=parseInt(btn.dataset.v)
-      var s=data._settings||{fontSize:1,fontFamily:0,lineHeight:1}
+      var s=data._settings||{fontSize:1,fontFamily:0,lineHeight:1,pageWidth:0}
       if(grp==='FontSize'){s.fontSize=v;s.fontSizeCustom=''}
       else if(grp==='FontFamily'){s.fontFamily=v;s.fontFamilyCustom=''}
       else if(grp==='LineHeight'){s.lineHeight=v;s.lineHeightCustom=''}
+      else if(grp==='PageWidth'){s.pageWidth=v}
       data._settings=s;save()
       stgHighlight(grp,v)
       applySettings(s)
     }
   })
 })
-;['FontSize','FontFamily','LineHeight'].forEach(function(grp){
+;['FontSize','FontFamily','LineHeight','PageWidth'].forEach(function(grp){
   var input=document.getElementById('stg'+grp+'Custom')
   if(!input)return
   input.oninput=function(){
