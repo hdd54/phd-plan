@@ -892,6 +892,7 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 .pomo-float{position:fixed;right:clamp(3.2rem,5vw,4.2rem);bottom:clamp(5.5rem,8vw,6rem);z-index:251;background:rgba(10,9,8,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--line-2);border-radius:var(--r);padding:clamp(.35rem,.6vw,.45rem) clamp(.5rem,.8vw,.6rem);display:none;flex-direction:column;align-items:center;gap:.08rem;cursor:pointer;transition:all .25s;box-shadow:0 8px 32px rgba(0,0,0,.45);min-width:clamp(4rem,7vw,5rem)}
 .pomo-float.s{display:flex;animation:floatIn .3s ease}
 .pomo-float:hover{border-color:var(--accent);box-shadow:0 8px 40px rgba(212,165,116,.15)}
+.pomo-float.dragging{cursor:grabbing;user-select:none;opacity:.85;transition:none!important}
 .pomo-float.r{animation:pomoPulse 1s infinite;border-color:var(--accent-2)}
 .pomo-float.break{animation:pomoPulseBreak 1s infinite;border-color:var(--accent-3)}
 @keyframes floatIn{0%{opacity:0;transform:translateY(10px) scale(.92)}100%{opacity:1;transform:translateY(0) scale(1)}}
@@ -985,6 +986,28 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 .pomo-mstone .pm-badge{font-size:clamp(.4rem,.6vw,.45rem);padding:.04rem .25rem;border-radius:100px;background:rgba(212,165,116,.1);color:var(--accent);letter-spacing:.05em}
 .pomo-mstone .pm-badge.done{background:rgba(212,165,116,.2);color:var(--accent)}
 .pomo-mstone .pm-prog-bar{height:3px;background:var(--line);border-radius:2px;overflow:hidden;width:clamp(3rem,5vw,5rem);flex-shrink:0}
+/* ===== Sleep Mode ===== */
+.sleep-overlay{position:fixed;inset:0;z-index:999;background:#000;display:none;flex-direction:column;align-items:center;justify-content:center;gap:clamp(1rem,2.5vh,2rem);cursor:pointer;user-select:none}
+.sleep-overlay.s{display:flex}
+.sleep-overlay .so-timer{font-family:var(--font-serif);font-size:clamp(5rem,20vw,12rem);color:var(--accent);letter-spacing:-.03em;line-height:1;font-weight:300;font-variant-numeric:tabular-nums;transition:color .3s}
+.sleep-overlay .so-timer.r{color:var(--accent-2)}
+.sleep-overlay .so-timer.break{color:var(--accent-3)}
+.sleep-overlay .so-label{font-size:clamp(.8rem,2vw,1.2rem);color:var(--muted);letter-spacing:.2em;text-transform:uppercase}
+.sleep-overlay .so-progress{width:clamp(160px,40vw,400px);height:4px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden}
+.sleep-overlay .so-progress .bar{height:100%;width:0%;border-radius:4px;transition:width .5s}
+.sleep-overlay .so-progress .bar.r{background:var(--accent-2)}
+.sleep-overlay .so-progress .bar.break{background:var(--accent-3)}
+.sleep-overlay .so-progress .bar.idle{background:var(--accent)}
+.sleep-overlay .so-ctrl{display:flex;gap:clamp(.6rem,1.2vw,1rem);margin-top:clamp(.3rem,.8vh,.6rem);cursor:default}
+.sleep-overlay .so-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:100px;padding:clamp(.25rem,.5vw,.35rem) clamp(.6rem,1.2vw,1rem);color:rgba(255,255,255,.7);font-family:var(--font-sans);font-size:clamp(.65rem,1.2vw,.8rem);cursor:pointer;transition:all .2s;letter-spacing:.08em;min-width:clamp(3.5rem,6vw,5rem)}
+.sleep-overlay .so-btn:hover{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.25)}
+.sleep-overlay .so-hint{position:fixed;bottom:clamp(1.5rem,4vh,3rem);font-size:clamp(.5rem,.8vw,.55rem);color:rgba(255,255,255,.2);letter-spacing:.1em}
+.sleep-overlay .so-hint span{display:inline-block;animation:soPulse 2s ease-in-out infinite}
+@keyframes soPulse{0%,100%{opacity:.3}50%{opacity:.8}}
+.so-tag-row{display:flex;gap:.3rem;justify-content:center;flex-wrap:wrap}
+.so-tag-row input{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:100px;padding:.12rem .4rem;color:rgba(255,255,255,.6);font-size:clamp(.5rem,.9vw,.55rem);font-family:var(--font-sans);outline:none;text-align:center;width:clamp(100px,20vw,200px)}
+.so-tag-row input::placeholder{color:rgba(255,255,255,.2)}
+.so-tag-row input:focus{border-color:rgba(212,165,116,.4);color:#fff}
 .pomo-mstone .pm-prog-bar .bar{height:100%;background:var(--accent);border-radius:2px;transition:width .8s}
 /* Tag input */
 .pomo-tag-row{display:flex;gap:.2rem;align-items:center}
@@ -1444,6 +1467,9 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
       <button class="pomo-ctrl-btn primary" id="pomoStartBtn">&#9654; 开始</button>
       <button class="pomo-ctrl-btn danger" id="pomoResetBtn">&#8635; 重置</button>
     </div>
+    <div style="display:flex;justify-content:center;margin-top:-.1rem">
+      <button class="pomo-ctrl-btn" id="sleepEntryBtn" style="font-size:clamp(.45rem,.75vw,.5rem);min-width:auto;padding:.1rem .4rem">🌙 睡眠模式</button>
+    </div>
   </div>
   <!-- Tab: Records -->
   <div class="pomo-body" id="pomoTabRecords" style="display:none">
@@ -1462,6 +1488,19 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
   <div class="pomo-body" id="pomoTabMilestones" style="display:none">
     <div class="pomo-mstones" id="pomoMstoneList"></div>
   </div>
+</div>
+
+<!-- ===== SLEEP MODE ===== -->
+<div class="sleep-overlay" id="sleepOverlay">
+  <div class="so-label" id="soLabel">专注</div>
+  <div class="so-timer" id="soTimer">25:00</div>
+  <div class="so-progress" id="soProgress"><div class="bar idle" id="soProgressBar"></div></div>
+  <div class="so-tag-row"><input id="soTagInput" placeholder="标签（如：论文、刷题…）" maxlength="20"></div>
+  <div class="so-ctrl">
+    <button class="so-btn" id="soStartBtn">▶ 开始</button>
+    <button class="so-btn" id="soResetBtn">↺ 重置</button>
+  </div>
+  <div class="so-hint"><span>点击任意位置退出</span></div>
 </div>
 
 <!-- ===== STATS TOGGLE ===== -->
@@ -2005,7 +2044,7 @@ function ensure(p) {
   });
 }
 function cloneDeep(arr){return arr.map(w=>({w:w.w,s:w.s||'',d:[...w.d]}))}
-function save(){localStorage.setItem(SK,JSON.stringify(data));saveOpenState();}
+function save(){localStorage.setItem(SK,JSON.stringify(data));saveOpenState();try{computeStats()}catch(e){}}
 
 // ======================== RENDER ========================
 function renderWeeks(cardId) {
@@ -4356,7 +4395,7 @@ function pomoStart(){if(pomo.running){clearInterval(pomo.interval);pomo.running=
   pomoFloatShow();pomoClose();pomoSaveState()}
 function pomoFloatShow(){var f=document.getElementById('pomoFloat');f.classList.add('s');f.classList.toggle('r',pomo.sessionType!=='break');f.classList.toggle('break',pomo.sessionType==='break');document.getElementById('pomoBtn').classList.add('r');updatePomoDisplay()}
 function pomoFloatHide(){document.getElementById('pomoFloat').classList.remove('s');document.getElementById('pomoBtn').classList.remove('r')}
-function pomoComplete(){pomoFloatHide();document.getElementById('pomoStartBtn').textContent='✓ 完成'
+function pomoComplete(){pomoFloatHide();sleepUpdateDisplay();document.getElementById('pomoStartBtn').textContent='✓ 完成'
   var tag=document.getElementById('pomoTagInput').value.trim()
   var now=new Date();var ds=now.toLocaleDateString('zh-CN');var ts=now.toLocaleTimeString()
   if(!data._pomoLog)data._pomoLog=[]
@@ -4400,12 +4439,59 @@ function renderPomoMstones(){var el=document.getElementById('pomoMstoneList');va
     var done=total>=m.c
     return'<div class="pomo-mstone'+(done?' done':'')+'"><span class="pm-icon">'+(done?m.i:'○')+'</span><div class="pm-info"><div class="pm-name">'+m.i+' 累计 '+m.n+' 番茄</div><div class="pm-prog">'+(done?'已达成 ✓':'当前 '+total+'/'+m.c)+'</div></div><div class="pm-prog-bar"><div class="bar" style="width:'+Math.min(100,total/m.c*100)+'%"></div></div>'+(done?'<span class="pm-badge done">✓</span>':'<span class="pm-badge">'+Math.round(total/m.c*100)+'%</span>')+'</div>'
   }).join('')}
+// ===== Sleep Mode =====
+function sleepUpdateDisplay(){var txt=fmtTime(pomo.left)
+  var te=document.getElementById('soTimer');te.textContent=txt
+  te.className='so-timer'+(pomo.running?' r':'')+(pomo.sessionType==='break'?' break':'')
+  document.getElementById('soLabel').textContent=pomo.label||'专注'
+  var pb=document.getElementById('soProgressBar')
+  pb.className='bar'+(pomo.running?(pomo.sessionType==='break'?' break':' r'):' idle')
+  pb.style.width=((1-pomo.left/pomo.time)*100)+'%'
+  document.getElementById('soStartBtn').textContent=pomo.running?'⏸ 暂停':'▶ 开始'}
+function sleepEnter(){document.getElementById('sleepOverlay').classList.add('s')
+  document.getElementById('soTagInput').value=document.getElementById('pomoTagInput').value
+  sleepUpdateDisplay()
+  if(pomo.running)pomoFloatHide()
+  pomoClose()}
+function sleepExit(){document.getElementById('sleepOverlay').classList.remove('s')
+  document.getElementById('pomoTagInput').value=document.getElementById('soTagInput').value
+  if(pomo.running){pomoFloatShow();updatePomoDisplay()}}
+function soStart(){if(pomo.running){clearInterval(pomo.interval);pomo.running=false;updatePomoDisplay();sleepUpdateDisplay();pomoSaveState();return}
+  pomo.running=true;pomo.date=new Date().toDateString()
+  clearInterval(pomo.interval)
+  pomo.interval=setInterval(function(){pomo.left--;updatePomoDisplay();sleepUpdateDisplay()
+    if(pomo.left<=0){clearInterval(pomo.interval);pomo.running=false;pomoComplete()}},1000)
+  pomoClose();sleepUpdateDisplay();pomoSaveState()}
+function soReset(){if(pomo.running&&!confirm('重置当前番茄？'))return
+  clearInterval(pomo.interval);pomo.running=false;pomo.left=pomo.time;updatePomoDisplay();sleepUpdateDisplay()
+  document.getElementById('pomoStartBtn').textContent='▶ 开始';document.getElementById('pomoProgressBar').style.width='0%';pomoSaveState()}
+// ===== Draggable Floating Timer =====
+(function(){var f=document.getElementById('pomoFloat'),d=false,ox,oy
+  f.addEventListener('mousedown',function(e){if(e.button!==0)return;d=true
+    var r=f.getBoundingClientRect()
+    ox=e.clientX-r.left;oy=e.clientY-r.top
+    f.style.left=r.left+'px';f.style.top=r.top+'px'
+    f.style.right='auto';f.style.bottom='auto'
+    f.classList.add('dragging')})
+  document.addEventListener('mousemove',function(e){if(!d)return
+    f.style.left=(e.clientX-ox)+'px';f.style.top=(e.clientY-oy)+'px'})
+  document.addEventListener('mouseup',function(){if(!d)return;d=false;f.classList.remove('dragging')
+    pomoSavePos()})})()
+function pomoSavePos(){var f=document.getElementById('pomoFloat');var l=parseInt(f.style.left);var t=parseInt(f.style.top)
+  if(l||t)try{localStorage.setItem('phd_v4_pomo_pos',JSON.stringify({l:l,t:t}))}catch(e){}}
+function pomoLoadPos(){try{var s=localStorage.getItem('phd_v4_pomo_pos');if(!s)return;var p=JSON.parse(s);var f=document.getElementById('pomoFloat');if(p.l||p.t){f.style.left=p.l+'px';f.style.top=p.t+'px';f.style.right='auto';f.style.bottom='auto'}}catch(e){}}
 // Pomodoro UI bindings
 document.getElementById('pomoBtn').addEventListener('click',function(){pomoOpen()})
 document.getElementById('pomoOverlay').addEventListener('click',pomoClose)
 document.getElementById('pomoClose').addEventListener('click',pomoClose)
 document.getElementById('pomoStartBtn').addEventListener('click',pomoStart)
 document.getElementById('pomoResetBtn').addEventListener('click',pomoReset)
+document.getElementById('sleepEntryBtn').addEventListener('click',sleepEnter)
+document.getElementById('sleepOverlay').addEventListener('click',function(e){if(e.target===this||e.target.closest('.so-hint'))sleepExit()})
+document.getElementById('soStartBtn').addEventListener('click',function(e){e.stopPropagation();soStart()})
+document.getElementById('soResetBtn').addEventListener('click',function(e){e.stopPropagation();soReset()})
+document.getElementById('soTagInput').addEventListener('keydown',function(e){e.stopPropagation()})
+document.getElementById('soTagInput').addEventListener('input',function(){document.getElementById('pomoTagInput').value=this.value})
 // Tab switching
 document.querySelectorAll('.pomo-tab').forEach(function(tab){
   tab.addEventListener('click',function(){
@@ -4425,8 +4511,8 @@ document.querySelectorAll('.pomo-type').forEach(function(btn){
   btn.addEventListener('click',function(){pomoSetType(btn)})
 })
 // Keyboard: Escape to close
-document.addEventListener('keydown',function(e){if(e.key==='Escape'&&document.getElementById('pomoModal').classList.contains('s'))pomoClose()})
-pomoLoad()
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(document.getElementById('sleepOverlay').classList.contains('s'))sleepExit();else if(document.getElementById('pomoModal').classList.contains('s'))pomoClose()}})
+pomoLoad();pomoLoadPos()
 
 // ======================== FEATURE: Milestone Timeline ========================
 function renderMilestones(cid){var area=document.getElementById('ms-'+cid);if(!area)return;var ms=data._milestones||{};var list=ms[cid]||[]
@@ -4698,8 +4784,8 @@ function initFeatures(){
   // Compute stats
   computeStats()
 }
-// Bind stats toggle
-document.getElementById('statsToggle').addEventListener('click',function(){document.getElementById('statsPanel').classList.toggle('s')})
+// Bind stats toggle — refresh data every time panel opens
+document.getElementById('statsToggle').addEventListener('click',function(){var p=document.getElementById('statsPanel');var was=p.classList.contains('s');p.classList.toggle('s');if(!was){try{computeStats()}catch(e){}}})
 // Init on load
 setTimeout(initFeatures,500)
 
@@ -4715,16 +4801,20 @@ function exportCSV(){var csv='\ufeff类型,日期,时间,标签,标签备注,时
   var blob=new Blob([csv],{type:'text/csv;charset=utf-8'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='phd-plan-export.csv';a.click();URL.revokeObjectURL(a.href)}
 
 // ======================== FEATURE: White Noise ========================
-var noiseCtx=null,noiseNode=null,noiseGain=null,noiseType='rain'
-function noiseStart(type){try{if(!noiseCtx)noiseCtx=new(window.AudioContext||window.webkitAudioContext);noiseStop()}catch(e){}try{
+var noiseCtx=null,noiseNode=null,noiseGain=null,noiseFilter=null,noiseType='rain'
+function noiseStart(type){try{
+  if(!noiseCtx||noiseCtx.state==='closed')noiseCtx=new(window.AudioContext||window.webkitAudioContext)
+  if(noiseCtx.state==='suspended')noiseCtx.resume()
+  noiseStop()
   noiseType=type||'rain';var sr=noiseCtx.sampleRate;var len=sr*2;var buf=noiseCtx.createBuffer(1,len);var d=buf.getChannelData(0)
-  if(noiseType==='rain'){for(var i=0;i<len;i++)d[i]=Math.random()*2-1;noiseGain=noiseCtx.createGain();noiseGain.gain.value=.08}
-  else{for(var i=0;i<len;i++){var t=i/sr;d[i]=(Math.random()*2-1)*.3+Math.sin(2*Math.PI*200*t)*.03+Math.sin(2*Math.PI*400*t)*.02};noiseGain=noiseCtx.createGain();noiseGain.gain.value=.04}
+  if(noiseType==='rain'){for(var i=0;i<len;i++)d[i]=Math.random()*2-1;noiseGain=noiseCtx.createGain();noiseGain.gain.value=.25}
+  else{for(var i=0;i<len;i++){var t=i/sr;d[i]=(Math.random()*2-1)*.3+Math.sin(2*Math.PI*200*t)*.03+Math.sin(2*Math.PI*400*t)*.02};noiseGain=noiseCtx.createGain();noiseGain.gain.value=.12}
   noiseNode=noiseCtx.createBufferSource();noiseNode.buffer=buf;noiseNode.loop=true
-  var f=noiseCtx.createBiquadFilter();f.type='lowpass';f.frequency.value=noiseType==='rain'?800:1500
-  noiseNode.connect(f);f.connect(noiseGain);noiseGain.connect(noiseCtx.destination);noiseNode.start()
-  document.getElementById('noiseBtn').textContent='🔊 关闭白噪音';document.getElementById('noiseBtn').classList.add('s')}catch(e){}}
+  noiseFilter=noiseCtx.createBiquadFilter();noiseFilter.type='lowpass';noiseFilter.frequency.value=noiseType==='rain'?800:1500
+  noiseNode.connect(noiseFilter);noiseFilter.connect(noiseGain);noiseGain.connect(noiseCtx.destination);noiseNode.start()
+  document.getElementById('noiseBtn').textContent='🔊 关闭白噪音';document.getElementById('noiseBtn').classList.add('s')}catch(e){showToast('⚠️ 白噪音启动失败')}}
 function noiseStop(){if(noiseNode){try{noiseNode.stop()}catch(e){}noiseNode.disconnect();noiseNode=null}
+  if(noiseFilter){noiseFilter.disconnect();noiseFilter=null}
   document.getElementById('noiseBtn').textContent='🎵 白噪音';document.getElementById('noiseBtn').classList.remove('s')}
 function noiseToggle(){if(noiseNode)noiseStop();else noiseStart()}
 
