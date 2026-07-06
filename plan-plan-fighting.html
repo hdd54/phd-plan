@@ -542,6 +542,23 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 .btm-bar .bb.d:hover{border-color:var(--accent-2);color:var(--accent-2);background:rgba(232,93,47,.04)}
 .btm-bar .bb.x{background:rgba(212,165,116,.1);border-color:var(--accent);color:var(--accent)}
 .btm-bar .bb .bb-icon{font-size:clamp(.5rem,.8vw,.55rem)}
+.btm-bar .chapter-info{
+  position:absolute;left:clamp(.4rem,1.2vw,.8rem);top:50%;transform:translateY(-50%);
+  display:flex;align-items:center;gap:clamp(.25rem,.6vw,.5rem);
+  font-size:clamp(.45rem,.75vw,.55rem);letter-spacing:.15em;font-weight:300;
+  color:var(--muted);pointer-events:none;
+  font-family:var(--font-sans);
+}
+.btm-bar .chapter-info .ci-current{color:var(--accent);text-transform:uppercase}
+.btm-bar .chapter-info .ci-page{font-family:var(--font-serif);color:var(--fg-dim)}
+.btm-bar .chapter-info .ci-divider{width:1px;height:clamp(8px,1.2vw,12px);background:var(--line-2)}
+
+/* Fixed 3D background container */
+#threeScene{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  opacity:0;transition:opacity 2s ease;
+}
+#threeScene.loaded{opacity:1}
 
 /* edit mode */
 .tb[contentEditable="true"],
@@ -1078,6 +1095,7 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 </section>
 <!-- /COVER -->
 <div id="progress"></div>
+<div id="threeScene"></div>
 <canvas id="pc"></canvas>
 <div class="gr-overlay"></div>
 
@@ -1201,6 +1219,11 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 
 <!-- ===== STICKY BOTTOM BAR ===== -->
 <div class="btm-bar">
+  <div class="chapter-info">
+    <span class="ci-current" id="currentSection">封面</span>
+    <span class="ci-divider"></span>
+    <span class="ci-page" id="pageIndicator">0/0</span>
+  </div>
   <button class="bb x" id="editToggle2">✎ 编辑</button>
   <button class="bb" id="expandAll2">📂 展开</button>
   <button class="bb" id="collapseAll2">📁 收起</button>
@@ -1530,6 +1553,8 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
   <p id="footerLine1" style="margin-bottom:.2rem"></p>
   <p id="footerLine2"></p>
 </footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
 <!-- Cover particle animation -->
 <script>
@@ -4789,6 +4814,131 @@ if ('serviceWorker' in navigator) {
     location.reload();
   });
 }
+
+// ======================== 3D INTERACTIVE SCENE ========================
+(function(){
+  var container = document.getElementById('threeScene');
+  if (!container || typeof THREE === 'undefined') return;
+
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
+  camera.position.z = 6;
+
+  var renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setClearColor(0x000000, 0);
+  container.appendChild(renderer.domElement);
+
+  var group = new THREE.Group();
+  scene.add(group);
+
+  // Torus Knot — main piece, amber wireframe
+  var knot = new THREE.Mesh(
+    new THREE.TorusKnotGeometry(1.2, 0.35, 100, 16),
+    new THREE.MeshBasicMaterial({ color: 0xd4a574, wireframe: true, transparent: true, opacity: 0.18 })
+  );
+  knot.position.set(0, 0, 0);
+  group.add(knot);
+
+  // Icosahedron — teal
+  var ico = new THREE.Mesh(
+    new THREE.IcosahedronGeometry(0.6, 0),
+    new THREE.MeshBasicMaterial({ color: 0x4a7c8c, wireframe: true, transparent: true, opacity: 0.12 })
+  );
+  ico.position.set(2.5, -1.2, -1);
+  group.add(ico);
+
+  // Dodecahedron — vermilion
+  var dod = new THREE.Mesh(
+    new THREE.DodecahedronGeometry(0.45, 0),
+    new THREE.MeshBasicMaterial({ color: 0xe85d2f, wireframe: true, transparent: true, opacity: 0.1 })
+  );
+  dod.position.set(-2.2, 1.4, -1.5);
+  group.add(dod);
+
+  // Small ring — amber
+  var ring = new THREE.Mesh(
+    new THREE.TorusGeometry(0.5, 0.08, 16, 32),
+    new THREE.MeshBasicMaterial({ color: 0xd4a574, wireframe: true, transparent: true, opacity: 0.08 })
+  );
+  ring.position.set(-1.5, -1.8, 0.5);
+  ring.rotation.x = Math.PI / 3;
+  group.add(ring);
+
+  // Mouse tracking
+  var mouseX = 0, mouseY = 0;
+  document.addEventListener('mousemove', function(e) {
+    mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+    mouseY = (e.clientY / window.innerHeight) * 2 - 1;
+  });
+
+  window.addEventListener('resize', function() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+
+  var clock = new THREE.Clock();
+
+  function animate() {
+    requestAnimationFrame(animate);
+    var t = clock.getElapsedTime();
+
+    group.rotation.x = Math.sin(t * 0.08) * 0.15 + mouseY * 0.05;
+    group.rotation.y = t * 0.06 + mouseX * 0.08;
+
+    knot.rotation.x = Math.sin(t * 0.12) * 0.2;
+    knot.rotation.z = Math.cos(t * 0.1) * 0.15;
+
+    ico.rotation.x = t * 0.15;
+    ico.rotation.y = t * 0.2;
+    ico.position.y = -1.2 + Math.sin(t * 0.3) * 0.3;
+
+    dod.rotation.x = t * 0.2;
+    dod.rotation.z = t * 0.15;
+    dod.position.x = -2.2 + Math.sin(t * 0.15) * 0.2;
+
+    ring.rotation.z = t * 0.1;
+    ring.position.y = -1.8 + Math.sin(t * 0.2) * 0.2;
+
+    renderer.render(scene, camera);
+  }
+
+  animate();
+  container.classList.add('loaded');
+})();
+
+// ======================== BOTTOM BAR CHAPTER INFO ========================
+(function(){
+  var secEl = document.getElementById('currentSection');
+  var pageEl = document.getElementById('pageIndicator');
+  if (!secEl || !pageEl) return;
+
+  var coverSection = document.getElementById('coverSection');
+  var allSections = document.querySelectorAll('.sec');
+  var total = allSections.length;
+
+  // Watch cover separately
+  if (coverSection) {
+    new IntersectionObserver(function(e) {
+      if (e[0].isIntersecting) { secEl.textContent = '封面'; pageEl.textContent = '0/0'; }
+    }, { threshold: 0.1 }).observe(coverSection);
+  }
+
+  // Watch each .sec
+  allSections.forEach(function(sec, idx) {
+    new IntersectionObserver(function(e) {
+      if (e[0].isIntersecting) {
+        var label = sec.querySelector('.ey');
+        var h2 = sec.querySelector('h2');
+        var name = label ? label.textContent.trim() : (h2 ? h2.textContent.replace(/[🔬📋💰❤️📊🗂️]/g,'').trim() : '');
+        secEl.textContent = name || '计划';
+        pageEl.textContent = (idx + 1) + '/' + total;
+      }
+    }, { threshold: 0.3 }).observe(sec);
+  });
+})();
 
 })();
 </script>
