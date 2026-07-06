@@ -676,6 +676,33 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 
 #fileInput{display:none}
 
+/* ===== Mortgage Calculator ===== */
+.mtg-overlay{position:fixed;inset:0;z-index:390;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .25s}
+.mtg-overlay.s{opacity:1;pointer-events:auto}
+.mtg-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.92);z-index:395;width:clamp(340px,65vw,480px);background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 24px 80px rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:all .3s cubic-bezier(.2,.9,.3,1);overflow:hidden}
+.mtg-modal.s{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+.mtg-header{display:flex;align-items:center;justify-content:space-between;padding:clamp(.5rem,1vw,.65rem) clamp(.6rem,1.2vw,.85rem);border-bottom:1px solid var(--line)}
+.mtg-header h3{margin:0;font-size:clamp(.7rem,1.1vw,.8rem);font-weight:400;color:var(--accent);letter-spacing:.04em;font-family:var(--font-sans)}
+.mtg-close{background:none;border:none;color:var(--muted);font-size:clamp(1rem,1.5vw,1.2rem);cursor:pointer;padding:.15rem;line-height:1;border-radius:4px;transition:color .2s}
+.mtg-close:hover{color:var(--accent)}
+.mtg-body{padding:clamp(.5rem,1vw,.75rem)}
+.mtg-row{display:flex;align-items:center;gap:.4rem;margin-bottom:clamp(.3rem,.6vw,.45rem)}
+.mtg-row label{font-size:clamp(.55rem,.85vw,.6rem);color:var(--fg-dim);min-width:clamp(60px,8vw,80px);flex-shrink:0;letter-spacing:.05em}
+.mtg-row input{flex:1;min-width:0;padding:clamp(.25rem,.4vw,.35rem) clamp(.35rem,.5vw,.45rem);border:1px solid var(--line);border-radius:6px;background:rgba(255,255,255,.03);color:var(--fg);font-size:clamp(.6rem,.95vw,.7rem);font-family:var(--font-sans);outline:none;transition:border-color .2s}
+.mtg-row input:focus{border-color:var(--accent)}
+.mtg-row .mtg-unit{font-size:clamp(.5rem,.75vw,.55rem);color:var(--muted);white-space:nowrap}
+.mtg-row select{flex:1;padding:clamp(.25rem,.4vw,.35rem) clamp(.35rem,.5vw,.45rem);border:1px solid var(--line);border-radius:6px;background:rgba(255,255,255,.03);color:var(--fg);font-size:clamp(.6rem,.95vw,.7rem);font-family:var(--font-sans);outline:none;transition:border-color .2s;cursor:pointer}
+.mtg-row select:focus{border-color:var(--accent)}
+.mtg-calc-btn{display:block;width:100%;padding:clamp(.35rem,.6vw,.45rem);margin-top:clamp(.3rem,.5vw,.4rem);border:1px solid var(--accent);border-radius:100px;background:rgba(212,165,116,.1);color:var(--accent);font-family:var(--font-sans);font-size:clamp(.6rem,1vw,.7rem);cursor:pointer;transition:all .2s;text-align:center;letter-spacing:.08em}
+.mtg-calc-btn:hover{background:rgba(212,165,116,.2)}
+.mtg-result{margin-top:clamp(.5rem,.8vw,.6rem);padding:clamp(.4rem,.6vw,.5rem);border:1px solid var(--line-2);border-radius:var(--rs);background:rgba(212,165,116,.03)}
+.mtg-result .mtg-r{display:flex;justify-content:space-between;align-items:center;padding:clamp(.15rem,.25vw,.2rem) 0;font-size:clamp(.6rem,.95vw,.68rem)}
+.mtg-result .mtg-r .mtg-rl{color:var(--fg-dim)}
+.mtg-result .mtg-r .mtg-rv{color:var(--fg);font-family:var(--font-sans);font-weight:400}
+.mtg-result .mtg-r.highlight{border-top:1px solid var(--line);margin-top:.15rem;padding-top:.3rem}
+.mtg-result .mtg-r.highlight .mtg-rv{color:var(--accent);font-weight:500;font-size:clamp(.7rem,1.1vw,.85rem)}
+.mtg-result .mtg-note{font-size:clamp(.5rem,.8vw,.55rem);color:var(--muted);margin-top:.25rem;text-align:center;letter-spacing:.05em}
+
 /* ---- Drag & Drop ---- */
 .di.dragging{opacity:.4;cursor:grabbing}
 .di.drag-over{border-color:var(--accent)!important;box-shadow:0 0 0 2px rgba(212,165,116,.2)!important}
@@ -840,6 +867,37 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
   .sh h2{font-size:clamp(.8rem,5vw,.9rem)}
   .sec{padding:clamp(1rem,5vw,1.2rem) clamp(.5rem,3vw,.6rem)}
   .hero{padding:clamp(1.5rem,5vw,2rem) clamp(.5rem,3vw,.8rem);min-height:45vh}
+  .stg-modal{width:92vw;min-width:0}
+  .pomo-modal{width:94vw;min-width:0}
+  .ai-panel{width:100vw}
+  .ai-key-section .ai-key-row{flex-wrap:wrap}
+  .ynw{top:clamp(28px,8vw,34px);padding:.2rem .2rem}
+  .yni{padding:.08rem .2rem;font-size:.55rem}
+  .yni .yl{font-size:.45rem}
+  .yni .yd{width:4px;height:4px}
+  .dr{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .dr .mt{min-width:520px}
+  .pomo-modal .pomo-types{gap:.2rem}
+  .pomo-modal .pomo-type{min-width:auto;padding:.15rem .25rem;font-size:.55rem}
+  .stg-body{padding:.4rem}
+  .stg-group{margin-bottom:.4rem}
+  .stg-btn{min-width:40px;padding:.15rem .1rem;font-size:.5rem}
+  .pomo-tabs .pomo-tab{font-size:.5rem;padding:.15rem .2rem}
+  .sec .tc{padding:.5rem}
+  .hero .hv{font-size:clamp(.6rem,3vw,.7rem)}
+  .hero .hh{font-size:clamp(1rem,7vw,1.4rem)}
+  .hero .hh + .hv{margin-top:.15rem}
+  .ch{font-size:.5rem;gap:.2rem}
+  #footerLine1,#footerLine2{font-size:.45rem}
+  .csb-wrap{grid-template-columns:1fr}
+  .mtg-modal{width:94vw;min-width:0}
+  .mtg-body{padding:.4rem}
+  .mtg-row{flex-direction:column;gap:.2rem}
+  .mtg-row label{min-width:auto}
+}@media(max-width:380px){
+  .pomo-modal .pomo-types{gap:.1rem}
+  .pomo-modal .pomo-type{padding:.1rem .15rem;font-size:.45rem}
+  .btm-bar .bb{padding:.04rem .1rem;font-size:.42rem;gap:.1rem}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}.sec{opacity:1;transform:none}#pc{display:none}body::after{display:none}}
 @media print{body{background:white;color:#000}#pc,.gr-overlay,.ynw,.ft,.btm-bar,.nav-rail{display:none}body::after{display:none}.tc{break-inside:avoid;border:1px solid #ddd}.hero{min-height:auto}}
@@ -1293,11 +1351,13 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
   <button class="bb" id="collapseAll2">📁 收起</button>
   <button class="bb" id="exportBtn2">📥 导出</button>
   <button class="bb" id="importBtn2">📤 导入</button>
+  <button class="bb" id="repoSaveBtn" title="保存数据到仓库">💾 存档</button>
   <button class="bb" id="gistIndicator" title="数据同步状态">⚡--</button>
   <button class="bb d" id="resetTasks2">🗑 重置</button>
   <button class="bb" id="installBtn" title="安装到桌面" style="display:none">📥 安装</button>
   <button class="bb" id="helpBtn" title="使用说明">📖</button>
   <button class="bb" id="stgBtn" title="设置">⚙</button>
+  <button class="bb" id="mtgBtn" title="房贷计算">🏠</button>
 </div>
 
 <!-- ===== HELP MODAL ===== -->
@@ -1423,10 +1483,65 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
         <button class="stg-btn" data-v="2">最宽</button>
       </div>
     </div>
+    <div class="stg-group" style="border-top:1px solid var(--line);padding-top:clamp(.5rem,1vw,1rem);margin-top:clamp(.3rem,.5vw,.5rem)">
+      <div class="stg-label">启动封面</div>
+      <div class="stg-row" id="stgSkipCover">
+        <button class="stg-btn a" data-v="0">显示</button>
+        <button class="stg-btn" data-v="1">跳过</button>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- ===== SEARCH OVERLAY ===== -->
+<!-- ===== MORTGAGE CALCULATOR ===== -->
+<div class="mtg-overlay" id="mtgOverlay"></div>
+<div class="mtg-modal" id="mtgModal">
+  <div class="mtg-header">
+    <h3>🏠 房贷计算器</h3>
+    <button class="mtg-close" id="mtgClose">✕</button>
+  </div>
+  <div class="mtg-body" id="mtgBody">
+    <div class="mtg-row">
+      <label>房价总额</label>
+      <input type="number" id="mtgPrice" placeholder="200" min="0" step="10">
+      <span class="mtg-unit">万元</span>
+    </div>
+    <div class="mtg-row">
+      <label>首付比例</label>
+      <select id="mtgDownPct">
+        <option value="15">15%（首套）</option>
+        <option value="20">20%</option>
+        <option value="30" selected>30%</option>
+        <option value="40">40%</option>
+        <option value="50">50%</option>
+      </select>
+    </div>
+    <div class="mtg-row">
+      <label>贷款年限</label>
+      <select id="mtgYears">
+        <option value="10">10年</option>
+        <option value="15">15年</option>
+        <option value="20">20年</option>
+        <option value="25" selected>25年</option>
+        <option value="30">30年</option>
+      </select>
+    </div>
+    <div class="mtg-row">
+      <label>利率</label>
+      <input type="number" id="mtgRate" placeholder="3.0" min="0" max="20" step="0.05" value="3.0">
+      <span class="mtg-unit">%</span>
+    </div>
+    <button class="mtg-calc-btn" id="mtgCalcBtn">计算</button>
+    <div class="mtg-result" id="mtgResult" style="display:none">
+      <div class="mtg-r"><span class="mtg-rl">贷款总额</span><span class="mtg-rv" id="mtgLoanAmt">—</span></div>
+      <div class="mtg-r"><span class="mtg-rl">首付金额</span><span class="mtg-rv" id="mtgDownAmt">—</span></div>
+      <div class="mtg-r"><span class="mtg-rl">月供</span><span class="mtg-rv" id="mtgMonthly">—</span></div>
+      <div class="mtg-r"><span class="mtg-rl">利息总额</span><span class="mtg-rv" id="mtgTotalInt">—</span></div>
+      <div class="mtg-r highlight"><span class="mtg-rl">还款总额</span><span class="mtg-rv" id="mtgTotalPay">—</span></div>
+      <div class="mtg-note">基于等额本息，商业贷款</div>
+    </div>
+  </div>
+</div>
 <div class="search-overlay" id="searchOverlay"></div>
 <div class="search-panel" id="searchPanel">
   <div class="search-input-wrap">
@@ -2014,6 +2129,7 @@ function ensure(p) {
   if (p._settings.fontFamilyCustom===undefined) p._settings.fontFamilyCustom='';
   if (p._settings.lineHeightCustom===undefined) p._settings.lineHeightCustom='';
   if (p._settings.pageWidth===undefined) p._settings.pageWidth=0;
+  if (p._settings.skipCover===undefined) p._settings.skipCover=false;
   // Migration: expand ranged week labels (e.g. '第1-4周' → individual weeks)
   var expanded=0;
   ['y1-academic','y2-academic','y3-academic','y4-academic','y5-academic'].forEach(function(cid){
@@ -4213,6 +4329,57 @@ function trySyncOnLoad() {
   });
 }
 
+// ===== "Save to Repo" - backup data as a commit =====
+const REPO_OWNER = 'hdd54';
+const REPO_NAME = 'phd-plan';
+const BACKUP_PATH = 'data/backup.json';
+document.getElementById('repoSaveBtn').addEventListener('click', async function() {
+  var btn = this;
+  if (btn.dataset.busy === '1') return;
+  btn.dataset.busy = '1';
+  btn.textContent = '⏳ 存档中…';
+  var token = gistToken || localStorage.getItem(GIST_TOKEN_KEY) || '';
+  if (!token) {
+    showToast('⚠️ 请先在 ⚡ 中配置 GitHub Token（需 repo 权限）');
+    btn.textContent = '💾 存档'; btn.dataset.busy = '';
+    return;
+  }
+  try {
+    var content = JSON.stringify(data, null, 2);
+    var encoded = btoa(unescape(encodeURIComponent(content)));
+    var now = new Date();
+    var dateStr = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0')+' '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+    var commitMsg = '💾 数据备份 ' + dateStr;
+    // Try to get current file SHA first
+    var sha = '';
+    try {
+      var getResp = await fetch('https://api.github.com/repos/'+REPO_OWNER+'/'+REPO_NAME+'/contents/'+BACKUP_PATH, {
+        headers: { 'Authorization': 'token '+token, 'Accept': 'application/vnd.github.v3+json' }
+      });
+      if (getResp.ok) {
+        var existing = await getResp.json();
+        sha = existing.sha;
+      }
+    } catch(e) { /* file doesn't exist yet */ }
+    // Create or update the file
+    var body = { message: commitMsg, content: encoded };
+    if (sha) body.sha = sha;
+    var resp = await fetch('https://api.github.com/repos/'+REPO_OWNER+'/'+REPO_NAME+'/contents/'+BACKUP_PATH, {
+      method: 'PUT',
+      headers: { 'Authorization': 'token '+token, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' },
+      body: JSON.stringify(body)
+    });
+    if (!resp.ok) {
+      var errData = await resp.json().catch(function(){ return {}; });
+      throw new Error(errData.message || resp.statusText);
+    }
+    showToast('✅ 已存档到仓库 ('+dateStr+')');
+  } catch(e) {
+    showToast('⚠️ 存档失败: '+(e.message||e).substring(0,50));
+  }
+  btn.textContent = '💾 存档'; btn.dataset.busy = '';
+});
+
 // ======================== SCROLL PROGRESS ========================
 (function(){
   const bar = document.getElementById('progress');
@@ -4520,12 +4687,56 @@ document.querySelectorAll('.pomo-tab').forEach(function(tab){
     if(target==='milestones')renderPomoMstones()
   })
 })
+// ===== Mortgage Calculator =====
+document.getElementById('mtgBtn').addEventListener('click',function(){
+  document.getElementById('mtgOverlay').classList.add('s');
+  document.getElementById('mtgModal').classList.add('s');
+  // Pre-fill with last saved values
+  var last = data._mtgLast || {};
+  if (last.price) document.getElementById('mtgPrice').value = last.price;
+  if (last.downPct) document.getElementById('mtgDownPct').value = last.downPct;
+  if (last.years) document.getElementById('mtgYears').value = last.years;
+  if (last.rate) document.getElementById('mtgRate').value = last.rate;
+});
+function mtgClose(){
+  document.getElementById('mtgOverlay').classList.remove('s');
+  document.getElementById('mtgModal').classList.remove('s');
+}
+document.getElementById('mtgOverlay').addEventListener('click',mtgClose);
+document.getElementById('mtgClose').addEventListener('click',mtgClose);
+document.getElementById('mtgCalcBtn').addEventListener('click',function(){
+  var price = parseFloat(document.getElementById('mtgPrice').value) || 0;
+  var downPct = parseInt(document.getElementById('mtgDownPct').value) || 30;
+  var years = parseInt(document.getElementById('mtgYears').value) || 25;
+  var rate = parseFloat(document.getElementById('mtgRate').value) || 3.0;
+  if (price <= 0) { showToast('⚠️ 请输入房价总额'); return; }
+  // Save last inputs
+  data._mtgLast = { price:price, downPct:downPct, years:years, rate:rate };
+  save();
+  // Calculate
+  var loan = price * (100 - downPct) / 100; // 贷款额（万元）
+  var downAmt = price - loan;
+  var monthlyRate = rate / 100 / 12;
+  var months = years * 12;
+  var monthly = loan * monthlyRate * Math.pow(1 + monthlyRate, months) / (Math.pow(1 + monthlyRate, months) - 1);
+  if (!isFinite(monthly)) monthly = loan / months; // 0% rate
+  var totalPay = monthly * months;
+  var totalInt = totalPay - loan;
+  // Display
+  var fmt = function(n){ return n.toFixed(1).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' 万'; };
+  document.getElementById('mtgLoanAmt').textContent = fmt(loan);
+  document.getElementById('mtgDownAmt').textContent = fmt(downAmt);
+  document.getElementById('mtgMonthly').textContent = monthly.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' 元/月';
+  document.getElementById('mtgTotalInt').textContent = fmt(totalInt);
+  document.getElementById('mtgTotalPay').textContent = fmt(totalPay);
+  document.getElementById('mtgResult').style.display = 'block';
+});
 // Session type buttons
 document.querySelectorAll('.pomo-type').forEach(function(btn){
   btn.addEventListener('click',function(){pomoSetType(btn)})
 })
 // Keyboard: Escape to close
-document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(document.getElementById('sleepOverlay').classList.contains('s'))sleepExit();else if(document.getElementById('pomoModal').classList.contains('s'))pomoClose()}})
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(document.getElementById('mtgModal').classList.contains('s'))mtgClose();else if(document.getElementById('sleepOverlay').classList.contains('s'))sleepExit();else if(document.getElementById('pomoModal').classList.contains('s'))pomoClose()}})
 pomoLoad();pomoLoadPos()
 
 // ======================== FEATURE: Milestone Timeline ========================
@@ -4620,16 +4831,20 @@ function applySettings(s){
   if (!isNaN(lh) && lh>0) root.style.setProperty('--line-height-base',lh)
   var pw = _SETTINGS_CFG.pageWidth[s.pageWidth]
   if(pw)root.style.setProperty('--page-width',pw+'vw')
+  // Skip cover auto-enter
+  if (s.skipCover) { window._skipCover = true; }
 }
 function stgHighlight(grp,v){
   document.querySelectorAll('#stg'+grp+' .stg-btn').forEach(function(b){b.classList.toggle('a',parseInt(b.dataset.v)===v)})
 }
+
 function stgOpen(){
   var s=data._settings||{fontSize:1,fontFamily:0,lineHeight:1,pageWidth:0}
   stgHighlight('FontSize',s.fontSize)
   stgHighlight('FontFamily',s.fontFamily)
   stgHighlight('LineHeight',s.lineHeight)
   stgHighlight('PageWidth',s.pageWidth)
+  stgHighlight('SkipCover',s.skipCover?1:0)
   document.getElementById('stgFontSizeCustom').value=s.fontSizeCustom||''
   document.getElementById('stgFontFamilyCustom').value=s.fontFamilyCustom||''
   document.getElementById('stgLineHeightCustom').value=s.lineHeightCustom||''
@@ -4652,6 +4867,7 @@ document.querySelectorAll('.stg-row').forEach(function(row){
       else if(grp==='FontFamily'){s.fontFamily=v;s.fontFamilyCustom=''}
       else if(grp==='LineHeight'){s.lineHeight=v;s.lineHeightCustom=''}
       else if(grp==='PageWidth'){s.pageWidth=v}
+      else if(grp==='SkipCover'){s.skipCover=!!v}
       data._settings=s;save()
       stgHighlight(grp,v)
       applySettings(s)
@@ -4903,6 +5119,10 @@ if (tocTarget) {
 }
 renderAll();
 applySettings(data._settings);
+// Skip cover animation if setting enabled
+if (window._skipCover && document.getElementById('coverSection') && !document.getElementById('coverSection').classList.contains('entered')) {
+  setTimeout(function(){ enterPlan(); }, 200);
+}
 // Auto-expand y1-academic on load
 setTimeout(() => {
   const body = document.getElementById('plan-body-y1-academic');
