@@ -110,7 +110,7 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 
 /* ===== horizontal nav (old ynw/yn/yni kept for scroll nav) ===== */
 .ynw{position:sticky;top:0;z-index:100;background:rgba(10,9,8,.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(212,165,116,.08);padding:clamp(.3rem,.7vw,.45rem) clamp(.5rem,2vw,.8rem);box-shadow:0 2px 24px rgba(0,0,0,.25)}
-.yn{max-width:clamp(400px,70vw,720px);margin:0 auto;display:flex;justify-content:space-between}
+.yn{max-width:clamp(400px,70vw,720px);margin:0 auto;display:flex;justify-content:space-between;flex-wrap:wrap;gap:.2rem}
 .yni{display:flex;flex-direction:column;align-items:center;gap:.12rem;cursor:pointer;padding:clamp(.12rem,.3vw,.2rem) clamp(.35rem,1.2vw,.6rem);border:none;background:none;color:var(--muted);font-family:var(--font-sans);font-size:clamp(.65rem,1.5vw,.8rem);transition:all .25s;position:relative;border-radius:var(--rs);letter-spacing:.12em;font-weight:300}
 .yni:hover{color:var(--fg-dim)}
 .yni.a{color:var(--accent);text-shadow:0 0 12px rgba(212,165,116,.15)}
@@ -263,11 +263,33 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 .tb[contentEditable="true"],
 .ti[contentEditable="true"],
 .tc .tt > span[contentEditable="true"],
-.tc .tm[contentEditable="true"]{outline:none;border-radius:4px;padding:.05rem .15rem;transition:background .15s;min-width:2em}
+.tc .tm[contentEditable="true"],
+.sh .ey[contentEditable="true"],
+.sh h2[contentEditable="true"],
+.sh .sub[contentEditable="true"],
+.sc h3[contentEditable="true"],
+.sc ul li[contentEditable="true"],
+.hmark[contentEditable="true"],
+.hsub[contentEditable="true"],
+.hstat .n[contentEditable="true"],
+.hstat .l[contentEditable="true"],
+.ft p[contentEditable="true"]
+{outline:none;border-radius:4px;padding:.05rem .15rem;transition:background .15s;min-width:2em}
 .tb[contentEditable="true"]:focus,
 .ti[contentEditable="true"]:focus,
 .tc .tt > span[contentEditable="true"]:focus,
-.tc .tm[contentEditable="true"]:focus{background:rgba(255,255,255,.04)}
+.tc .tm[contentEditable="true"]:focus,
+.sh .ey[contentEditable="true"]:focus,
+.sh h2[contentEditable="true"]:focus,
+.sh .sub[contentEditable="true"]:focus,
+.sc h3[contentEditable="true"]:focus,
+.sc ul li[contentEditable="true"]:focus,
+.hmark[contentEditable="true"]:focus,
+.hsub[contentEditable="true"]:focus,
+.hstat .n[contentEditable="true"]:focus,
+.hstat .l[contentEditable="true"]:focus,
+.ft p[contentEditable="true"]:focus
+{background:rgba(255,255,255,.04)}
 .ed-badge{position:fixed;top:.3rem;right:.3rem;z-index:210;padding:.15rem .4rem;border-radius:100px;font-size:clamp(.5rem,.85vw,.55rem);border:1px solid var(--accent);background:rgba(212,165,116,.08);color:var(--accent);pointer-events:none;opacity:0;transition:opacity .25s;letter-spacing:.1em;font-weight:300}
 .ed-badge.s{opacity:1}
 
@@ -813,6 +835,12 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 <div class="sc"><h3>✦ 核心优势</h3><ul><li>北航博士——选调资格全开</li><li>江西籍——本地选调偏好</li><li>理工科——行测数量+逻辑是主场</li><li>现有5万存款——比多数博士从容</li><li>无家庭负担——财务灵活</li></ul></div>
 <div class="sc r"><h3>△ 风险预警</h3><ul><li>3SCI+2专利压力大——尽早启动</li><li>Push型导师×考公时间矛盾</li><li>论文答辩与考试时间可能冲突</li><li>核心部门竞争激烈，要有B计划</li></ul></div>
 </div></section>
+
+<!-- ===== CUSTOM YEARS (动态添加) ===== -->
+<div id="customYearsContainer"></div>
+<div class="sec reveal" style="text-align:center;padding:1rem clamp(.6rem,2vw,1.2rem)">
+  <button id="addYearBtn" class="bb" style="max-width:280px;margin:0 auto;padding:.35rem .6rem;font-size:clamp(.6rem,1.2vw,.75rem)">＋ 添加新计划年</button>
+</div>
 
 <!-- ===== STICKY BOTTOM BAR ===== -->
 <div class="btm-bar">
@@ -1362,12 +1390,24 @@ function updateMeta(cardId) {
 function updateAllStats() {
   let total=0,done=0;
   const yt={y1:{t:0,d:0},y2:{t:0,d:0},y3:{t:0,d:0},y4:{t:0,d:0},y5:{t:0,d:0}};
-  for(const[cid,weeks]of Object.entries(data)){const y=cid.substring(0,2);if(!yt[y])continue;(weeks||[]).forEach(w=>(w.d||[]).forEach(t=>{const d=typeof t==='object'?t.done:false;var c=countLines(t);total+=c;if(d)done+=c;yt[y].t+=c;if(d)yt[y].d+=c}))}
+  for(const[cid,weeks]of Object.entries(data)){
+    var yPrefix=cid.substring(0,2);
+    if(!yt[yPrefix]) {
+      // Check for custom year prefix (c + digit)
+      var m=cid.match(/^(c\d+)/);
+      if(m){yPrefix=m[1];if(!yt[yPrefix])yt[yPrefix]={t:0,d:0}}
+      else continue;
+    }
+    (weeks||[]).forEach(w=>(w.d||[]).forEach(t=>{const d=typeof t==='object'?t.done:false;var c=countLines(t);total+=c;if(d)done+=c;yt[yPrefix].t+=c;if(d)yt[yPrefix].d+=c}))
+  }
   document.getElementById('statTotal').textContent=total;
   document.getElementById('statDone').textContent=done;
   const ys=document.getElementById('yearStats');
   const yN={y1:'博一',y2:'博二',y3:'博三',y4:'博四',y5:'博五'};
-  ys.innerHTML=Object.entries(yt).map(([y,v])=>{const p=v.t===0?0:Math.round((v.d/v.t)*100);return`<div class="ysb-item"><span class="ysb-dot" style="background:${COLORS.a}"></span>${yN[y]}<span class="ysb-p">${v.d}/${v.t}</span><span style="font-size:clamp(.55rem,.8vw,.6rem);color:var(--txt3)">${p}%</span></div>`;}).join('');
+  // Add custom year labels
+  const customYears = data._customYears || [];
+  customYears.forEach(yr => { yN[yr.id] = yr.label; });
+  ys.innerHTML=Object.entries(yt).filter(([y])=>y in yN).map(([y,v])=>{const p=v.t===0?0:Math.round((v.d/v.t)*100);return`<div class="ysb-item"><span class="ysb-dot" style="background:${COLORS.a}"></span>${yN[y]}<span class="ysb-p">${v.d}/${v.t}</span><span style="font-size:clamp(.55rem,.8vw,.6rem);color:var(--txt3)">${p}%</span></div>`;}).join('');
 }
 
 function renderAll() {
@@ -1376,7 +1416,153 @@ function renderAll() {
     if (!data[cid]) data[cid] = [];
     renderWeeks(cid);
   });
+  renderCustomYears();
 }
+
+// ======================== CUSTOM YEARS (动态添加) ========================
+let customYearCounter = 0;
+
+// Load existing custom year definitions or initialize empty
+function getCustomYears() {
+  if (!data._customYears) data._customYears = [];
+  return data._customYears;
+}
+
+function renderCustomYears() {
+  const container = document.getElementById('customYearsContainer');
+  if (!container) return;
+  const years = getCustomYears();
+  container.innerHTML = '';
+  
+  // Refresh nav
+  document.querySelectorAll('.yni-custom, .nav-dot-custom').forEach(el => el.remove());
+
+  years.forEach((yr, idx) => {
+    const id = yr.id;
+    const label = yr.label || '新计划';
+    const title = yr.title || '';
+    const subtitle = yr.subtitle || '';
+    
+    // Generate HTML same structure as static years
+    const html = `
+      <section class="sec reveal" id="${id}">
+        <div class="sh">
+          <div class="ey">${esc(label)}</div>
+          <h2>${esc(title)}</h2>
+          <p class="sub">${esc(subtitle)}</p>
+        </div>
+        <div class="tg">
+          <div class="tc a" data-c="${id}-academic"><div class="ti">📚</div><div class="tt"><span contenteditable="false">学术</span><span class="ttg">0%</span></div><div class="tb" id="ov-${id}-academic"><ul><li>待规划</li></ul></div><div class="wp" data-c="${id}-academic"></div><div class="tp"><div class="bar" data-c="${id}-academic"></div></div><div class="tm"><span>📋 展开制定周计划</span></div></div>
+          <div class="tc b" data-c="${id}-exam"><div class="ti">📋</div><div class="tt"><span contenteditable="false">备考</span><span class="ttg">0%</span></div><div class="tb" id="ov-${id}-exam"><ul><li>待规划</li></ul></div><div class="wp" data-c="${id}-exam"></div><div class="tp"><div class="bar" data-c="${id}-exam"></div></div><div class="tm"><span>📋 展开制定周计划</span></div></div>
+          <div class="tc c" data-c="${id}-finance"><div class="ti">💰</div><div class="tt"><span contenteditable="false">财务</span><span class="ttg">0%</span></div><div class="tb" id="ov-${id}-finance"><ul><li>待规划</li></ul></div><div class="wp" data-c="${id}-finance"></div><div class="tp"><div class="bar" data-c="${id}-finance"></div></div><div class="tm"><span>📋 展开制定周计划</span></div></div>
+          <div class="tc d" data-c="${id}-life"><div class="ti">❤️</div><div class="tt"><span contenteditable="false">生活</span><span class="ttg">0%</span></div><div class="tb" id="ov-${id}-life"><ul><li>待规划</li></ul></div><div class="wp" data-c="${id}-life"></div><div class="tp"><div class="bar" data-c="${id}-life"></div></div><div class="tm"><span>📋 展开制定周计划</span></div></div>
+        </div>
+        <div style="text-align:right;margin-top:.5rem">
+          <button class="del-year-btn bb d" data-id="${id}">🗑 删除此计划</button>
+        </div>
+      </section>
+      <div class="sec-divider"><hr></div>`;
+    
+    container.insertAdjacentHTML('beforeend', html);
+
+    // Observe new section for scroll animations & nav
+    const newSec = document.getElementById(id);
+    if (newSec) {
+      if (typeof obs !== 'undefined' && obs instanceof IntersectionObserver) {
+        obs.observe(newSec);
+      }
+      // Also observe for nav-dot active state
+      if (typeof navObs !== 'undefined' && navObs instanceof IntersectionObserver) {
+        navObs.observe(newSec);
+      }
+      // Observe for reveal animation
+      if (typeof rObs !== 'undefined' && rObs instanceof IntersectionObserver) {
+        rObs.observe(newSec);
+      }
+    }
+
+    // Add nav buttons
+    const yn = document.querySelector('.yn');
+    if (yn) {
+      const btn = document.createElement('button');
+      btn.className = 'yni yni-custom';
+      btn.dataset.y = id;
+      btn.innerHTML = `<span class="yd"></span><span class="yl">${esc(label)}</span>`;
+      yn.appendChild(btn);
+    }
+    const navRail = document.getElementById('navRail');
+    if (navRail && navRail.querySelector('.nav-dot[data-target="sum"]')) {
+      const dot = document.createElement('button');
+      dot.className = 'nav-dot nav-dot-custom';
+      dot.dataset.target = id;
+      dot.dataset.label = label;
+      dot.ariaLabel = label;
+      navRail.insertBefore(dot, navRail.querySelector('.nav-dot[data-target="sum"]'));
+    }
+
+    // Ensure week data arrays exist
+    ['academic','exam','finance','life'].forEach(t => {
+      const cid = id + '-' + t;
+      if (!data[cid]) data[cid] = [];
+    });
+  });
+
+  // Re-render weeks for custom cards
+  years.forEach(yr => {
+    ['academic','exam','finance','life'].forEach(t => {
+      const cid = yr.id + '-' + t;
+      const el = document.querySelector(`.wp[data-c="${cid}"]`);
+      if (el) renderWeeks(cid);
+    });
+  });
+
+  // Re-apply edit mode if active
+  if (document.querySelector('.tb[contentEditable="true"]')) {
+    document.querySelectorAll(
+      '.tb, .tc .ti, .tc .tt > span:first-child, .tc .tm, .sh .ey, .sh h2, .sh .sub, .sc h3, .sc ul li, .ft p'
+    ).forEach(el => { el.contentEditable = true; });
+  }
+
+  // Delete year handler
+  container.querySelectorAll('.del-year-btn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const id = this.dataset.id;
+      if (!confirm('确定删除「' + id + '」及其所有周计划数据？')) return;
+      // Remove from data
+      const years = getCustomYears();
+      data._customYears = years.filter(y => y.id !== id);
+      ['academic','exam','finance','life'].forEach(t => { delete data[id + '-' + t]; });
+      save();
+      renderAll(); // calls renderCustomYears() internally
+      showToast('🗑 已删除');
+    });
+  });
+}
+
+// Add new year
+function addCustomYear() {
+  const label = prompt('请输入新计划名称（如：博六、拓展计划等）', '新计划');
+  if (!label || !label.trim()) return;
+  const title = prompt('请输入副标题（如：延毕年、备选方案等）', '新规划年');
+  const subtitle = prompt('请输入分类比例（如：学术30% · 考公45%）', '');
+  customYearCounter++;
+  const id = 'c' + Date.now();
+  const years = getCustomYears();
+  years.push({ id, label: label.trim(), title: (title||label.trim()), subtitle: (subtitle||'') });
+  data._customYears = years;
+  save();
+  renderAll(); // calls renderCustomYears() internally
+  // Scroll to new section
+  setTimeout(() => {
+    const sec = document.getElementById(id);
+    if (sec) sec.scrollIntoView({behavior:'smooth', block:'start'});
+  }, 100);
+  showToast('＋ 已添加「' + label.trim() + '」');
+}
+
+// Wire add year button (script runs after DOM in body, so button exists)
+document.getElementById('addYearBtn')?.addEventListener('click', addCustomYear);
 
 // ======================== TOAST ========================
 let toastTimer;
@@ -1567,8 +1753,15 @@ document.addEventListener('click', e => {
   // Edit toggle (both buttons)
   if (t.id==='editToggle'||t.closest('#editToggle')||t.id==='editToggle2'||t.closest('#editToggle2')) {
     const isEdit = !document.querySelector('.tb[contentEditable="true"]');
-    // Toggle contentEditable on overview text, heading icon, category label, and motto
-    document.querySelectorAll('.tb, .tc .ti, .tc .tt > span:first-child, .tc .tm, .wk-label').forEach(el => {
+    // Toggle contentEditable on ALL text elements
+    document.querySelectorAll(
+      '.tb, .tc .ti, .tc .tt > span:first-child, .tc .tm, .wk-label, ' +
+      '.sh .ey, .sh h2, .sh .sub, ' +
+      '.sc h3, .sc ul li, ' +
+      '.hmark, .hsub, ' +
+      '.hstat .n, .hstat .l, ' +
+      '.ft p'
+    ).forEach(el => {
       el.contentEditable = isEdit;
     });
     // In edit mode: text cursor on daily textareas; disable drag; non-edit: default arrow
@@ -1671,7 +1864,7 @@ const obs = new IntersectionObserver(entries => {
     if (e.isIntersecting) {
       e.target.classList.add('v');
       const id = e.target.getAttribute('id');
-      if (id && (id.startsWith('y')||id==='sum')) {
+      if (id && (id.startsWith('y')||id==='sum'||id.startsWith('c'))) {
         document.querySelectorAll('.yni').forEach(n => n.classList.toggle('a', n.dataset.y === id));
       }
     }
@@ -2875,10 +3068,11 @@ function trySyncOnLoad() {
 })();
 
 // ======================== LEFT NAV RAIL ========================
+var navObs;
 (function(){
   const dots = document.querySelectorAll('.nav-dot');
   const sections = document.querySelectorAll('.sec');
-  const navObs = new IntersectionObserver(function(entries) {
+  navObs = new IntersectionObserver(function(entries) {
     entries.forEach(function(entry) {
       if (entry.isIntersecting) {
         const id = entry.target.getAttribute('id');
@@ -2898,8 +3092,9 @@ function trySyncOnLoad() {
 })();
 
 // ======================== REVEAL ON SCROLL ========================
+var rObs;
 (function(){
-  var rObs = new IntersectionObserver(function(entries) {
+  rObs = new IntersectionObserver(function(entries) {
     entries.forEach(function(e) { if (e.isIntersecting) e.target.classList.add('in'); });
   }, { threshold: 0.15 });
   document.querySelectorAll('.reveal').forEach(function(el) { rObs.observe(el); });
@@ -3474,6 +3669,84 @@ document.addEventListener('blur', e => {
     if (!data._overviews) data._overviews = {};
     if (!data._overviews[cid]) data._overviews[cid] = {};
     data._overviews[cid].tm = tm.innerHTML;
+    save(); return;
+  }
+  // Year section header label (.ey)
+  var ey = el.closest('.sh .ey');
+  if (ey && ey.contentEditable === 'true') {
+    var sec = ey.closest('.sec');
+    if (!sec) return;
+    if (!data._overviews) data._overviews = {};
+    data._overviews[sec.id+'-ey'] = ey.textContent;
+    save(); return;
+  }
+  // Year section h2 title
+  var h2el = el.closest('.sh h2');
+  if (h2el && h2el.contentEditable === 'true') {
+    var sec = h2el.closest('.sec');
+    if (!sec) return;
+    if (!data._overviews) data._overviews = {};
+    // Store text-only, preserve the emoji icons
+    data._overviews[sec.id+'-h2'] = h2el.innerHTML;
+    save(); return;
+  }
+  // Year section subtitle (.sub)
+  var sub = el.closest('.sh .sub');
+  if (sub && sub.contentEditable === 'true') {
+    if (!data._overviews) data._overviews = {};
+    data._overviews['sub-'+sub.textContent.slice(0,8)] = sub.textContent;
+    save(); return;
+  }
+  // Summary card h3
+  var sch3 = el.closest('.sc h3');
+  if (sch3 && sch3.contentEditable === 'true') {
+    if (!data._overviews) data._overviews = {};
+    data._overviews['sc-'+sch3.textContent.slice(0,6)] = sch3.textContent;
+    save(); return;
+  }
+  // Summary card li
+  var scLi = el.closest('.sc ul li');
+  if (scLi && scLi.contentEditable === 'true') {
+    if (!data._overviews) data._overviews = {};
+    data._overviews['scli-'+Date.now()] = scLi.textContent;
+    save(); return;
+  }
+  // Hero title
+  var hm = el.closest('.hmark');
+  if (hm && hm.contentEditable === 'true') {
+    if (!data._overviews) data._overviews = {};
+    data._overviews['hmark'] = hm.innerHTML;
+    save(); return;
+  }
+  // Hero subtitle
+  var hs = el.closest('.hsub');
+  if (hs && hs.contentEditable === 'true') {
+    if (!data._overviews) data._overviews = {};
+    data._overviews['hsub'] = hs.textContent;
+    save(); return;
+  }
+  // Hero stats
+  var hstat = el.closest('.hstat');
+  if (hstat) {
+    var nEl = hstat.querySelector('.n');
+    var lEl = hstat.querySelector('.l');
+    if (nEl && nEl.contentEditable === 'true') {
+      if (!data._overviews) data._overviews = {};
+      data._overviews['hstat-n'] = nEl.textContent;
+      save();
+    }
+    if (lEl && lEl.contentEditable === 'true') {
+      if (!data._overviews) data._overviews = {};
+      data._overviews['hstat-l'] = lEl.textContent;
+      save();
+    }
+    return;
+  }
+  // Footer text
+  var ftp = el.closest('.ft p');
+  if (ftp && ftp.contentEditable === 'true') {
+    if (!data._overviews) data._overviews = {};
+    data._overviews['ft'] = ftp.textContent;
     save(); return;
   }
 }, true);
