@@ -108,8 +108,20 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 .nav-dot.a::after{color:var(--accent)}
 @media(max-width:680px){.nav-rail{display:none}}
 
+/* ===== page toolbar ===== */
+.pb{position:sticky;top:0;z-index:200;background:rgba(10,9,8,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(212,165,116,.1);padding:clamp(.25rem,.5vw,.35rem) clamp(.4rem,1.5vw,.6rem);display:flex;gap:clamp(.2rem,.4vw,.35rem);align-items:center;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch}
+.pb::-webkit-scrollbar{height:2px}
+.pb::-webkit-scrollbar-thumb{background:rgba(212,165,116,.2);border-radius:2px}
+.pbi{flex-shrink:0;display:inline-flex;align-items:center;gap:.25rem;padding:clamp(.15rem,.3vw,.2rem) clamp(.35rem,.8vw,.5rem);border:1px solid transparent;border-radius:100px;background:transparent;color:var(--muted);font-family:var(--font-sans);font-size:clamp(.55rem,1vw,.65rem);cursor:pointer;transition:all .25s;white-space:nowrap;letter-spacing:.08em;font-weight:300}
+.pbi:hover{color:var(--fg-dim);border-color:var(--line-2)}
+.pbi.a{color:var(--accent);border-color:var(--accent);background:rgba(212,165,116,.08);text-shadow:0 0 8px rgba(212,165,116,.12)}
+.pbi.add{font-size:clamp(.7rem,1.2vw,.8rem);padding:.05rem .35rem;color:var(--accent);opacity:.6}
+.pbi.add:hover{opacity:1;border-color:var(--accent)}
+.page-content{display:none}
+.page-content.a{display:block}
+
 /* ===== horizontal nav (old ynw/yn/yni kept for scroll nav) ===== */
-.ynw{position:sticky;top:0;z-index:100;background:rgba(10,9,8,.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(212,165,116,.08);padding:clamp(.3rem,.7vw,.45rem) clamp(.5rem,2vw,.8rem);box-shadow:0 2px 24px rgba(0,0,0,.25)}
+.ynw{position:sticky;top:clamp(34px,5vw,44px);z-index:100;background:rgba(10,9,8,.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(212,165,116,.08);padding:clamp(.3rem,.7vw,.45rem) clamp(.5rem,2vw,.8rem);box-shadow:0 2px 24px rgba(0,0,0,.25)}
 .yn{max-width:clamp(400px,70vw,720px);margin:0 auto;display:flex;justify-content:space-between;flex-wrap:wrap;gap:.2rem}
 .yni{display:flex;flex-direction:column;align-items:center;gap:.12rem;cursor:pointer;padding:clamp(.12rem,.3vw,.2rem) clamp(.35rem,1.2vw,.6rem);border:none;background:none;color:var(--muted);font-family:var(--font-sans);font-size:clamp(.65rem,1.5vw,.8rem);transition:all .25s;position:relative;border-radius:var(--rs);letter-spacing:.12em;font-weight:300}
 .yni:hover{color:var(--fg-dim)}
@@ -752,6 +764,15 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 <div class="toast" id="toast">✓ 已保存</div>
 <input type="file" id="fileInput" accept=".json" />
 
+<!-- PAGE TOOLBAR -->
+<div class="pb" id="pageBar">
+  <button class="pbi a" data-page="p0">🎓 博士计划</button>
+  <button class="pbi add" id="addPageBtn" title="添加新页">＋</button>
+</div>
+
+<!-- PAGE 0 CONTENT (博士计划 - existing content) -->
+<div id="page0Content" class="page-content a">
+
 <!-- HERO -->
 <header class="hero">
   <div class="hmark reveal in">博士四年 · <em>全景规划</em></div>
@@ -841,6 +862,9 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 <div class="sec reveal" style="text-align:center;padding:1rem clamp(.6rem,2vw,1.2rem)">
   <button id="addYearBtn" class="bb" style="max-width:280px;margin:0 auto;padding:.35rem .6rem;font-size:clamp(.6rem,1.2vw,.75rem)">＋ 添加新计划年</button>
 </div>
+
+<!-- ===== DYNAMIC PAGES CONTENT ===== -->
+<div id="pageContent" class="page-content"></div>
 
 <!-- ===== STICKY BOTTOM BAR ===== -->
 <div class="btm-bar">
@@ -1417,25 +1441,28 @@ function updateMeta(cardId) {
 
 function updateAllStats() {
   let total=0,done=0;
+  // Per-year stats for page 0
   const yt={y1:{t:0,d:0},y2:{t:0,d:0},y3:{t:0,d:0},y4:{t:0,d:0},y5:{t:0,d:0}};
   for(const[cid,weeks]of Object.entries(data)){
-    var yPrefix=cid.substring(0,2);
-    if(!yt[yPrefix]) {
-      // Check for custom year prefix (c + digit)
+    if(!Array.isArray(weeks)||cid.startsWith('_'))continue;
+    // Track per-year for page 0
+    var yP=cid.substring(0,2);
+    if(!yt[yP]){
       var m=cid.match(/^(c\d+)/);
-      if(m){yPrefix=m[1];if(!yt[yPrefix])yt[yPrefix]={t:0,d:0}}
-      else continue;
+      if(m){yP=m[1];if(!yt[yP])yt[yP]={t:0,d:0}}
     }
-    (weeks||[]).forEach(w=>(w.d||[]).forEach(t=>{const d=typeof t==='object'?t.done:false;var c=countLines(t);total+=c;if(d)done+=c;yt[yPrefix].t+=c;if(d)yt[yPrefix].d+=c}))
+    (weeks||[]).forEach(w=>(w.d||[]).forEach(t=>{const d=typeof t==='object'?t.done:false;total+=1;if(d)done+=1;if(yt[yP]){yt[yP].t+=1;if(d)yt[yP].d+=1}}))
   }
-  document.getElementById('statTotal').textContent=total;
-  document.getElementById('statDone').textContent=done;
-  const ys=document.getElementById('yearStats');
-  const yN={y1:'博一',y2:'博二',y3:'博三',y4:'博四',y5:'博五'};
-  // Add custom year labels
-  const customYears = data._customYears || [];
-  customYears.forEach(yr => { yN[yr.id] = yr.label; });
-  ys.innerHTML=Object.entries(yt).filter(([y])=>y in yN).map(([y,v])=>{const p=v.t===0?0:Math.round((v.d/v.t)*100);return`<div class="ysb-item"><span class="ysb-dot" style="background:${COLORS.a}"></span>${yN[y]}<span class="ysb-p">${v.d}/${v.t}</span><span style="font-size:clamp(.55rem,.8vw,.6rem);color:var(--txt3)">${p}%</span></div>`;}).join('');
+  var stEl=document.getElementById('statTotal');if(stEl)stEl.textContent=total;
+  var sdEl=document.getElementById('statDone');if(sdEl)sdEl.textContent=done;
+  // Year stats card (page 0 only)
+  var ys=document.getElementById('yearStats');
+  if(ys){
+    var yN={y1:'博一',y2:'博二',y3:'博三',y4:'博四',y5:'博五'};
+    var cys=data._customYears||[];
+    cys.forEach(function(yr){yN[yr.id]=yr.label});
+    ys.innerHTML=Object.entries(yt).filter(function(a){return a[1].t>0||yN[a[0]]}).map(function(a){var v=a[1],p=v.t===0?0:Math.round((v.d/v.t)*100);return'<div class="ysb-item"><span class="ysb-dot" style="background:'+COLORS.a+'"></span>'+(yN[a[0]]||a[0])+'<span class="ysb-p">'+v.d+'/'+v.t+'</span><span style="font-size:clamp(.55rem,.8vw,.6rem);color:var(--txt3)">'+p+'%</span></div>'}).join('');
+  }
 }
 
 function renderAll() {
@@ -1591,6 +1618,253 @@ function addCustomYear() {
 
 // Wire add year button (script runs after DOM in body, so button exists)
 document.getElementById('addYearBtn')?.addEventListener('click', addCustomYear);
+
+// ======================== PAGE MANAGEMENT (多页面) ========================
+let activePageId = 'p0';
+
+function initPages() {
+  if (!data._pages || !Array.isArray(data._pages) || data._pages.length === 0) {
+    data._pages = [{
+      id: 'p0',
+      label: '博士计划',
+      icon: '🎓',
+      type: 'year',
+      categories: [
+        { id: 'academic', icon: '📚', label: '学术' },
+        { id: 'exam', icon: '📋', label: '考公' },
+        { id: 'finance', icon: '💰', label: '财务' },
+        { id: 'life', icon: '❤️', label: '生活' }
+      ]
+    }];
+    save();
+  }
+  renderPageToolbar();
+  // Ensure page 0 is active and visible
+  const p0 = document.getElementById('page0Content');
+  const dp = document.getElementById('pageContent');
+  if (p0) p0.classList.add('a');
+  if (dp) dp.classList.remove('a');
+  activePageId = 'p0';
+}
+
+function renderPageToolbar() {
+  const bar = document.getElementById('pageBar');
+  if (!bar) return;
+  const pages = data._pages || [];
+  // Rebuild: keep only the add button or recreate all
+  bar.innerHTML = '';
+  pages.forEach(function(p) {
+    var b = document.createElement('button');
+    b.className = 'pbi' + (p.id === activePageId ? ' a' : '');
+    b.dataset.page = p.id;
+    b.textContent = (p.icon||'📄') + ' ' + p.label;
+    bar.appendChild(b);
+  });
+  var add = document.createElement('button');
+  add.id = 'addPageBtn';
+  add.className = 'pbi add';
+  add.title = '添加新页';
+  add.textContent = '＋';
+  bar.appendChild(add);
+}
+
+function switchPage(pageId) {
+  if (pageId === activePageId) return;
+  activePageId = pageId;
+  
+  var p0 = document.getElementById('page0Content');
+  var dp = document.getElementById('pageContent');
+  var nr = document.getElementById('navRail');
+  var yn = document.getElementById('ynw');
+  
+  if (pageId === 'p0') {
+    if (p0) p0.classList.add('a');
+    if (dp) { dp.classList.remove('a'); dp.innerHTML = ''; }
+    if (nr) nr.style.display = '';
+    if (yn) yn.style.display = '';
+    renderAll();
+  } else {
+    if (p0) p0.classList.remove('a');
+    if (dp) dp.classList.add('a');
+    if (nr) nr.style.display = 'none';
+    if (yn) yn.style.display = 'none';
+    renderDynamicPage(pageId);
+  }
+  renderPageToolbar();
+}
+
+function renderDynamicPage(pageId) {
+  var container = document.getElementById('pageContent');
+  var pages = data._pages || [];
+  var page = null;
+  for (var i = 0; i < pages.length; i++) { if (pages[i].id === pageId) { page = pages[i]; break; } }
+  if (!page || !container) return;
+  
+  // Find section IDs for this page from data keys
+  var catIds = [];
+  for (var ci = 0; ci < page.categories.length; ci++) catIds.push(page.categories[ci].id);
+  var sectionSet = {};
+  for (var key in data) {
+    if (key.indexOf(pageId + '-') === 0) {
+      var rest = key.slice(pageId.length + 1);
+      // Check if rest ends with one of the category IDs
+      for (var ci2 = 0; ci2 < catIds.length; ci2++) {
+        var cat = catIds[ci2];
+        if (rest.indexOf('-') > 0 && rest.slice(-cat.length) === cat && (rest.length === cat.length || rest[rest.length-cat.length-1] === '-')) {
+          var secId = rest.slice(0, rest.length - cat.length - 1);
+          sectionSet[secId] = true;
+          break;
+        }
+      }
+    }
+  }
+  var sections = Object.keys(sectionSet).sort();
+  
+  if (sections.length === 0) {
+    container.innerHTML = '<div class="sec reveal in" style="text-align:center;padding:3rem 1rem"><p style="color:var(--txt3);font-size:.9rem;margin-bottom:1.5rem">暂无计划</p><button class="bb" onclick="addPageSection(\''+pageId+'\')">＋ 添加'+(page.type==='month'?'月份':'年份')+'</button></div>';
+    return;
+  }
+  
+  // Build section labels
+  var secLabels = {};
+  for (var si = 0; si < sections.length; si++) {
+    var s = sections[si];
+    if (page.type === 'month') {
+      var num = parseInt(s.replace('m','')) || 1;
+      var mn = ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
+      secLabels[s] = mn[num-1] || (num+'月');
+    } else {
+      var num2 = parseInt(s.replace('y','')) || 1;
+      secLabels[s] = '第'+num2+'年';
+    }
+  }
+  
+  var html = '';
+  for (var si2 = 0; si2 < sections.length; si2++) {
+    var secId = sections[si2];
+    var label = secLabels[secId] || secId;
+    
+    html += '<section class="sec reveal" id="'+pageId+'-'+secId+'"><div class="sh"><div class="ey">'+esc(label)+'</div><h2>'+esc(label)+'</h2><p class="sub"></p></div><div class="tg">';
+    
+    for (var ci3 = 0; ci3 < page.categories.length; ci3++) {
+      var cat = page.categories[ci3];
+      var cardId = pageId + '-' + secId + '-' + cat.id;
+      var letters = ['a','b','c','d','e','f','g','h'];
+      var letter = letters[ci3 % letters.length];
+      html += '<div class="tc '+letter+'" data-c="'+cardId+'"><div class="ti">'+cat.icon+'</div><div class="tt"><span>'+esc(cat.label)+'</span><span class="ttg">0%</span></div><div class="tb" id="ov-'+cardId+'"><ul><li>待规划</li></ul></div><div class="wp" data-c="'+cardId+'"></div><div class="tp"><div class="bar" data-c="'+cardId+'"></div></div><div class="tm"><span>📋 展开制定周计划</span></div></div>';
+    }
+    
+    html += '</div></section><div class="sec-divider"><hr></div>';
+  }
+  
+  // Add section button
+  html += '<div class="sec reveal" style="text-align:center;padding:1rem"><button class="bb" onclick="addPageSection(\''+pageId+'\')">＋ 添加'+(page.type==='month'?'月份':'年份')+'</button></div>';
+  
+  container.innerHTML = html;
+  
+  // Initialize weeks for all cards
+  for (var ci4 = 0; ci4 < page.categories.length; ci4++) {
+    var cat2 = page.categories[ci4];
+    for (var si3 = 0; si3 < sections.length; si3++) {
+      var cardId2 = pageId + '-' + sections[si3] + '-' + cat2.id;
+      if (!data[cardId2]) data[cardId2] = [];
+      renderWeeks(cardId2);
+    }
+  }
+  
+  // Observe sections
+  container.querySelectorAll('.sec').forEach(function(s) {
+    if (typeof obs !== 'undefined') try { obs.observe(s); } catch(e) {}
+    if (typeof navObs !== 'undefined') try { navObs.observe(s); } catch(e) {}
+    if (typeof rObs !== 'undefined') try { rObs.observe(s); } catch(e) {}
+  });
+  
+  // Re-apply edit mode
+  if (document.querySelector('.tb[contentEditable="true"]')) {
+    container.querySelectorAll('.tb, .tc .ti, .tc .tt > span:first-child, .tc .tm').forEach(function(el) { el.contentEditable = true; });
+  }
+  
+  updateAllStats();
+}
+
+function addPage() {
+  var label = prompt('请输入新页面名称（如：买房计划、健身计划等）', '新计划');
+  if (!label || !label.trim()) return;
+  var icon = prompt('请输入页面图标（emoji，如：🏠 💪 📚）', '📄');
+  var typeAns = prompt('计划类型：输入 y 按年计划，输入 m 按月计划', 'y');
+  var pageType = typeAns && typeAns.toLowerCase() === 'm' ? 'month' : 'year';
+  
+  var catsInput = prompt('请输入分类（用逗号分隔，如：💰房价,🏦贷款,📈收入,📉支出）', '📚任务1,📋任务2,💰任务3,❤️任务4');
+  var categories = [];
+  if (catsInput) {
+    var parts = catsInput.split(',');
+    for (var i = 0; i < parts.length; i++) {
+      var c = parts[i].trim();
+      if (!c) continue;
+      // Try to extract leading emoji
+      var emoji = '📄';
+      var name = c;
+      // Simple emoji extraction: first char if it's high unicode
+      var code = c.charCodeAt(0);
+      if (code > 0x2600 || (code >= 0x2000 && code <= 0x27BF)) {
+        emoji = c.charAt(0);
+        name = c.slice(1).trim();
+      }
+      if (!name) name = '分类' + (i+1);
+      categories.push({ id: 'cat' + i, icon: emoji, label: name });
+    }
+  }
+  if (categories.length === 0) {
+    categories.push({ id: 'cat0', icon: '📄', label: '默认' });
+  }
+  
+  var pageId = 'p' + Date.now();
+  var pages = data._pages || [];
+  pages.push({ id: pageId, label: label.trim(), icon: icon.trim() || '📄', type: pageType, categories: categories });
+  data._pages = pages;
+  save();
+  renderPageToolbar();
+  
+  // Create initial section
+  var firstSecId = pageType === 'month' ? 'm1' : 'y1';
+  for (var ci = 0; ci < categories.length; ci++) {
+    data[pageId + '-' + firstSecId + '-' + categories[ci].id] = [];
+  }
+  save();
+  
+  switchPage(pageId);
+  showToast('＋ 已创建「' + label.trim() + '」');
+}
+
+function addPageSection(pageId) {
+  var pages = data._pages || [];
+  var page = null;
+  for (var i = 0; i < pages.length; i++) { if (pages[i].id === pageId) { page = pages[i]; break; } }
+  if (!page) return;
+  
+  var type = page.type;
+  var ans = prompt('输入' + (type === 'month' ? '月份数字（如：3）' : '年份数字（如：1）'), '1');
+  var num = parseInt(ans);
+  if (isNaN(num) || num < 1) return;
+  
+  var secId = type === 'month' ? 'm' + num : 'y' + num;
+  var secLabel = type === 'month' ? (['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'][num-1] || num+'月') : '第'+num+'年';
+  
+  for (var ci = 0; ci < page.categories.length; ci++) {
+    var cardId = pageId + '-' + secId + '-' + page.categories[ci].id;
+    if (!data[cardId]) data[cardId] = [];
+  }
+  save();
+  renderDynamicPage(pageId);
+  showToast('＋ 已添加「' + secLabel + '」');
+}
+
+// Wire page toolbar clicks
+document.addEventListener('click', function(e) {
+  var pbi = e.target.closest('.pbi[data-page]');
+  if (pbi) { var pid = pbi.dataset.page; if (pid !== activePageId) switchPage(pid); return; }
+  if (e.target.closest('#addPageBtn')) { addPage(); return; }
+});
 
 // ======================== TOAST ========================
 let toastTimer;
@@ -3639,6 +3913,7 @@ if (data._overviews) {
     }
   });
 }
+initPages();
 renderAll();
 // Auto-expand y1-academic on load
 setTimeout(() => {
