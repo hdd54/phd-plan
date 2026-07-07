@@ -1207,9 +1207,6 @@ body.fm .kbd-hint{display:none}
 /* ===== Feature: Task Tags (handled by feature-tags.js) ===== */
 
 /* ===== Feature: Week Batch Ops ===== */
-.wk-batch{display:flex;gap:.15rem;margin-left:auto}
-.wk-batch button{background:rgba(255,255,255,.03);border:1px solid var(--line-2);border-radius:4px;color:var(--muted);font-size:clamp(.45rem,.7vw,.5rem);padding:.06rem .2rem;cursor:pointer;transition:all .2s;font-family:var(--font-sans);line-height:1.2}
-.wk-batch button:hover{color:var(--accent);border-color:var(--accent);background:rgba(212,165,116,.08)}
 
 /* ===== Feature: Credit Card Calculator ===== */
 .cc-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.92);z-index:395;width:clamp(340px,65vw,480px);background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 24px 80px rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:all .3s cubic-bezier(.2,.9,.3,1);overflow:hidden}
@@ -5894,46 +5891,6 @@ document.getElementById('doOverlay').addEventListener('click', doClose_);
 document.getElementById('doCloseBtn').addEventListener('click', doClose_);
 document.getElementById('doFmBtn').addEventListener('click', function(){ doClose_(); fmEnter(); });
 setTimeout(showDailyOverview, 1200);
-
-// ======================== FEATURE: Week Batch Ops ========================
-(function(){
-  function enhanceWeeks(){
-    document.querySelectorAll('.wk-header').forEach(function(hdr){
-      if(hdr.querySelector('.wk-batch')) return;
-      var weekEl = hdr.closest('.week');
-      if(!weekEl) return;
-      var wi = parseInt(weekEl.dataset.wi);
-      var cid = hdr.querySelector('.wk-toggle').dataset.c;
-      var batch = document.createElement('div');
-      batch.className = 'wk-batch';
-      var copyBtn = document.createElement('button');
-      copyBtn.textContent = '📋'; copyBtn.title = '复制本周到新周';
-      copyBtn.addEventListener('click', function(e){
-        e.stopPropagation();
-        if(!data[cid] || !data[cid][wi]) return;
-        var src = JSON.parse(JSON.stringify(data[cid][wi]));
-        src.w = '周'+(data[cid].length+1);
-        if(src.d) src.d.forEach(function(t){ if(typeof t==='object') t.done=false; });
-        data[cid].push(src); save(); renderWeeks(cid);
-        showToast('📋 已复制为 "'+src.w+'"');
-      });
-      var clearBtn = document.createElement('button');
-      clearBtn.textContent = '🗑'; clearBtn.title = '清空本周任务';
-      clearBtn.addEventListener('click', function(e){
-        e.stopPropagation();
-        if(!data[cid] || !data[cid][wi]) return;
-        if(!confirm('清空第'+(wi+1)+'周的所有任务？')) return;
-        if(data[cid][wi].d) data[cid][wi].d = data[cid][wi].d.map(function(){ return ''; });
-        save(); renderWeeks(cid); showToast('🗑 已清空本周任务');
-      });
-      batch.appendChild(copyBtn); batch.appendChild(clearBtn);
-      hdr.appendChild(batch);
-    });
-  }
-  var _rw = renderWeeks;
-  renderWeeks = function(cid){ _rw.call(this, cid); setTimeout(enhanceWeeks, 0); };
-  setTimeout(enhanceWeeks, 500);
-})();
 
 // ======================== FEATURE: Browser Notification ========================
 (function(){
