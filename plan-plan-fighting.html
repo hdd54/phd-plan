@@ -1483,7 +1483,6 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
   <button class="bb" id="installBtn" title="安装到桌面" style="display:none">📥 安装</button>
   <button class="bb" id="helpBtn" title="使用说明"><span class="bb-icon">📖</span> 说明</button>
   <button class="bb" id="stgBtn" title="设置"><span class="bb-icon">⚙</span> 设置</button>
-  <button class="bb" id="mtgBtn" title="房贷计算"><span class="bb-icon">🏠</span> 房贷</button>
   <button class="bb" id="ccBtn" title="信用卡计算"><span class="bb-icon">💳</span> 信用卡</button>
   <button class="bb" id="svBtn" title="存款目标"><span class="bb-icon">💰</span> 储蓄</button>
   <button class="bb" id="snBtn" title="进度快照"><span class="bb-icon">📸</span> 快照</button>
@@ -1491,7 +1490,7 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
   <button class="bb" id="bkpBtn" title="数据备份"><span class="bb-icon">💾</span> 备份</button>
   <button class="bb" id="calBtn" title="月视图"><span class="bb-icon">📅</span> 月历</button>
   <button class="bb" id="statBtn" title="统计分析"><span class="bb-icon">📊</span> 统计</button>
-  <button class="bb" id="costBtn" title="购房成本"><span class="bb-icon">📋</span> 购房</button>
+  <button class="bb" id="costBtn" title="购房计算（房贷+成本）"><span class="bb-icon">🏠</span> 购房</button>
   <button class="bb" id="fundBtn" title="公积金贷款"><span class="bb-icon">🏦</span> 公积金</button>
   <button class="bb" id="houseBtn" title="看房清单"><span class="bb-icon">🏡</span> 看房</button>
   <button class="bb" id="pdfBtn" title="打印报告"><span class="bb-icon">📄</span> 打印</button>
@@ -1643,55 +1642,7 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
   </div>
 </div>
 
-<!-- ===== MORTGAGE CALCULATOR ===== -->
-<div class="mtg-overlay" id="mtgOverlay"></div>
-<div class="mtg-modal" id="mtgModal">
-  <div class="mtg-header">
-    <h3>🏠 房贷计算器</h3>
-    <button class="mtg-close" id="mtgClose">✕</button>
-  </div>
-  <div class="mtg-body" id="mtgBody">
-    <div class="mtg-row">
-      <label>房价总额</label>
-      <input type="number" id="mtgPrice" placeholder="200" min="0" step="10">
-      <span class="mtg-unit">万元</span>
-    </div>
-    <div class="mtg-row">
-      <label>首付比例</label>
-      <select id="mtgDownPct">
-        <option value="15">15%（首套）</option>
-        <option value="20">20%</option>
-        <option value="30" selected>30%</option>
-        <option value="40">40%</option>
-        <option value="50">50%</option>
-      </select>
-    </div>
-    <div class="mtg-row">
-      <label>贷款年限</label>
-      <select id="mtgYears">
-        <option value="10">10年</option>
-        <option value="15">15年</option>
-        <option value="20">20年</option>
-        <option value="25" selected>25年</option>
-        <option value="30">30年</option>
-      </select>
-    </div>
-    <div class="mtg-row">
-      <label>利率</label>
-      <input type="number" id="mtgRate" placeholder="3.0" min="0" max="20" step="0.05" value="3.0">
-      <span class="mtg-unit">%</span>
-    </div>
-    <button class="mtg-calc-btn" id="mtgCalcBtn">计算</button>
-    <div class="mtg-result" id="mtgResult" style="display:none">
-      <div class="mtg-r"><span class="mtg-rl">贷款总额</span><span class="mtg-rv" id="mtgLoanAmt">—</span></div>
-      <div class="mtg-r"><span class="mtg-rl">首付金额</span><span class="mtg-rv" id="mtgDownAmt">—</span></div>
-      <div class="mtg-r"><span class="mtg-rl">月供</span><span class="mtg-rv" id="mtgMonthly">—</span></div>
-      <div class="mtg-r"><span class="mtg-rl">利息总额</span><span class="mtg-rv" id="mtgTotalInt">—</span></div>
-      <div class="mtg-r highlight"><span class="mtg-rl">还款总额</span><span class="mtg-rv" id="mtgTotalPay">—</span></div>
-      <div class="mtg-note">基于等额本息，商业贷款</div>
-    </div>
-  </div>
-</div>
+
 
 <!-- ===== CREDIT CARD CALCULATOR ===== -->
 <div class="mtg-overlay" id="ccOverlay"></div>
@@ -4958,56 +4909,13 @@ document.querySelectorAll('.pomo-tab').forEach(function(tab){
     if(target==='milestones')renderPomoMstones()
   })
 })
-// ===== Mortgage Calculator =====
-document.getElementById('mtgBtn').addEventListener('click',function(){
-  document.getElementById('mtgOverlay').classList.add('s');
-  document.getElementById('mtgModal').classList.add('s');
-  // Pre-fill with last saved values
-  var last = data._mtgLast || {};
-  if (last.price) document.getElementById('mtgPrice').value = last.price;
-  if (last.downPct) document.getElementById('mtgDownPct').value = last.downPct;
-  if (last.years) document.getElementById('mtgYears').value = last.years;
-  if (last.rate) document.getElementById('mtgRate').value = last.rate;
-});
-function mtgClose(){
-  document.getElementById('mtgOverlay').classList.remove('s');
-  document.getElementById('mtgModal').classList.remove('s');
-}
-document.getElementById('mtgOverlay').addEventListener('click',mtgClose);
-document.getElementById('mtgClose').addEventListener('click',mtgClose);
-document.getElementById('mtgCalcBtn').addEventListener('click',function(){
-  var price = parseFloat(document.getElementById('mtgPrice').value) || 0;
-  var downPct = parseInt(document.getElementById('mtgDownPct').value) || 30;
-  var years = parseInt(document.getElementById('mtgYears').value) || 25;
-  var rate = parseFloat(document.getElementById('mtgRate').value) || 3.0;
-  if (price <= 0) { showToast('⚠️ 请输入房价总额'); return; }
-  // Save last inputs
-  data._mtgLast = { price:price, downPct:downPct, years:years, rate:rate };
-  save();
-  // Calculate
-  var loan = price * (100 - downPct) / 100; // 贷款额（万元）
-  var downAmt = price - loan;
-  var monthlyRate = rate / 100 / 12;
-  var months = years * 12;
-  var monthly = loan * monthlyRate * Math.pow(1 + monthlyRate, months) / (Math.pow(1 + monthlyRate, months) - 1);
-  if (!isFinite(monthly)) monthly = loan / months; // 0% rate
-  var totalPay = monthly * months;
-  var totalInt = totalPay - loan;
-  // Display
-  var fmt = function(n){ return n.toFixed(1).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' 万'; };
-  document.getElementById('mtgLoanAmt').textContent = fmt(loan);
-  document.getElementById('mtgDownAmt').textContent = fmt(downAmt);
-  document.getElementById('mtgMonthly').textContent = (monthly * 10000).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' 元/月';
-  document.getElementById('mtgTotalInt').textContent = fmt(totalInt);
-  document.getElementById('mtgTotalPay').textContent = fmt(totalPay);
-  document.getElementById('mtgResult').style.display = 'block';
-});
+
 // Session type buttons
 document.querySelectorAll('.pomo-type').forEach(function(btn){
   btn.addEventListener('click',function(){pomoSetType(btn)})
 })
 // Keyboard: Escape to close
-document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(document.getElementById('mtgModal').classList.contains('s'))mtgClose();else if(document.getElementById('sleepOverlay').classList.contains('s'))sleepExit();else if(document.getElementById('pomoModal').classList.contains('s'))pomoClose()}})
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(document.getElementById('sleepOverlay').classList.contains('s'))sleepExit();else if(document.getElementById('pomoModal').classList.contains('s'))pomoClose();else if(document.getElementById('costOverlay')&&document.getElementById('costOverlay').classList.contains('s')){var ce=document.getElementById('cstClose');if(ce)ce.click()}}})
 pomoLoad();pomoLoadPos()
 
 // ======================== FEATURE: Milestone Timeline ========================
