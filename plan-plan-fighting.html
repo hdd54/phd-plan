@@ -342,7 +342,7 @@ body.cp .pomo-float,
 body.cp .stat-toggle,
 body.cp .kbd-hint,
 body.cp .ai-fab,
-body.cp .btm-bar{opacity:0;pointer-events:none;transition:opacity .4s}
+body.cp .left-bar{opacity:0;pointer-events:none;transition:opacity .4s}
 
 html{scroll-behavior:smooth;font-size:var(--font-size-root,15px)}
 body{
@@ -569,20 +569,29 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 .fb.d:hover{border-color:var(--accent-2);color:var(--accent-2);background:rgba(232,93,47,.04)}
 .fb.x{background:rgba(212,165,116,.1);border-color:var(--accent);color:var(--accent)}
 
-/* ===== sticky bottom bar ===== */
-.btm-bar{position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(10,9,8,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid rgba(212,165,116,.1);padding:clamp(.18rem,.4vw,.28rem) clamp(.3rem,1.2vw,.5rem);display:flex;justify-content:center;align-items:center;gap:clamp(.18rem,.4vw,.35rem);flex-wrap:wrap;max-height:36px;box-shadow:0 -2px 24px rgba(0,0,0,.35)}
-.btm-bar .bb{display:inline-flex;align-items:center;gap:.25rem;padding:clamp(.1rem,.25vw,.18rem) clamp(.35rem,.8vw,.5rem);border:1px solid var(--line-2);border-radius:100px;background:transparent;color:var(--muted);font-family:var(--font-sans);font-size:clamp(.5rem,.85vw,.58rem);cursor:pointer;transition:all .25s;white-space:nowrap;letter-spacing:.12em;font-weight:300}
-.btm-bar .bb:hover{border-color:var(--accent);color:var(--accent);background:rgba(212,165,116,.04)}
-.btm-bar .bb.d:hover{border-color:var(--accent-2);color:var(--accent-2);background:rgba(232,93,47,.04)}
-.btm-bar .bb.x{background:rgba(212,165,116,.1);border-color:var(--accent);color:var(--accent)}
-.btm-bar .bb .bb-icon{font-size:clamp(.5rem,.8vw,.55rem)}
-.btm-bar .chapter-info{display:none}
-  font-size:clamp(.4rem,.6vw,.45rem);color:var(--muted);
-  transition:transform .25s, color .25s;
-}
-.btm-bar .chapter-info:hover .ci-jump{
-  color:var(--accent);transform:translateY(1px);
-}
+/* ===== left sidebar toolbar ===== */
+:root{--sb-w:50px}
+body.sb{--sb-w:145px}
+.left-bar{position:fixed;left:0;top:0;bottom:0;z-index:200;width:var(--sb-w);background:rgba(10,9,8,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-right:1px solid rgba(212,165,116,.1);display:flex;flex-direction:column;align-items:center;gap:.08rem;padding:.35rem .1rem;overflow-y:auto;overflow-x:hidden;transition:width .3s cubic-bezier(.2,.9,.3,1);box-shadow:2px 0 24px rgba(0,0,0,.35)}
+.left-bar.s{--sb-w:145px;align-items:stretch}
+.left-bar .bb{display:flex;align-items:center;gap:.2rem;width:100%;padding:.22rem .25rem;border:1px solid transparent;border-radius:6px;background:transparent;color:var(--muted);font-family:var(--font-sans);font-size:clamp(.5rem,.7vw,.53rem);cursor:pointer;transition:all .2s;white-space:nowrap;letter-spacing:.08em;font-weight:300;flex-shrink:0}
+.left-bar .bb:hover{border-color:var(--line-2);color:var(--accent);background:rgba(212,165,116,.04)}
+.left-bar .bb.d:hover{border-color:var(--accent-2);color:var(--accent-2);background:rgba(232,93,47,.04)}
+.left-bar .bb.x{background:rgba(212,165,116,.1);border-color:var(--accent);color:var(--accent)}
+.left-bar .bb .bb-icon{font-size:.6rem;flex-shrink:0;width:20px;text-align:center;line-height:1}
+.left-bar .bb .lb-lbl{overflow:hidden;white-space:nowrap;opacity:1;transition:opacity .2s,width .2s}
+.left-bar:not(.s) .bb .lb-lbl{opacity:0;width:0;overflow:hidden}
+/* toggle button */
+.lb-toggle{flex-shrink:0;width:30px;height:30px;border:1px solid var(--line-2);border-radius:6px;background:transparent;color:var(--muted);font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-bottom:.08rem;transition:all .2s;flex-shrink:0}
+.lb-toggle:hover{border-color:var(--accent);color:var(--accent)}
+.left-bar.s .lb-toggle{align-self:flex-end;margin-right:.1rem}
+/* chapter-info in sidebar */
+.left-bar .chapter-info{display:flex;flex-direction:column;align-items:center;font-size:.48rem;color:var(--muted);padding:.08rem 0 .15rem;border-bottom:1px solid var(--line);margin-bottom:.08rem;width:100%;text-align:center;gap:.04rem}
+.left-bar.s .chapter-info{flex-direction:row;gap:.2rem;padding:.08rem .2rem .15rem}
+/* main content offset */
+body{padding-left:var(--sb-w);transition:padding-left .3s cubic-bezier(.2,.9,.3,1)}
+/* nav rail offset */
+.nav-rail{left:calc(var(--sb-w) + clamp(6px,1vw,14px))!important}
 
 /* Fixed 3D background container — z-index:1 to stay above particle canvas (#pc) and gradient overlay (.gr-overlay) */
 #threeScene{
@@ -859,10 +868,15 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 .gist-status-text.ok{color:var(--accent)}
 .gist-status-text.err{color:var(--accent-2)}
 
-@media(max-width:480px){
-  .btm-bar{max-height:30px;padding:.1rem .2rem}
-  .btm-bar .bb{padding:.06rem .18rem;font-size:.48rem;gap:.15rem}
-  .btm-bar .bb .bb-icon{display:none}
+@media(max-width:680px){
+  .left-bar{width:42px!important;padding:.3rem .06rem;gap:.06rem}
+  .left-bar .bb{padding:.15rem .1rem;font-size:.48rem;gap:.1rem;border-radius:4px}
+  .left-bar .bb .bb-icon{width:16px;font-size:.5rem}
+  .left-bar .bb .lb-lbl{display:none!important}
+  .left-bar .chapter-info{display:none}
+  .left-bar .lb-toggle{width:26px;height:26px;font-size:.75rem}
+  body{padding-left:42px!important}
+  .nav-rail{left:50px!important}
   .yni .yl{font-size:.5rem}
   .sh h2{font-size:clamp(.8rem,5vw,.9rem)}
   .sec{padding:clamp(1rem,5vw,1.2rem) clamp(.5rem,3vw,.6rem)}
@@ -897,10 +911,10 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 }@media(max-width:380px){
   .pomo-modal .pomo-types{gap:.1rem}
   .pomo-modal .pomo-type{padding:.1rem .15rem;font-size:.45rem}
-  .btm-bar .bb{padding:.04rem .1rem;font-size:.42rem;gap:.1rem}
+  .left-bar .bb{padding:.12rem .08rem;font-size:.42rem;gap:.06rem}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}.sec{opacity:1;transform:none}#pc{display:none}body::after{display:none}}
-@media print{body{background:white;color:#000}#pc,.gr-overlay,.ynw,.ft,.btm-bar,.nav-rail{display:none}body::after{display:none}.tc{break-inside:avoid;border:1px solid #ddd}.hero{min-height:auto}}
+@media print{body{background:white;color:#000;padding-left:0!important}#pc,.gr-overlay,.ynw,.ft,.left-bar,.nav-rail{display:none}body::after{display:none}.tc{break-inside:avoid;border:1px solid #ddd}.hero{min-height:auto}}
 
 /* ===== Feature: Markdown Preview ===== */
 .md-btn{position:absolute;top:.05rem;right:.05rem;z-index:5;background:rgba(255,255,255,.04);border:1px solid var(--line-2);border-radius:4px;color:var(--muted);font-size:.45rem;padding:.02rem .25rem;cursor:pointer;transition:all .2s;line-height:1.2;font-family:var(--font-sans);letter-spacing:.08em;opacity:0}
@@ -1490,9 +1504,7 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
   <button class="bb" id="bkpBtn" title="数据备份"><span class="bb-icon">💾</span> 备份</button>
   <button class="bb" id="calBtn" title="月视图"><span class="bb-icon">📅</span> 月历</button>
   <button class="bb" id="statBtn" title="统计分析"><span class="bb-icon">📊</span> 统计</button>
-  <button class="bb" id="costBtn" title="购房计算（房贷+成本）"><span class="bb-icon">🏠</span> 购房</button>
-  <button class="bb" id="fundBtn" title="公积金贷款"><span class="bb-icon">🏦</span> 公积金</button>
-  <button class="bb" id="houseBtn" title="看房清单"><span class="bb-icon">🏡</span> 看房</button>
+  <button class="bb" id="housingBtn" title="购房综合（贷款+成本+清单）"><span class="bb-icon">🏠</span> 购房</button>
   <button class="bb" id="pdfBtn" title="打印报告"><span class="bb-icon">📄</span> 打印</button>
 </div>
 
@@ -4915,7 +4927,7 @@ document.querySelectorAll('.pomo-type').forEach(function(btn){
   btn.addEventListener('click',function(){pomoSetType(btn)})
 })
 // Keyboard: Escape to close
-document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(document.getElementById('sleepOverlay').classList.contains('s'))sleepExit();else if(document.getElementById('pomoModal').classList.contains('s'))pomoClose();else if(document.getElementById('costOverlay')&&document.getElementById('costOverlay').classList.contains('s')){var ce=document.getElementById('cstClose');if(ce)ce.click()}}})
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(document.getElementById('sleepOverlay').classList.contains('s'))sleepExit();else if(document.getElementById('pomoModal').classList.contains('s'))pomoClose();else if(document.getElementById('housingOverlay')&&document.getElementById('housingOverlay').classList.contains('s')){var ce=document.getElementById('housingClose');if(ce)ce.click()}}})
 pomoLoad();pomoLoadPos()
 
 // ======================== FEATURE: Milestone Timeline ========================
@@ -6090,10 +6102,8 @@ function snRenderList_(){
 <script src="js/feature-search.js"></script>
 <script src="js/feature-monthview.js"></script>
 <script src="js/feature-stats.js"></script>
-<script src="js/feature-housing.js"></script>
 <script src="js/feature-reminder.js"></script>
-<script src="js/feature-fundloan.js"></script>
-<script src="js/feature-houselist.js"></script>
+<script src="js/feature-housing-all.js"></script>
 <script src="js/feature-pdf.js"></script>
 </body>
 </html>
