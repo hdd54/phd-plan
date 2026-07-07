@@ -1197,13 +1197,6 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 .do-actions button:hover{background:rgba(212,165,116,.1);border-color:var(--accent);color:var(--accent)}
 .do-actions button.p{background:rgba(212,165,116,.1);border-color:var(--accent);color:var(--accent)}
 
-/* ===== Feature: Focus Mode ===== */
-body.fm .btm-bar,body.fm .ai-fab,body.fm .pomo-btn,body.fm .pomo-float,body.fm .stat-toggle,body.fm .nav-rail{opacity:0;pointer-events:none;transition:opacity .4s}
-body.fm .fm-exit{opacity:1;pointer-events:auto}
-body.fm .kbd-hint{display:none}
-.fm-exit{position:fixed;top:clamp(.4rem,1vw,.6rem);right:clamp(.4rem,1vw,.6rem);z-index:290;background:rgba(10,9,8,.85);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:100px;padding:clamp(.15rem,.3vw,.25rem) clamp(.35rem,.5vw,.5rem);font-size:clamp(.5rem,.75vw,.55rem);color:var(--muted);cursor:pointer;transition:all .2s;font-family:var(--font-sans);opacity:0;pointer-events:none;line-height:1}
-.fm-exit:hover{color:var(--accent);border-color:var(--accent)}
-
 /* ===== Feature: Task Tags (handled by feature-tags.js) ===== */
 
 /* ===== Feature: Week Batch Ops ===== */
@@ -1239,6 +1232,39 @@ body.fm .kbd-hint{display:none}
 .sv-summary .sv-srv{color:var(--fg);font-family:var(--font-sans);font-weight:400}
 .sv-progress{height:4px;background:var(--line);border-radius:2px;margin:clamp(.3rem,.5vw,.4rem) 0;overflow:hidden}
 .sv-progress .sv-bar{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--jade),var(--accent));transition:width .8s;min-width:0}
+/* Savings Daily Log */
+.sv-section-title{font-size:clamp(.6rem,.9vw,.65rem);color:var(--fg);letter-spacing:.08em;margin:clamp(.4rem,.6vw,.5rem) 0 clamp(.2rem,.3vw,.25rem);font-weight:500}
+.sv-auto-total{padding:clamp(.2rem,.3vw,.25rem) clamp(.25rem,.4vw,.35rem);background:rgba(212,165,116,.06);border:1px solid rgba(212,165,116,.15);border-radius:var(--rs);text-align:center;margin-bottom:clamp(.25rem,.4vw,.35rem)}
+.sv-auto-total .sv-at-num{font-family:var(--font-serif);font-size:clamp(1.1rem,2vw,1.4rem);color:var(--accent);font-weight:300}
+.sv-auto-total .sv-at-lbl{font-size:clamp(.45rem,.65vw,.5rem);color:var(--muted);letter-spacing:.08em}
+.sv-log-actions{display:flex;gap:.25rem;margin-bottom:clamp(.3rem,.5vw,.4rem)}
+.sv-log-btn{flex:1;padding:clamp(.25rem,.4vw,.3rem);border-radius:100px;border:1px solid var(--line);background:rgba(255,255,255,.02);color:var(--fg-dim);font-size:clamp(.5rem,.75vw,.55rem);cursor:pointer;transition:all .2s;text-align:center;font-family:var(--font-sans)}
+.sv-log-btn:hover{background:rgba(255,255,255,.06)}
+.sv-log-btn.sv-save{color:#2ecc71;border-color:rgba(46,204,113,.3)}.sv-log-btn.sv-save:hover{background:rgba(46,204,113,.08)}
+.sv-log-btn.sv-earn{color:#64b5f6;border-color:rgba(100,181,246,.3)}.sv-log-btn.sv-earn:hover{background:rgba(100,181,246,.08)}
+.sv-log-btn.sv-spend{color:#e74c3c;border-color:rgba(231,76,60,.3)}.sv-log-btn.sv-spend:hover{background:rgba(231,76,60,.08)}
+.sv-log-list{max-height:clamp(140px,25vh,200px);overflow-y:auto;margin-top:clamp(.15rem,.25vw,.2rem)}
+.sv-log-list::-webkit-scrollbar{width:3px}.sv-log-list::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:3px}
+.sv-log-item{display:flex;align-items:center;gap:.25rem;padding:clamp(.15rem,.25vw,.2rem) clamp(.15rem,.2vw,.2rem);border-bottom:1px solid var(--line);font-size:clamp(.5rem,.75vw,.55rem)}
+.sv-log-item:last-child{border-bottom:none}
+.sv-log-item .sv-li-date{color:var(--muted);min-width:clamp(50px,7vw,65px);font-size:clamp(.45rem,.65vw,.5rem)}
+.sv-log-item .sv-li-type{font-size:clamp(.45rem,.6vw,.5rem);padding:.02rem .12rem;border-radius:3px;min-width:clamp(28px,4vw,34px);text-align:center}
+.sv-log-item .sv-li-type.sv-t-save{color:#2ecc71;background:rgba(46,204,113,.1)}
+.sv-log-item .sv-li-type.sv-t-earn{color:#64b5f6;background:rgba(100,181,246,.1)}
+.sv-log-item .sv-li-type.sv-t-spend{color:#e74c3c;background:rgba(231,76,60,.1)}
+.sv-log-item .sv-li-amt{font-family:var(--font-serif);min-width:clamp(45px,6vw,55px);text-align:right}
+.sv-log-item .sv-li-amt.plus{color:#2ecc71}.sv-log-item .sv-li-amt.minus{color:#e74c3c}
+.sv-log-item .sv-li-note{color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:clamp(.42rem,.6vw,.48rem)}
+.sv-log-item .sv-li-del{background:none;border:none;color:var(--muted);cursor:pointer;padding:.02rem .08rem;font-size:clamp(.5rem,.7vw,.55rem);line-height:1;border-radius:3px;transition:color .2s}
+.sv-log-item .sv-li-del:hover{color:#e74c3c}
+.sv-log-form{display:flex;gap:.25rem;align-items:center;margin-top:clamp(.15rem,.2vw,.2rem);padding:clamp(.2rem,.3vw,.25rem);background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:var(--rs)}
+.sv-log-form input{flex:1;min-width:0;padding:clamp(.15rem,.25vw,.2rem) clamp(.2rem,.35vw,.28rem);border:1px solid var(--line);border-radius:6px;background:rgba(255,255,255,.03);color:var(--fg);font-size:clamp(.5rem,.75vw,.55rem);font-family:var(--font-sans);outline:none;transition:border-color .2s}
+.sv-log-form input:focus{border-color:var(--accent)}
+.sv-log-form .sv-lf-btn{padding:clamp(.15rem,.25vw,.2rem) clamp(.35rem,.5vw,.45rem);border-radius:100px;border:1px solid var(--accent);background:rgba(212,165,116,.1);color:var(--accent);font-size:clamp(.5rem,.7vw,.55rem);cursor:pointer;transition:all .2s;font-family:var(--font-sans);white-space:nowrap}
+.sv-log-form .sv-lf-btn:hover{background:rgba(212,165,116,.2)}
+.sv-log-form .sv-lf-cancel{background:none;border:none;color:var(--muted);cursor:pointer;font-size:clamp(.5rem,.7vw,.55rem);padding:.1rem;font-family:var(--font-sans)}
+.sv-log-form .sv-lf-cancel:hover{color:var(--fg-dim)}
+.sv-log-empty{text-align:center;color:var(--muted);font-size:clamp(.48rem,.7vw,.52rem);padding:clamp(.25rem,.4vw,.35rem) 0}
 
 /* ===== Feature: Snapshot Comparison ===== */
 .sn-overlay{position:fixed;inset:0;z-index:390;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .25s}
@@ -1461,7 +1487,6 @@ body.fm .kbd-hint{display:none}
   <button class="bb" id="ccBtn" title="信用卡计算"><span class="bb-icon">💳</span> 信用卡</button>
   <button class="bb" id="svBtn" title="存款目标"><span class="bb-icon">💰</span> 储蓄</button>
   <button class="bb" id="snBtn" title="进度快照"><span class="bb-icon">📸</span> 快照</button>
-  <button class="bb" id="fmBtn" title="专注模式"><span class="bb-icon">🧘</span> 专注</button>
   <button class="bb" id="themeBtn" title="切换主题"><span class="bb-icon">🌙</span> 主题</button>
   <button class="bb" id="bkpBtn" title="数据备份"><span class="bb-icon">💾</span> 备份</button>
   <button class="bb" id="calBtn" title="月视图"><span class="bb-icon">📅</span> 月历</button>
@@ -1705,31 +1730,50 @@ body.fm .kbd-hint{display:none}
 <div class="sv-overlay" id="svOverlay"></div>
 <div class="sv-modal" id="svModal">
   <div class="sv-header">
-    <h3>💰 存款设置</h3>
+    <h3>💰 存款目标</h3>
     <button class="sv-close" id="svClose">✕</button>
   </div>
   <div class="sv-body">
+    <!-- Goal Setup -->
     <div class="sv-row">
       <label>目标金额</label>
       <input type="number" id="svGoal" placeholder="50" min="0" step="1">
       <span class="sv-unit">万元</span>
     </div>
     <div class="sv-row">
-      <label>已存金额</label>
-      <input type="number" id="svSaved" placeholder="10" min="0" step="0.5">
+      <label>初始存款</label>
+      <input type="number" id="svInitial" placeholder="0" min="0" step="0.5">
       <span class="sv-unit">万元</span>
     </div>
     <div class="sv-row">
       <label>目标日期</label>
       <input type="date" id="svDate">
     </div>
-    <button class="sv-save-btn" id="svSaveBtn">保存</button>
-    <div class="sv-summary" id="svSummary" style="display:none">
-      <div class="sv-sr"><span class="sv-srl">目标</span><span class="sv-srv" id="svDispGoal">—</span></div>
-      <div class="sv-sr"><span class="sv-srl">已存</span><span class="sv-srv" id="svDispSaved">—</span></div>
-      <div class="sv-progress"><div class="sv-bar" id="svBar" style="width:0%"></div></div>
-      <div class="sv-sr highlight"><span class="sv-srl">完成度</span><span class="sv-srv" id="svDispPct">0%</span></div>
-      <div class="sv-sr"><span class="sv-srl">剩余</span><span class="sv-srv" id="svDispRemain">—</span></div>
+    <button class="sv-save-btn" id="svSaveBtn">保存目标</button>
+
+    <!-- Summary & Daily Log (shown after goal is set) -->
+    <div id="svLogSection" style="display:none">
+      <!-- Auto-calculated total -->
+      <div class="sv-auto-total">
+        <div class="sv-at-lbl">当前存款总额</div>
+        <div class="sv-at-num" id="svAutoTotal">0.0 万</div>
+      </div>
+
+      <div class="sv-summary" id="svSummary">
+        <div class="sv-sr"><span class="sv-srl">目标</span><span class="sv-srv" id="svDispGoal">—</span></div>
+        <div class="sv-progress"><div class="sv-bar" id="svBar" style="width:0%"></div></div>
+        <div class="sv-sr highlight"><span class="sv-srl">完成度</span><span class="sv-srv" id="svDispPct">0%</span></div>
+        <div class="sv-sr"><span class="sv-srl">剩余</span><span class="sv-srv" id="svDispRemain">—</span></div>
+      </div>
+
+      <!-- Daily Log -->
+      <div class="sv-section-title">📋 流水账</div>
+      <div class="sv-log-actions">
+        <button class="sv-log-btn sv-save" id="svLogSaveBtn">💰 省钱 +</button>
+        <button class="sv-log-btn sv-earn" id="svLogEarnBtn">💼 赚钱 +</button>
+        <button class="sv-log-btn sv-spend" id="svLogSpendBtn">🛒 用钱 −</button>
+      </div>
+      <div id="svLogList" class="sv-log-list"></div>
     </div>
   </div>
 </div>
@@ -1765,13 +1809,9 @@ body.fm .kbd-hint{display:none}
     <div class="do-tips" id="doTip"></div>
     <div class="do-actions">
       <button id="doCloseBtn">开始今天</button>
-      <button class="p" id="doFmBtn">专注模式</button>
     </div>
   </div>
 </div>
-
-<!-- ===== FOCUS MODE EXIT BUTTON ===== -->
-<button class="fm-exit" id="fmExitBtn">✕ 退出专注</button>
 
 <div class="search-overlay" id="searchOverlay"></div>
 <div class="search-panel" id="searchPanel">
@@ -4957,7 +4997,7 @@ document.getElementById('mtgCalcBtn').addEventListener('click',function(){
   var fmt = function(n){ return n.toFixed(1).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' 万'; };
   document.getElementById('mtgLoanAmt').textContent = fmt(loan);
   document.getElementById('mtgDownAmt').textContent = fmt(downAmt);
-  document.getElementById('mtgMonthly').textContent = monthly.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' 元/月';
+  document.getElementById('mtgMonthly').textContent = (monthly * 10000).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' 元/月';
   document.getElementById('mtgTotalInt').textContent = fmt(totalInt);
   document.getElementById('mtgTotalPay').textContent = fmt(totalPay);
   document.getElementById('mtgResult').style.display = 'block';
@@ -5822,26 +5862,6 @@ if ('serviceWorker' in navigator) {
   container.classList.add('loaded');
 })();
 
-// ======================== FEATURE: Focus Mode ========================
-function fmEnter(){
-  document.body.classList.add('fm');
-  showToast('🧘 专注模式');
-  localStorage.setItem('fm', '1');
-}
-function fmExit(){
-  document.body.classList.remove('fm');
-  localStorage.setItem('fm', '0');
-}
-document.getElementById('fmBtn').addEventListener('click', fmEnter);
-document.getElementById('fmExitBtn').addEventListener('click', fmExit);
-document.addEventListener('keydown', function(e){
-  if(e.key==='f'&&!e.ctrlKey&&!e.metaKey&&!e.altKey){
-    var ta = e.target.closest('textarea, input, [contenteditable]');
-    if(!ta){ e.preventDefault(); if(document.body.classList.contains('fm')) fmExit(); else fmEnter(); }
-  }
-});
-if(localStorage.getItem('fm')==='1') document.body.classList.add('fm');
-
 // ======================== FEATURE: Daily Overview ========================
 function showDailyOverview(){
   var last = localStorage.getItem('doLast') || '';
@@ -5889,7 +5909,6 @@ function doClose_(){
 document.getElementById('doClose').addEventListener('click', doClose_);
 document.getElementById('doOverlay').addEventListener('click', doClose_);
 document.getElementById('doCloseBtn').addEventListener('click', doClose_);
-document.getElementById('doFmBtn').addEventListener('click', function(){ doClose_(); fmEnter(); });
 setTimeout(showDailyOverview, 1200);
 
 // ======================== FEATURE: Browser Notification ========================
@@ -5941,13 +5960,71 @@ document.getElementById('ccCalcBtn').addEventListener('click', function(){
   document.getElementById('ccResult').style.display = 'block';
 });
 
-// ======================== FEATURE: Savings Settings ========================
+// ======================== FEATURE: Savings Settings (with Daily Log) ========================
+function svCalcTotal_(){
+  var sv = data._savings||{};
+  var total = parseFloat(sv.initial)||0;
+  (sv.log||[]).forEach(function(e){
+    if(e.type==='save'||e.type==='earn') total += parseFloat(e.amount)||0;
+    else if(e.type==='spend') total -= parseFloat(e.amount)||0;
+  });
+  return Math.max(0, total);
+}
+function svRenderLog_(){
+  var sv = data._savings||{};
+  var list = document.getElementById('svLogList');
+  if(!list) return;
+  var log = sv.log||[];
+  if(!log.length){ list.innerHTML = '<div class="sv-log-empty">暂无流水记录，点击上方按钮添加</div>'; return; }
+  var typeLabels = {save:'省钱',earn:'赚钱',spend:'用钱'};
+  var html = '';
+  var sorted = log.slice().sort(function(a,b){ return (a.date||'') < (b.date||'') ? 1 : -1; });
+  sorted.forEach(function(e, idx){
+    // Find original index in log for deletion
+    var origIdx = log.indexOf(e);
+    var isPlus = (e.type==='save'||e.type==='earn');
+    var sign = isPlus ? '+' : '−';
+    var cls = isPlus ? 'plus' : 'minus';
+    var tCls = 'sv-t-' + e.type;
+    html += '<div class="sv-log-item">'
+      + '<span class="sv-li-date">' + (e.date||'') + '</span>'
+      + '<span class="sv-li-type ' + tCls + '">' + (typeLabels[e.type]||e.type) + '</span>'
+      + '<span class="sv-li-amt ' + cls + '">' + sign + (parseFloat(e.amount)||0).toFixed(2) + '万</span>'
+      + '<span class="sv-li-note">' + (e.note||'') + '</span>'
+      + '<button class="sv-li-del" data-idx="' + origIdx + '" title="删除">✕</button>'
+      + '</div>';
+  });
+  list.innerHTML = html;
+  // Wire delete buttons
+  list.querySelectorAll('.sv-li-del').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var idx = parseInt(this.dataset.idx);
+      sv.log.splice(idx, 1);
+      data._savings = sv; save();
+      svRenderSummary_(); svRenderLog_();
+    });
+  });
+}
+function svRenderSummary_(){
+  var sv = data._savings||{};
+  var total = svCalcTotal_();
+  var logSection = document.getElementById('svLogSection');
+  if(!sv.goal){ if(logSection) logSection.style.display='none'; return; }
+  if(logSection) logSection.style.display='block';
+  document.getElementById('svDispGoal').textContent = (sv.goal||0).toFixed(1)+' 万';
+  document.getElementById('svAutoTotal').textContent = total.toFixed(1)+' 万 / '+(sv.goal||0).toFixed(1)+' 万';
+  var pct = sv.goal>0 ? Math.min(100, Math.round(total/sv.goal*100)) : 0;
+  document.getElementById('svDispPct').textContent = pct+'%';
+  document.getElementById('svDispRemain').textContent = Math.max(0,(sv.goal||0)-total).toFixed(1)+' 万';
+  document.getElementById('svBar').style.width = pct+'%';
+  svRenderLog_();
+}
 document.getElementById('svBtn').addEventListener('click', function(){
   document.getElementById('svOverlay').classList.add('s');
   document.getElementById('svModal').classList.add('s');
   var sv = data._savings||{};
   if(sv.goal) document.getElementById('svGoal').value = sv.goal;
-  if(sv.saved!==undefined) document.getElementById('svSaved').value = sv.saved;
+  if(sv.initial!==undefined) document.getElementById('svInitial').value = sv.initial;
   if(sv.date) document.getElementById('svDate').value = sv.date;
   svRenderSummary_();
 });
@@ -5955,24 +6032,33 @@ document.getElementById('svOverlay').addEventListener('click', function(){ docum
 document.getElementById('svClose').addEventListener('click', function(){ document.getElementById('svOverlay').classList.remove('s'); document.getElementById('svModal').classList.remove('s'); });
 document.getElementById('svSaveBtn').addEventListener('click', function(){
   var goal = parseFloat(document.getElementById('svGoal').value)||0;
-  var saved = parseFloat(document.getElementById('svSaved').value)||0;
+  var initial = parseFloat(document.getElementById('svInitial').value)||0;
   var date = document.getElementById('svDate').value||'';
   if(goal<=0){ showToast('⚠️ 请输入目标金额'); return; }
-  data._savings = {goal:goal,saved:saved,date:date}; save();
+  var sv = data._savings||{};
+  sv.goal = goal; sv.initial = initial; sv.date = date;
+  if(!sv.log) sv.log = [];
+  data._savings = sv; save();
   svRenderSummary_(); showToast('✅ 存款目标已保存');
 });
-function svRenderSummary_(){
+// Quick log entry: type in ('save'|'earn'|'spend')
+function svPromptAdd_(type){
+  var typeLabels = {save:'省钱',earn:'赚钱',spend:'用钱'};
+  var label = typeLabels[type] || type;
+  var amtStr = prompt('💰 ' + label + ' 金额（万元）：');
+  if(amtStr === null) return;
+  var amt = parseFloat(amtStr);
+  if(isNaN(amt) || amt <= 0){ showToast('⚠️ 请输入有效金额'); return; }
+  var note = prompt('📝 备注（可选）：') || '';
   var sv = data._savings||{};
-  var el = document.getElementById('svSummary');
-  if(!sv.goal){ el.style.display='none'; return; }
-  el.style.display='block';
-  document.getElementById('svDispGoal').textContent = (sv.goal||0).toFixed(1)+' 万';
-  document.getElementById('svDispSaved').textContent = (sv.saved||0).toFixed(1)+' 万';
-  var pct = sv.goal>0?Math.min(100,Math.round((sv.saved||0)/sv.goal*100)):0;
-  document.getElementById('svDispPct').textContent = pct+'%';
-  document.getElementById('svDispRemain').textContent = Math.max(0,(sv.goal||0)-(sv.saved||0)).toFixed(1)+' 万';
-  document.getElementById('svBar').style.width = pct+'%';
+  if(!sv.log) sv.log = [];
+  sv.log.push({ date: new Date().toISOString().slice(0,10), type: type, amount: amt, note: note });
+  data._savings = sv; save();
+  svRenderSummary_(); showToast('✅ 已记录'+label+' '+amt.toFixed(2)+'万');
 }
+document.getElementById('svLogSaveBtn').addEventListener('click', function(){ svPromptAdd_('save'); });
+document.getElementById('svLogEarnBtn').addEventListener('click', function(){ svPromptAdd_('earn'); });
+document.getElementById('svLogSpendBtn').addEventListener('click', function(){ svPromptAdd_('spend'); });
 setTimeout(svRenderSummary_, 1000);
 
 // ======================== FEATURE: Snapshot Comparison ========================
