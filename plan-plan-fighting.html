@@ -1314,7 +1314,7 @@ body{padding-left:var(--sb-w);transition:padding-left .3s cubic-bezier(.2,.9,.3,
 @media(max-width:480px){.sn-modal{width:94vw;min-width:0}.sn-compare{grid-template-columns:1fr}}
 </style>
 </head>
-<body>
+<body class="sb">
 <!-- COVER: OPEN BOOK -->
 <section id="coverSection">
   <canvas id="coverCanvas"></canvas>
@@ -1478,34 +1478,35 @@ body{padding-left:var(--sb-w);transition:padding-left .3s cubic-bezier(.2,.9,.3,
 <!-- ===== DYNAMIC PAGES CONTENT ===== -->
 <div id="pageContent" class="page-content"></div>
 
-<!-- ===== STICKY BOTTOM BAR ===== -->
-<div class="btm-bar">
+<!-- ===== LEFT SIDEBAR TOOLBAR ===== -->
+<div class="left-bar s" id="leftBar">
+  <button class="lb-toggle" id="lbToggle">◀</button>
   <div class="chapter-info" title="点击跳转至当前章节">
     <span class="ci-current" id="currentSection">封面</span>
     <span class="ci-divider"></span>
     <span class="ci-page" id="pageIndicator">0/0</span>
     <span class="ci-jump">↕</span>
   </div>
-  <button class="bb x" id="editToggle2">✎ 编辑</button>
-  <button class="bb" id="expandAll2">📂 展开</button>
-  <button class="bb" id="collapseAll2">📁 收起</button>
-  <button class="bb" id="exportBtn2">📥 导出</button>
-  <button class="bb" id="importBtn2">📤 导入</button>
-  <button class="bb" id="repoSaveBtn" title="保存数据到仓库">💾 存档</button>
-  <button class="bb" id="gistIndicator" title="数据同步状态">⚡--</button>
-  <button class="bb d" id="resetTasks2">🗑 重置</button>
-  <button class="bb" id="installBtn" title="安装到桌面" style="display:none">📥 安装</button>
-  <button class="bb" id="helpBtn" title="使用说明"><span class="bb-icon">📖</span> 说明</button>
-  <button class="bb" id="stgBtn" title="设置"><span class="bb-icon">⚙</span> 设置</button>
-  <button class="bb" id="ccBtn" title="信用卡计算"><span class="bb-icon">💳</span> 信用卡</button>
-  <button class="bb" id="svBtn" title="存款目标"><span class="bb-icon">💰</span> 储蓄</button>
-  <button class="bb" id="snBtn" title="进度快照"><span class="bb-icon">📸</span> 快照</button>
-  <button class="bb" id="themeBtn" title="切换主题"><span class="bb-icon">🌙</span> 主题</button>
-  <button class="bb" id="bkpBtn" title="数据备份"><span class="bb-icon">💾</span> 备份</button>
-  <button class="bb" id="calBtn" title="月视图"><span class="bb-icon">📅</span> 月历</button>
-  <button class="bb" id="statBtn" title="统计分析"><span class="bb-icon">📊</span> 统计</button>
-  <button class="bb" id="housingBtn" title="购房综合（贷款+成本+清单）"><span class="bb-icon">🏠</span> 购房</button>
-  <button class="bb" id="pdfBtn" title="打印报告"><span class="bb-icon">📄</span> 打印</button>
+  <button class="bb x" id="editToggle2"><span class="bb-icon">✎</span><span class="lb-lbl">编辑</span></button>
+  <button class="bb" id="expandAll2"><span class="bb-icon">📂</span><span class="lb-lbl">展开</span></button>
+  <button class="bb" id="collapseAll2"><span class="bb-icon">📁</span><span class="lb-lbl">收起</span></button>
+  <button class="bb" id="exportBtn2"><span class="bb-icon">📥</span><span class="lb-lbl">导出</span></button>
+  <button class="bb" id="importBtn2"><span class="bb-icon">📤</span><span class="lb-lbl">导入</span></button>
+  <button class="bb" id="repoSaveBtn" title="保存数据到仓库"><span class="bb-icon">💾</span><span class="lb-lbl">存档</span></button>
+  <button class="bb" id="gistIndicator" title="数据同步状态"><span class="bb-icon">⚡</span><span class="lb-lbl">--</span></button>
+  <button class="bb d" id="resetTasks2"><span class="bb-icon">🗑</span><span class="lb-lbl">重置</span></button>
+  <button class="bb" id="installBtn" title="安装到桌面" style="display:none"><span class="bb-icon">📥</span><span class="lb-lbl">安装</span></button>
+  <button class="bb" id="helpBtn" title="使用说明"><span class="bb-icon">📖</span><span class="lb-lbl">说明</span></button>
+  <button class="bb" id="stgBtn" title="设置"><span class="bb-icon">⚙</span><span class="lb-lbl">设置</span></button>
+  <button class="bb" id="ccBtn" title="信用卡计算"><span class="bb-icon">💳</span><span class="lb-lbl">信用卡</span></button>
+  <button class="bb" id="svBtn" title="存款目标"><span class="bb-icon">💰</span><span class="lb-lbl">储蓄</span></button>
+  <button class="bb" id="snBtn" title="进度快照"><span class="bb-icon">📸</span><span class="lb-lbl">快照</span></button>
+  <button class="bb" id="themeBtn" title="切换主题"><span class="bb-icon">🌙</span><span class="lb-lbl">主题</span></button>
+  <button class="bb" id="bkpBtn" title="数据备份"><span class="bb-icon">💾</span><span class="lb-lbl">备份</span></button>
+  <button class="bb" id="calBtn" title="月视图"><span class="bb-icon">📅</span><span class="lb-lbl">月历</span></button>
+  <button class="bb" id="statBtn" title="统计分析"><span class="bb-icon">📊</span><span class="lb-lbl">统计</span></button>
+  <button class="bb" id="housingBtn" title="购房综合（贷款+成本+清单）"><span class="bb-icon">🏠</span><span class="lb-lbl">购房</span></button>
+  <button class="bb" id="pdfBtn" title="打印报告"><span class="bb-icon">📄</span><span class="lb-lbl">打印</span></button>
 </div>
 
 <!-- ===== HELP MODAL ===== -->
@@ -4929,6 +4930,25 @@ document.querySelectorAll('.pomo-type').forEach(function(btn){
 // Keyboard: Escape to close
 document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(document.getElementById('sleepOverlay').classList.contains('s'))sleepExit();else if(document.getElementById('pomoModal').classList.contains('s'))pomoClose();else if(document.getElementById('housingOverlay')&&document.getElementById('housingOverlay').classList.contains('s')){var ce=document.getElementById('housingClose');if(ce)ce.click()}}})
 pomoLoad();pomoLoadPos()
+
+// Left sidebar toggle
+(function(){
+  var bar = document.getElementById('leftBar');
+  var btn = document.getElementById('lbToggle');
+  if(bar && btn){
+    if(localStorage.getItem('_leftBarCollapsed')==='1'){
+      bar.classList.remove('s');
+      document.body.classList.remove('sb');
+    }
+    btn.textContent = bar.classList.contains('s') ? '◀' : '▶';
+    btn.addEventListener('click', function(){
+      bar.classList.toggle('s');
+      document.body.classList.toggle('sb');
+      btn.textContent = bar.classList.contains('s') ? '◀' : '▶';
+      try { localStorage.setItem('_leftBarCollapsed', bar.classList.contains('s') ? '0' : '1'); } catch(e){}
+    });
+  }
+})();
 
 // ======================== FEATURE: Milestone Timeline ========================
 function renderMilestones(cid){var area=document.getElementById('ms-'+cid);if(!area)return;var ms=data._milestones||{};var list=ms[cid]||[]
