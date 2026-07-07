@@ -1204,42 +1204,7 @@ body.fm .kbd-hint{display:none}
 .fm-exit{position:fixed;top:clamp(.4rem,1vw,.6rem);right:clamp(.4rem,1vw,.6rem);z-index:290;background:rgba(10,9,8,.85);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:100px;padding:clamp(.15rem,.3vw,.25rem) clamp(.35rem,.5vw,.5rem);font-size:clamp(.5rem,.75vw,.55rem);color:var(--muted);cursor:pointer;transition:all .2s;font-family:var(--font-sans);opacity:0;pointer-events:none;line-height:1}
 .fm-exit:hover{color:var(--accent);border-color:var(--accent)}
 
-/* ===== Feature: Task Tags ===== */
-.tag-dot{display:inline-flex;align-items:center;justify-content:center;width:clamp(10px,1.2vw,12px);height:clamp(10px,1.2vw,12px);border-radius:50%;margin-right:clamp(.06rem,.1vw,.08rem);flex-shrink:0;cursor:pointer;transition:transform .2s;vertical-align:middle}
-.tag-dot:hover{transform:scale(1.3)}
-.tag-dot.n{background:var(--line-2);opacity:.4}
-.tag-dot.r{background:var(--cinnabar)}
-.tag-dot.g{background:var(--jade)}
-.tag-dot.y{background:#c9a040}
-.tag-dot.b{background:var(--accent-3)}
-.tag-dot.p{background:#8b5cf6}
-.tag-dot.o{background:var(--accent-2)}
-.tag-picker{display:inline-flex;gap:.15rem;margin-left:.2rem;opacity:0;pointer-events:none;transition:opacity .2s}
-.dr:hover .tag-picker{opacity:1;pointer-events:auto}
-.tag-picker .tp-btn{width:clamp(10px,1.1vw,12px);height:clamp(10px,1.1vw,12px);border-radius:50%;border:1px solid var(--line-2);cursor:pointer;transition:all .2s;padding:0;background:transparent}
-.tag-picker .tp-btn:hover{transform:scale(1.3);border-color:var(--fg-dim)}
-.tag-picker .tp-btn.a{transform:scale(1.2);border-color:var(--accent);box-shadow:0 0 6px rgba(212,165,116,.3)}
-.tag-picker .tp-btn.tpn{background:var(--line-2)}
-.tag-picker .tp-btn.tpr{background:var(--cinnabar)}
-.tag-picker .tp-btn.tpg{background:var(--jade)}
-.tag-picker .tp-btn.tpy{background:#c9a040}
-.tag-picker .tp-btn.tpb{background:var(--accent-3)}
-.tag-picker .tp-btn.tpp{background:#8b5cf6}
-.tag-picker .tp-btn.tpo{background:var(--accent-2)}
-.tag-filter-bar{display:flex;gap:.2rem;align-items:center;padding:clamp(.15rem,.25vw,.2rem) 0;flex-wrap:wrap}
-.tag-filter-bar .tfb-label{font-size:clamp(.5rem,.75vw,.55rem);color:var(--muted);margin-right:.1rem}
-.tag-filter-bar .tfb-btn{width:clamp(10px,1.1vw,12px);height:clamp(10px,1.1vw,12px);border-radius:50%;border:1px solid var(--line-2);cursor:pointer;padding:0;background:transparent;transition:all .2s;position:relative}
-.tag-filter-bar .tfb-btn.a{border-color:var(--accent);box-shadow:0 0 6px rgba(212,165,116,.3)}
-.tag-filter-bar .tfb-btn.a::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:6px;color:var(--accent)}
-.tag-filter-bar .tfb-btn.tfba{background:var(--line-2)}
-.tag-filter-bar .tfb-btn.tfbr{background:var(--cinnabar)}
-.tag-filter-bar .tfb-btn.tfbg{background:var(--jade)}
-.tag-filter-bar .tfb-btn.tfby{background:#c9a040}
-.tag-filter-bar .tfb-btn.tfbb{background:var(--accent-3)}
-.tag-filter-bar .tfb-btn.tfbp{background:#8b5cf6}
-.tag-filter-bar .tfb-btn.tfbo{background:var(--accent-2)}
-.tag-filter-bar .tfb-clear{font-size:clamp(.45rem,.7vw,.5rem);color:var(--muted);cursor:pointer;border:none;background:none;font-family:var(--font-sans);padding:.02rem .1rem}
-.tag-filter-bar .tfb-clear:hover{color:var(--accent)}
+/* ===== Feature: Task Tags (handled by feature-tags.js) ===== */
 
 /* ===== Feature: Week Batch Ops ===== */
 .wk-batch{display:flex;gap:.15rem;margin-left:auto}
@@ -1493,13 +1458,21 @@ body.fm .kbd-hint{display:none}
   <button class="bb" id="gistIndicator" title="数据同步状态">⚡--</button>
   <button class="bb d" id="resetTasks2">🗑 重置</button>
   <button class="bb" id="installBtn" title="安装到桌面" style="display:none">📥 安装</button>
-  <button class="bb" id="helpBtn" title="使用说明">📖</button>
-  <button class="bb" id="stgBtn" title="设置">⚙</button>
-  <button class="bb" id="mtgBtn" title="房贷计算">🏠</button>
-  <button class="bb" id="ccBtn" title="信用卡计算">💳</button>
-  <button class="bb" id="svBtn" title="存款目标">💰</button>
-  <button class="bb" id="snBtn" title="进度快照">📸</button>
-  <button class="bb" id="fmBtn" title="专注模式">🧘</button>
+  <button class="bb" id="helpBtn" title="使用说明"><span class="bb-icon">📖</span> 说明</button>
+  <button class="bb" id="stgBtn" title="设置"><span class="bb-icon">⚙</span> 设置</button>
+  <button class="bb" id="mtgBtn" title="房贷计算"><span class="bb-icon">🏠</span> 房贷</button>
+  <button class="bb" id="ccBtn" title="信用卡计算"><span class="bb-icon">💳</span> 信用卡</button>
+  <button class="bb" id="svBtn" title="存款目标"><span class="bb-icon">💰</span> 储蓄</button>
+  <button class="bb" id="snBtn" title="进度快照"><span class="bb-icon">📸</span> 快照</button>
+  <button class="bb" id="fmBtn" title="专注模式"><span class="bb-icon">🧘</span> 专注</button>
+  <button class="bb" id="themeBtn" title="切换主题"><span class="bb-icon">🌙</span> 主题</button>
+  <button class="bb" id="bkpBtn" title="数据备份"><span class="bb-icon">💾</span> 备份</button>
+  <button class="bb" id="calBtn" title="月视图"><span class="bb-icon">📅</span> 月历</button>
+  <button class="bb" id="statBtn" title="统计分析"><span class="bb-icon">📊</span> 统计</button>
+  <button class="bb" id="costBtn" title="购房成本"><span class="bb-icon">📋</span> 购房</button>
+  <button class="bb" id="fundBtn" title="公积金贷款"><span class="bb-icon">🏦</span> 公积金</button>
+  <button class="bb" id="houseBtn" title="看房清单"><span class="bb-icon">🏡</span> 看房</button>
+  <button class="bb" id="pdfBtn" title="打印报告"><span class="bb-icon">📄</span> 打印</button>
 </div>
 
 <!-- ===== HELP MODAL ===== -->
@@ -5962,91 +5935,6 @@ setTimeout(showDailyOverview, 1200);
   setTimeout(enhanceWeeks, 500);
 })();
 
-// ======================== FEATURE: Task Tags ========================
-var TAG_CLS = { r:'r', g:'g', y:'y', b:'b', p:'p', o:'o' };
-(function(){
-  function enhanceTags(){
-    document.querySelectorAll('.dr').forEach(function(row){
-      if(row.querySelector('.tag-dot')) return;
-      var textarea = row.querySelector('.di'); if(!textarea) return;
-      var cid = textarea.dataset.c, wi = parseInt(textarea.dataset.wi), di = parseInt(textarea.dataset.di);
-      var tag = '';
-      if(data[cid] && data[cid][wi] && data[cid][wi].d && data[cid][wi].d[di]){
-        var t = data[cid][wi].d[di];
-        if(typeof t==='object' && t.tag) tag = t.tag;
-      }
-      var dl = row.querySelector('.dl'); if(!dl) return;
-      var dot = document.createElement('span');
-      dot.className = 'tag-dot ' + (tag ? TAG_CLS[tag]||'n' : 'n');
-      dot.title = tag || '无标签'; dot.dataset.tag = tag||'';
-      dl.parentNode.insertBefore(dot, dl);
-      var picker = document.createElement('span');
-      picker.className = 'tag-picker';
-      ['','r','g','y','b','p','o'].forEach(function(t){
-        var btn = document.createElement('button');
-        btn.className = 'tp-btn ' + (t ? 'tp'+t : 'tpn');
-        btn.title = t ? ({r:'实验',g:'写作',y:'备考',b:'杂务',p:'阅读',o:'其他'}[t]||t) : '无标签';
-        if(t === tag) btn.classList.add('a');
-        btn.addEventListener('click', function(e){
-          e.stopPropagation();
-          if(!data[cid]||!data[cid][wi]) return;
-          if(!data[cid][wi].d) data[cid][wi].d = [];
-          if(!data[cid][wi].d[di]) data[cid][wi].d[di] = '';
-          var td = data[cid][wi].d[di];
-          if(typeof td==='string') data[cid][wi].d[di] = { text: td, done: false, tag: t };
-          else { td.tag = t; }
-          save();
-          dot.className = 'tag-dot ' + (t ? TAG_CLS[t]||'n' : 'n');
-          dot.title = t || '无标签'; dot.dataset.tag = t||'';
-          picker.querySelectorAll('.tp-btn').forEach(function(b){ b.classList.remove('a'); });
-          btn.classList.add('a');
-        });
-        picker.appendChild(btn);
-      });
-      row.appendChild(picker);
-    });
-  }
-  function enhanceFilters(){
-    document.querySelectorAll('.weeks-wrap').forEach(function(wrap){
-      if(wrap.querySelector('.tag-filter-bar')) return;
-      var bar = document.createElement('div');
-      bar.className = 'tag-filter-bar';
-      bar.innerHTML = '<span class="tfb-label">🏷</span>';
-      var activeFilter = '';
-      ['','r','g','y','b','p','o'].forEach(function(t){
-        var btn = document.createElement('button');
-        btn.className = 'tfb-btn ' + (t ? 'tfb'+t : 'tfba');
-        btn.title = t ? ({r:'实验',g:'写作',y:'备考',b:'杂务',p:'阅读',o:'其他'}[t]||t) : '全部';
-        btn.addEventListener('click', function(){
-          if(activeFilter === t) activeFilter = '';
-          else activeFilter = t;
-          bar.querySelectorAll('.tfb-btn').forEach(function(b){ b.classList.remove('a'); });
-          if(activeFilter) btn.classList.add('a');
-          wrap.closest('.wb').querySelectorAll('.dr').forEach(function(row){
-            var dot = row.querySelector('.tag-dot');
-            if(!activeFilter) row.style.display = '';
-            else if(dot && dot.dataset.tag === activeFilter) row.style.display = '';
-            else row.style.display = 'none';
-          });
-        });
-        bar.appendChild(btn);
-      });
-      var clear = document.createElement('button');
-      clear.className = 'tfb-clear'; clear.textContent = '✕清空';
-      clear.addEventListener('click', function(){
-        activeFilter = '';
-        bar.querySelectorAll('.tfb-btn').forEach(function(b){ b.classList.remove('a'); });
-        wrap.closest('.wb').querySelectorAll('.dr').forEach(function(row){ row.style.display = ''; });
-      });
-      bar.appendChild(clear);
-      wrap.parentNode.insertBefore(bar, wrap);
-    });
-  }
-  var _rw2 = renderWeeks;
-  renderWeeks = function(cid){ _rw2.call(this, cid); setTimeout(function(){ enhanceTags(); enhanceFilters(); }, 50); };
-  setTimeout(function(){ enhanceTags(); enhanceFilters(); }, 600);
-})();
-
 // ======================== FEATURE: Browser Notification ========================
 (function(){
   function reqNotif(){ if('Notification' in window && Notification.permission==='default') Notification.requestPermission(); }
@@ -6244,5 +6132,17 @@ function snRenderList_(){
 
 })();
 </script>
+<script src="js/core.js"></script>
+<script src="js/feature-tags.js"></script>
+<script src="js/feature-theme.js"></script>
+<script src="js/feature-export.js"></script>
+<script src="js/feature-search.js"></script>
+<script src="js/feature-monthview.js"></script>
+<script src="js/feature-stats.js"></script>
+<script src="js/feature-housing.js"></script>
+<script src="js/feature-reminder.js"></script>
+<script src="js/feature-fundloan.js"></script>
+<script src="js/feature-houselist.js"></script>
+<script src="js/feature-pdf.js"></script>
 </body>
 </html>
