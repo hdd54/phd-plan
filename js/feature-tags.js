@@ -10,9 +10,11 @@
   // TAG_COLORS and TAG_KEYS are in core.js
   var TAG_LABELS = {};
   var TAG_SHORT = {};
-  TAG_KEYS.forEach(function(k){
+  var TAG_NUM = {};
+  TAG_KEYS.forEach(function(k, i){
     TAG_LABELS[k] = TAG_COLORS[k].label;
     TAG_SHORT[k] = TAG_COLORS[k].label ? TAG_COLORS[k].label.charAt(0) : '';
+    TAG_NUM[k] = i > 0 ? String(i) : '';
   });
 
   // ===== Inject compact tag CSS =====
@@ -26,7 +28,7 @@
     .md-btn,.journal-btn{flex-shrink:0;font-size:clamp(.4rem,.6vw,.45rem);padding:.02rem .15rem}
     /* Tag dot with short label */
     .tg-wrap{display:inline-flex;align-items:center;gap:2px;flex-shrink:0;position:relative;cursor:pointer;margin:0 1px}
-    .tag-dot2{width:clamp(8px,1vw,10px);height:clamp(8px,1vw,10px);border-radius:50%;flex-shrink:0;transition:transform .15s}
+    .tag-dot2{width:clamp(14px,1.6vw,16px);height:clamp(14px,1.6vw,16px);border-radius:50%;flex-shrink:0;transition:transform .15s;font-size:clamp(7px,.75vw,8px);line-height:clamp(14px,1.6vw,16px);text-align:center;color:rgba(255,255,255,.9);font-weight:600;font-family:var(--font-sans);overflow:hidden}
     .tag-dot2:hover{transform:scale(1.4)}
     .tag-dot2.n{background:var(--line-2);opacity:.4}
     .tag-dot2.r{background:#e74c3c}.tag-dot2.g{background:#2ecc71}.tag-dot2.y{background:#c9a040}
@@ -36,7 +38,7 @@
     /* Compact inline picker */
     .tg-picker{display:none;position:absolute;top:100%;left:50%;transform:translateX(-50%);z-index:50;background:var(--bg3);border:1px solid var(--line);border-radius:8px;padding:3px;box-shadow:0 8px 32px rgba(0,0,0,.5);white-space:nowrap;margin-top:3px}
     .tg-picker.s{display:flex;gap:2px;flex-wrap:wrap;width:max-content}
-    .tg-picker .tgp-btn{width:clamp(10px,1.2vw,12px);height:clamp(10px,1.2vw,12px);border-radius:50%;border:1.5px solid transparent;cursor:pointer;padding:0;background:transparent;transition:all .15s}
+    .tg-picker .tgp-btn{width:clamp(18px,2vw,20px);height:clamp(18px,2vw,20px);border-radius:50%;border:1.5px solid transparent;cursor:pointer;padding:0;background:transparent;transition:all .15s;font-size:clamp(8px,.85vw,9px);line-height:clamp(18px,2vw,20px);text-align:center;color:rgba(255,255,255,.9);font-weight:600;font-family:var(--font-sans);overflow:hidden}
     .tg-picker .tgp-btn:hover{transform:scale(1.3)}
     .tg-picker .tgp-btn.a{border-color:var(--accent);box-shadow:0 0 6px rgba(212,165,116,.4);transform:scale(1.2)}
     .tgp-n{background:var(--line-2);opacity:.4}
@@ -47,7 +49,7 @@
     /* Compact filter bar */
     .tag-filter-bar2{display:flex;gap:.15rem;align-items:center;padding:clamp(.1rem,.2vw,.15rem) 0;flex-wrap:wrap}
     .tag-filter-bar2 .tfb-lbl{font-size:clamp(.45rem,.65vw,.5rem);color:var(--muted);margin-right:.05rem}
-    .tag-filter-bar2 .tfb-b2{width:clamp(8px,1vw,10px);height:clamp(8px,1vw,10px);border-radius:50%;border:1px solid var(--line-2);cursor:pointer;padding:0;background:transparent;transition:all .15s}
+    .tag-filter-bar2 .tfb-b2{width:clamp(16px,1.8vw,18px);height:clamp(16px,1.8vw,18px);border-radius:50%;border:1px solid var(--line-2);cursor:pointer;padding:0;background:transparent;transition:all .15s;font-size:clamp(7px,.75vw,8px);line-height:clamp(16px,1.8vw,18px);text-align:center;color:rgba(255,255,255,.9);font-weight:600;font-family:var(--font-sans);overflow:hidden}
     .tag-filter-bar2 .tfb-b2.a{border-color:var(--accent);box-shadow:0 0 4px rgba(212,165,116,.3)}
     .tag-filter-bar2 .tfb-b2.a::after{content:'';position:absolute;inset:1px;border-radius:50%;background:rgba(212,165,116,.5)}
     .tag-filter-bar2 .tfb-clr{font-size:clamp(.4rem,.6vw,.45rem);color:var(--muted);cursor:pointer;border:none;background:none;font-family:var(--font-sans);padding:.02rem .08rem}
@@ -95,6 +97,7 @@
     // Create dot
     var dot = document.createElement('span');
     dot.className = 'tag-dot2 ' + (tag ? tag : 'n');
+    dot.textContent = TAG_NUM[tag] || '';
     wrap.appendChild(dot);
 
     // Create inline picker
@@ -108,6 +111,7 @@
     TAG_KEYS.forEach(function(t, i){
       var btn = document.createElement('button');
       btn.className = 'tgp-btn tgp-' + (t || 'n');
+      btn.textContent = TAG_NUM[t] || '';
       btn.title = TAG_COLORS[t].label;
       if(t === tag) btn.classList.add('a');
       btn.addEventListener('click', function(e){
@@ -115,6 +119,7 @@
         if(t === tag) t = ''; // toggle off
         setTaskTag(cid, wi, di, t);
         dot.className = 'tag-dot2 ' + (t || 'n');
+        dot.textContent = TAG_NUM[t] || '';
         dot.title = TAG_COLORS[t].label;
         picker.querySelectorAll('.tgp-btn').forEach(function(b){ b.classList.remove('a'); });
         if(t) btn.classList.add('a');
@@ -189,6 +194,7 @@
       btn.style.background = (t ? bg : 'var(--line-2)');
       btn.style.position = 'relative';
       btn.style.opacity = (t ? '0.5' : '0.3');
+      btn.textContent = TAG_NUM[t] || '';
       btn.title = TAG_COLORS[t].label;
 
       btn.addEventListener('click', function(){

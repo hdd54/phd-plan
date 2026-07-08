@@ -5609,6 +5609,8 @@ window.data = data;
 window.showToast = showToast;
 window.save = save;
 window.renderWeeks = renderWeeks;
+// Route local calls through window.renderWeeks so feature patches (feature-tags.js) apply
+renderWeeks = function(cid){ window.renderWeeks(cid); };
 })();
 </script>
 <script src="js/core.js"></script>
