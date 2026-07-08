@@ -43,7 +43,7 @@
 
     // Insert above the tag filter bar (or before weeks-wrap)
     var tagBar = parent.querySelector('.tag-filter-bar2') || parent.querySelector('.tag-filter-bar');
-    if(tagBar) {
+    if(tagBar && tagBar.parentNode === parent) {
       parent.insertBefore(bar, tagBar);
     } else {
       parent.insertBefore(bar, wrap);

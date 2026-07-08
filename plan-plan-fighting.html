@@ -4369,27 +4369,6 @@ document.querySelectorAll('.pomo-type').forEach(function(btn){
 document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(document.getElementById('sleepOverlay').classList.contains('s'))sleepExit();else if(document.getElementById('pomoModal').classList.contains('s'))pomoClose();else if(document.getElementById('housingOverlay')&&document.getElementById('housingOverlay').classList.contains('s')){var ce=document.getElementById('housingClose');if(ce)ce.click()}}})
 try{pomoLoad()}catch(e){}try{pomoLoadPos}catch(e){}
 
-// ===== Non-critical init wrapped in try/catch to not break feature bindings =====
-try{
-// Left sidebar toggle
-(function(){
-  var bar = document.getElementById('leftBar');
-  var btn = document.getElementById('lbToggle');
-  if(bar && btn){
-    if(localStorage.getItem('_leftBarCollapsed')==='1'){
-      bar.classList.remove('s');
-      document.body.classList.remove('sb');
-    }
-    btn.textContent = bar.classList.contains('s') ? '◀' : '▶';
-    btn.addEventListener('click', function(){
-      bar.classList.toggle('s');
-      document.body.classList.toggle('sb');
-      btn.textContent = bar.classList.contains('s') ? '◀' : '▶';
-      try { localStorage.setItem('_leftBarCollapsed', bar.classList.contains('s') ? '0' : '1'); } catch(e){}
-    });
-  }
-})();
-
 // ======================== FEATURE: Milestone Timeline ========================
 function renderMilestones(cid){var area=document.getElementById('ms-'+cid);if(!area)return;var ms=data._milestones||{};var list=ms[cid]||[]
   area.innerHTML='<div class="ms-line">'
@@ -4405,7 +4384,6 @@ function addMilestone(cid){var label=prompt('里程碑名称：');if(!label||!la
   var date=prompt('日期（如 2026-06）：')||''
   if(!data._milestones)data._milestones={};if(!data._milestones[cid])data._milestones[cid]=[]
   data._milestones[cid].push({label:label.trim(),date:date,done:false,type:1});save();renderMilestones(cid)}
-// Init milestone areas for all years
 function initMilestones(){if(!data._milestones)data._milestones={}
   ;['y1','y2','y3','y4','y5'].forEach(function(cid){if(!data._milestones[cid])data._milestones[cid]=[]})}
 
@@ -4440,31 +4418,39 @@ function searchDo(q){q=q.trim().toLowerCase();var res=document.getElementById('s
 function searchGoTo(cid,wi,di){searchClose()
   var sec=document.getElementById(cid);if(sec)sec.scrollIntoView({behavior:'smooth',block:'start'})
   if(wi>=0){var body=document.getElementById('plan-body-'+cid+'-academic');if(body&&!body.classList.contains('o')){var t=body.closest('.tc')||body.previousElementSibling;if(t&&t.classList.contains('wt'))t.click()}
-    // scroll to week
     setTimeout(function(){var weeks=document.querySelectorAll('#plan-body-'+cid+'-academic .week');if(weeks[wi])weeks[wi].scrollIntoView({behavior:'smooth',block:'center'})},400)}}
+
+// ===== Non-critical init wrapped in try/catch to not break feature bindings =====
+try{
+// Left sidebar toggle
+(function(){
+  var bar = document.getElementById('leftBar');
+  var btn = document.getElementById('lbToggle');
+  if(bar && btn){
+    if(localStorage.getItem('_leftBarCollapsed')==='1'){
+      bar.classList.remove('s');
+      document.body.classList.remove('sb');
+    }
+    btn.textContent = bar.classList.contains('s') ? '◀' : '▶';
+    btn.addEventListener('click', function(){
+      bar.classList.toggle('s');
+      document.body.classList.toggle('sb');
+      btn.textContent = bar.classList.contains('s') ? '◀' : '▶';
+      try { localStorage.setItem('_leftBarCollapsed', bar.classList.contains('s') ? '0' : '1'); } catch(e){}
+    });
+  }
+})();
 // Search bindings (null-safe: search elements may not exist in HTML)
 var searchOv=document.getElementById('searchOverlay'),searchInp=document.getElementById('searchInput'),searchCl=document.getElementById('searchClose')
 if(searchOv)searchOv.onclick=searchClose
 if(searchCl)searchCl.onclick=searchClose
 if(searchInp){searchInp.addEventListener('input',function(){searchDo(this.value)});searchInp.addEventListener('keydown',function(e){if(e.key==='Escape')searchClose()})}
-}catch(e){console.error('Sidebar/milestone/search init error:',e)}
+}catch(e){console.error('Sidebar/search init error:',e)}
 
-try{
 // ===== Help Modal =====
 function helpOpen(){document.getElementById('helpOverlay').classList.add('s');document.getElementById('helpModal').classList.add('s')}
 function helpClose_(){document.getElementById('helpOverlay').classList.remove('s');document.getElementById('helpModal').classList.remove('s')}
-document.getElementById('helpBtn').onclick=helpOpen
-document.getElementById('helpOverlay').onclick=helpClose_
-document.getElementById('helpClose').onclick=helpClose_
-document.addEventListener('keydown',function(e){
-  if(e.key==='?'&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!e.target.closest('input,textarea,[contentEditable]')){
-    e.preventDefault();var m=document.getElementById('helpModal');if(m.classList.contains('s'))helpClose_();else helpOpen()
-  }
-  if(e.key==='Escape'&&document.getElementById('helpModal').classList.contains('s'))helpClose_()
-})
-}catch(e){console.error('help init error:',e)}
 
-try{
 // ===== Settings =====
 var _SETTINGS_CFG={
   fontSize:[13,15,17,20],
@@ -4491,7 +4477,6 @@ function applySettings(s){
 function stgHighlight(grp,v){
   document.querySelectorAll('#stg'+grp+' .stg-btn').forEach(function(b){b.classList.toggle('a',parseInt(b.dataset.v)===v)})
 }
-
 function stgOpen(){
   var s=data._settings||{fontSize:1,fontFamily:0,lineHeight:1,pageWidth:0}
   stgHighlight('FontSize',s.fontSize)
@@ -4502,6 +4487,22 @@ function stgOpen(){
   document.getElementById('stgFontFamilyCustom').value=s.fontFamilyCustom||''
   document.getElementById('stgLineHeightCustom').value=s.lineHeightCustom||''
   document.getElementById('stgOverlay').classList.add('s')
+
+try{
+// ===== Help Modal Init =====
+document.getElementById('helpBtn').onclick=helpOpen
+document.getElementById('helpOverlay').onclick=helpClose_
+document.getElementById('helpClose').onclick=helpClose_
+document.addEventListener('keydown',function(e){
+  if(e.key==='?'&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!e.target.closest('input,textarea,[contentEditable]')){
+    e.preventDefault();var m=document.getElementById('helpModal');if(m.classList.contains('s'))helpClose_();else helpOpen()
+  }
+  if(e.key==='Escape'&&document.getElementById('helpModal').classList.contains('s'))helpClose_()
+})
+}catch(e){console.error('help init error:',e)}
+
+try{
+// ===== Settings Init =====
   document.getElementById('stgModal').classList.add('s')
 }
 function stgClose(){
