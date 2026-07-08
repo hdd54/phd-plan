@@ -91,6 +91,62 @@
         '--card':'#141414','--card-h':'#1c1c1c'
       },
       el: {}
+    },
+    'scarlet-red': {
+      name: '嫣红', icon: '❤️',
+      vars: {
+        '--bg':'#0f0707','--bg2':'#1a0c0c','--bg3':'#2a1414',
+        '--fg':'#f0e0e0','--fg-dim':'#c09090','--muted':'#905050',
+        '--accent':'#e05050','--accent-2':'#d4a574','--accent-3':'#5a8a8a',
+        '--line':'#2a1818','--line-2':'#3a2020',
+        '--cinnabar':'#d03030','--cinnabar-dim':'rgba(208,48,48,.12)',
+        '--jade':'#3a8a5a','--jade-dim':'rgba(58,138,90,.1)',
+        '--gold-leaf':'#C9A96E','--gold-dim':'rgba(224,80,80,.12)',
+        '--card':'#1a0c0c','--card-h':'#2a1414'
+      },
+      el: {}
+    },
+    'aurora': {
+      name: '极光', icon: '🌌',
+      vars: {
+        '--bg':'#080e0e','--bg2':'#0c1a18','--bg3':'#142a26',
+        '--fg':'#dcefeb','--fg-dim':'#8ab8b0','--muted':'#4a8278',
+        '--accent':'#5cd4b0','--accent-2':'#7c5cf4','--accent-3':'#f4c85c',
+        '--line':'#1a2a26','--line-2':'#263a34',
+        '--cinnabar':'#c04040','--cinnabar-dim':'rgba(192,64,64,.12)',
+        '--jade':'#2aaa7a','--jade-dim':'rgba(42,170,122,.1)',
+        '--gold-leaf':'#d4a050','--gold-dim':'rgba(92,212,176,.12)',
+        '--card':'#0c1a18','--card-h':'#142a26'
+      },
+      el: {}
+    },
+    'autumn-leaves': {
+      name: '秋叶', icon: '🍂',
+      vars: {
+        '--bg':'#0f0b06','--bg2':'#1a140e','--bg3':'#2a1e14',
+        '--fg':'#efe4d8','--fg-dim':'#b8a088','--muted':'#7a6a50',
+        '--accent':'#d49040','--accent-2':'#b85530','--accent-3':'#4a7a5a',
+        '--line':'#2a2218','--line-2':'#3a3022',
+        '--cinnabar':'#c04a30','--cinnabar-dim':'rgba(192,74,48,.12)',
+        '--jade':'#4a8a4a','--jade-dim':'rgba(74,138,74,.1)',
+        '--gold-leaf':'#c99440','--gold-dim':'rgba(212,144,64,.12)',
+        '--card':'#1a140e','--card-h':'#2a1e14'
+      },
+      el: {}
+    },
+    'misty-blue': {
+      name: '雾灰蓝', icon: '🌫️',
+      vars: {
+        '--bg':'#0e1118','--bg2':'#151a24','--bg3':'#1e2430',
+        '--fg':'#dce0ec','--fg-dim':'#9098b0','--muted':'#586078',
+        '--accent':'#7a8ab8','--accent-2':'#b8987a','--accent-3':'#5a9a8a',
+        '--line':'#222838','--line-2':'#2e3448',
+        '--cinnabar':'#b84848','--cinnabar-dim':'rgba(184,72,72,.12)',
+        '--jade':'#4a8a6a','--jade-dim':'rgba(74,138,106,.1)',
+        '--gold-leaf':'#a0985a','--gold-dim':'rgba(122,138,184,.12)',
+        '--card':'#151a24','--card-h':'#1e2430'
+      },
+      el: {}
     }
   };
 
@@ -110,7 +166,7 @@
     currentTheme = id;
 
     // Remove any previous theme class, then add current
-    document.documentElement.classList.remove('t-warm-dark', 't-warm-light', 't-deep-blue', 't-forest-green', 't-twilight-purple', 't-minimal-gray');
+    document.documentElement.classList.remove('t-warm-dark', 't-warm-light', 't-deep-blue', 't-forest-green', 't-twilight-purple', 't-minimal-gray', 't-scarlet-red', 't-aurora', 't-autumn-leaves', 't-misty-blue');
     document.documentElement.classList.add('t-' + id);
 
     // Build CSS variable overrides
