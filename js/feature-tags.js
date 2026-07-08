@@ -254,14 +254,11 @@
   // Also run on dynamic content changes
   document.addEventListener('DOMContentLoaded', function(){ setTimeout(enhanceAll, 1000); });
 
-  // Re-run when weeks are re-rendered (e.g. add week, delete week)
-  var origAddWeek = window.addWeek;
-  if(origAddWeek){
-    window.addWeek = function(){
-      origAddWeek.apply(this, arguments);
-      setTimeout(enhanceAll, 100);
-    };
-  }
+  // ===== MutationObserver: auto-enhance when weeks are added/removed =====
+  var mo = new MutationObserver(function(){
+    if(document.querySelector('.week')) setTimeout(enhanceAll, 30);
+  });
+  mo.observe(document.getElementById('app') || document.body, { childList: true, subtree: true });
 
   console.log('feature-tags: loaded (13 colors, compact)');
 })();
