@@ -60,18 +60,20 @@
   // ===== Get task tag from data =====
   function getTaskTag(cid, wi, di){
     try {
-      var t = data[cid][wi].d[di];
+      var _d = window.data || {};
+      var t = _d[cid][wi].d[di];
       if(typeof t === 'object' && t.tag) return t.tag;
     } catch(e){}
     return '';
   }
 
   function setTaskTag(cid, wi, di, tagVal){
-    if(!data[cid] || !data[cid][wi]) return;
-    if(!data[cid][wi].d) data[cid][wi].d = [];
-    if(!data[cid][wi].d[di]) data[cid][wi].d[di] = '';
-    var td = data[cid][wi].d[di];
-    if(typeof td === 'string') data[cid][wi].d[di] = { text: td, done: false, tag: tagVal };
+    var _d = window.data;
+    if(!_d || !_d[cid] || !_d[cid][wi]) return;
+    if(!_d[cid][wi].d) _d[cid][wi].d = [];
+    if(!_d[cid][wi].d[di]) _d[cid][wi].d[di] = '';
+    var td = _d[cid][wi].d[di];
+    if(typeof td === 'string') _d[cid][wi].d[di] = { text: td, done: false, tag: tagVal };
     else td.tag = tagVal;
     save();
   }

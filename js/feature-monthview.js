@@ -47,10 +47,10 @@
 
   // ===== Get max weeks across all cards =====
   function getMaxWeeks() {
-    var max = 0;
-    for(var cid in data) {
+    var max = 0, _d = window.data || {};
+    for(var cid in _d) {
       if(cid.startsWith('_')) continue;
-      var weeks = data[cid];
+      var weeks = _d[cid];
       if(!Array.isArray(weeks)) continue;
       if(weeks.length > max) max = weeks.length;
     }
@@ -59,10 +59,11 @@
 
   // ===== Get week label =====
   function getWeekLabel(wi) {
+    var _d = window.data || {};
     // Try to find a label from any card
-    for(var cid in data) {
+    for(var cid in _d) {
       if(cid.startsWith('_')) continue;
-      var weeks = data[cid];
+      var weeks = _d[cid];
       if(!Array.isArray(weeks) || !weeks[wi]) continue;
       if(weeks[wi].w) return weeks[wi].w;
     }
@@ -71,10 +72,10 @@
 
   // ===== Aggregate task data for a specific week and day =====
   function getDayStats(wi, di) {
-    var total = 0, done = 0;
-    for(var cid in data) {
+    var total = 0, done = 0, _d = window.data || {};
+    for(var cid in _d) {
       if(cid.startsWith('_')) continue;
-      var weeks = data[cid];
+      var weeks = _d[cid];
       if(!Array.isArray(weeks) || !weeks[wi]) continue;
       var week = weeks[wi];
       if(!week.d || !Array.isArray(week.d)) continue;

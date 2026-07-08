@@ -84,9 +84,10 @@ window.aggregateTasks = function(){
   // Initialize tag counters
   TAG_KEYS.forEach(function(k){ result.byTag[k] = 0; });
 
-  Object.keys(data).forEach(function(cid){
+  var _d = window.data || {};
+  Object.keys(_d).forEach(function(cid){
     if(cid.startsWith('_')) return;
-    var weeks = data[cid];
+    var weeks = _d[cid];
     if(!Array.isArray(weeks)) return;
     weeks.forEach(function(week, wi){
       if(!week || !week.d) return;
@@ -107,8 +108,8 @@ window.aggregateTasks = function(){
   });
 
   // Pomo hours
-  if(data._pomoLog){
-    result.pomoHours = data._pomoLog.reduce(function(sum, r){ return sum + (r.duration||0)/60; }, 0);
+  if(_d._pomoLog){
+    result.pomoHours = _d._pomoLog.reduce(function(sum, r){ return sum + (r.duration||0)/60; }, 0);
   }
 
   return result;

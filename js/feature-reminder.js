@@ -26,22 +26,24 @@
 
   // ===== Get reminder for a task =====
   function getReminder(cid, wi, di){
-    if(!data._reminders) data._reminders = [];
-    for(var i=0; i<data._reminders.length; i++){
-      var r = data._reminders[i];
+    var _d = window.data || {};
+    if(!_d._reminders) _d._reminders = [];
+    for(var i=0; i<_d._reminders.length; i++){
+      var r = _d._reminders[i];
       if(r.cardId === cid && r.wi === wi && r.di === di) return r;
     }
     return null;
   }
 
   function setReminder(cid, wi, di, deadline){
-    if(!data._reminders) data._reminders = [];
+    var _d = window.data || {};
+    if(!_d._reminders) _d._reminders = [];
     // Remove existing
-    data._reminders = data._reminders.filter(function(r){ return !(r.cardId === cid && r.wi === wi && r.di === di); });
+    _d._reminders = _d._reminders.filter(function(r){ return !(r.cardId === cid && r.wi === wi && r.di === di); });
     if(deadline){
       var text = '';
-      try { var td = data[cid][wi].d[di]; text = typeof td === 'object' ? td.text : td; } catch(e){}
-      data._reminders.push({ cardId: cid, wi: wi, di: di, text: text, deadline: deadline, notified: false });
+      try { var td = _d[cid][wi].d[di]; text = typeof td === 'object' ? td.text : td; } catch(e){}
+      _d._reminders.push({ cardId: cid, wi: wi, di: di, text: text, deadline: deadline, notified: false });
     }
     save();
   }
@@ -52,9 +54,10 @@
 
   // ===== Check due reminders =====
   function checkReminders(){
-    if(!data._reminders) return;
+    var _d = window.data || {};
+    if(!_d._reminders) return;
     var now = new Date();
-    data._reminders.forEach(function(r){
+    _d._reminders.forEach(function(r){
       if(r.notified) return;
       var due = new Date(r.deadline);
       var diff = due - now;
@@ -71,7 +74,7 @@
       }
     });
     // Clean up old notifications (>7 days past)
-    data._reminders = data._reminders.filter(function(r){
+    _d._reminders = _d._reminders.filter(function(r){
       var due = new Date(r.deadline);
       return (now - due) < 604800000; // 7 days
     });

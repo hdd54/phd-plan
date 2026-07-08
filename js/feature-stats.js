@@ -128,9 +128,10 @@
     }
 
     // Pomo by week
-    if(data._pomoLog && data._pomoLog.length > 0){
+    var _d = window.data || {};
+    if(_d._pomoLog && _d._pomoLog.length > 0){
       var pomoByWeek = {};
-      data._pomoLog.forEach(function(r){
+      _d._pomoLog.forEach(function(r){
         var d = r.date || '';
         pomoByWeek[d] = (pomoByWeek[d] || 0) + (r.duration || 25);
       });
