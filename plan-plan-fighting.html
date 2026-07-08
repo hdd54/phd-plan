@@ -4487,9 +4487,10 @@ function stgOpen(){
   document.getElementById('stgFontFamilyCustom').value=s.fontFamilyCustom||''
   document.getElementById('stgLineHeightCustom').value=s.lineHeightCustom||''
   document.getElementById('stgOverlay').classList.add('s')
+}
 
+// ===== Settings Init =====
 try{
-// ===== Help Modal Init =====
 document.getElementById('helpBtn').onclick=helpOpen
 document.getElementById('helpOverlay').onclick=helpClose_
 document.getElementById('helpClose').onclick=helpClose_
@@ -4501,14 +4502,11 @@ document.addEventListener('keydown',function(e){
 })
 }catch(e){console.error('help init error:',e)}
 
-try{
-// ===== Settings Init =====
-  document.getElementById('stgModal').classList.add('s')
-}
 function stgClose(){
   document.getElementById('stgOverlay').classList.remove('s')
   document.getElementById('stgModal').classList.remove('s')
 }
+try{
 document.getElementById('stgBtn').onclick=stgOpen
 document.getElementById('stgOverlay').onclick=stgClose
 document.getElementById('stgClose').onclick=stgClose
