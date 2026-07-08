@@ -415,6 +415,19 @@ body{padding-left:var(--sb-w);transition:padding-left .3s cubic-bezier(.2,.9,.3,
 .mtg-result .mtg-r.highlight .mtg-rv{color:var(--accent);font-weight:500;font-size:clamp(.7rem,1.1vw,.85rem)}
 .mtg-result .mtg-note{font-size:clamp(.5rem,.8vw,.55rem);color:var(--muted);margin-top:.25rem;text-align:center;letter-spacing:.05em}
 
+/* ===== Finance (CC + Savings combined) ===== */
+.finance-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.92);z-index:395;width:clamp(340px,65vw,500px);background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 24px 80px rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:all .3s cubic-bezier(.2,.9,.3,1);overflow:hidden;max-height:85vh;display:flex;flex-direction:column}
+.finance-modal.s{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+.finance-header{display:flex;align-items:center;justify-content:space-between;padding:clamp(.5rem,1vw,.65rem) clamp(.6rem,1.2vw,.85rem);border-bottom:1px solid var(--line);flex-shrink:0}
+.finance-header h3{margin:0;font-size:clamp(.7rem,1.1vw,.8rem);font-weight:400;color:var(--accent);letter-spacing:.04em;font-family:var(--font-sans)}
+.finance-close{background:none;border:none;color:var(--muted);font-size:clamp(1rem,1.5vw,1.2rem);cursor:pointer;padding:.15rem;line-height:1;border-radius:4px;transition:color .2s}
+.finance-close:hover{color:var(--accent)}
+.finance-body{padding:clamp(.5rem,1vw,.75rem);overflow-y:auto;flex:1}
+.finance-body::-webkit-scrollbar{width:3px}
+.finance-body::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:3px}
+.finance-section{margin-bottom:.25rem}
+.finance-section-title{font-size:clamp(.6rem,.95vw,.68rem);color:var(--accent);letter-spacing:.06em;margin-bottom:clamp(.3rem,.5vw,.4rem);font-weight:400;font-family:var(--font-sans)}
+.finance-divider{height:1px;background:var(--line);margin:clamp(.4rem,.7vw,.55rem) 0;opacity:.5}
 /* ---- Drag & Drop ---- */
 .di.dragging{opacity:.4;cursor:grabbing}
 .di.drag-over{border-color:var(--accent)!important;box-shadow:0 0 0 2px rgba(212,165,116,.2)!important}
@@ -1162,8 +1175,7 @@ body{padding-left:var(--sb-w);transition:padding-left .3s cubic-bezier(.2,.9,.3,
   <button class="bb" id="installBtn" title="安装到桌面" style="display:none"><span class="bb-icon">📥</span><span class="lb-lbl">安装</span></button>
   <button class="bb" id="helpBtn" title="使用说明"><span class="bb-icon">📖</span><span class="lb-lbl">说明</span></button>
   <button class="bb" id="stgBtn" title="设置"><span class="bb-icon">⚙</span><span class="lb-lbl">设置</span></button>
-  <button class="bb" id="ccBtn" title="信用卡计算"><span class="bb-icon">💳</span><span class="lb-lbl">信用卡</span></button>
-  <button class="bb" id="svBtn" title="存款目标"><span class="bb-icon">💰</span><span class="lb-lbl">储蓄</span></button>
+  <button class="bb" id="financeBtn" title="财务管理"><span class="bb-icon">💰</span><span class="lb-lbl">财务</span></button>
   <button class="bb" id="snBtn" title="进度快照"><span class="bb-icon">📸</span><span class="lb-lbl">快照</span></button>
   <button class="bb" id="themeBtn" title="切换主题"><span class="bb-icon">🌙</span><span class="lb-lbl">主题</span></button>
   <button class="bb" id="bkpBtn" title="数据备份"><span class="bb-icon">💾</span><span class="lb-lbl">备份</span></button>
@@ -1314,87 +1326,87 @@ body{padding-left:var(--sb-w);transition:padding-left .3s cubic-bezier(.2,.9,.3,
 
 
 
-<!-- ===== CREDIT CARD CALCULATOR ===== -->
-<div class="mtg-overlay" id="ccOverlay"></div>
-<div class="cc-modal" id="ccModal">
-  <div class="mtg-header">
-    <h3>💳 信用卡还款计算器</h3>
-    <button class="mtg-close" id="ccClose">✕</button>
+<!-- ===== FINANCE MANAGEMENT (Credit Card + Savings combined) ===== -->
+<div class="mtg-overlay" id="financeOverlay"></div>
+<div class="finance-modal" id="financeModal">
+  <div class="finance-header">
+    <h3>💰 财务管理</h3>
+    <button class="finance-close" id="financeClose">✕</button>
   </div>
-  <div class="mtg-body">
-    <div class="mtg-row">
-      <label>欠款金额</label>
-      <input type="number" id="ccBal" placeholder="10000" min="0" step="1000">
-      <span class="mtg-unit">元</span>
-    </div>
-    <div class="mtg-row">
-      <label>年利率</label>
-      <input type="number" id="ccRate" placeholder="18.25" min="0" max="36" step="0.05" value="18.25">
-      <span class="mtg-unit">%</span>
-    </div>
-    <div class="mtg-row">
-      <label>每月还款</label>
-      <input type="number" id="ccPay" placeholder="500" min="0" step="100">
-      <span class="mtg-unit">元</span>
-    </div>
-    <button class="mtg-calc-btn" id="ccCalcBtn">计算</button>
-    <div class="mtg-result" id="ccResult" style="display:none">
-      <div class="mtg-r"><span class="mtg-rl">预计还清</span><span class="mtg-rv" id="ccMonths">—</span></div>
-      <div class="mtg-r"><span class="mtg-rl">利息总额</span><span class="mtg-rv" id="ccInterest">—</span></div>
-      <div class="mtg-r highlight"><span class="mtg-rl">总还款额</span><span class="mtg-rv" id="ccTotal">—</span></div>
-      <div class="mtg-note">最低还款利息测算，实际以账单为准</div>
-    </div>
-  </div>
-</div>
-
-<!-- ===== SAVINGS SETTINGS ===== -->
-<div class="sv-overlay" id="svOverlay"></div>
-<div class="sv-modal" id="svModal">
-  <div class="sv-header">
-    <h3>💰 存款目标</h3>
-    <button class="sv-close" id="svClose">✕</button>
-  </div>
-  <div class="sv-body">
-    <!-- Goal Setup -->
-    <div class="sv-row">
-      <label>目标金额</label>
-      <input type="number" id="svGoal" placeholder="50" min="0" step="1">
-      <span class="sv-unit">万元</span>
-    </div>
-    <div class="sv-row">
-      <label>初始存款</label>
-      <input type="number" id="svInitial" placeholder="0" min="0" step="0.5">
-      <span class="sv-unit">万元</span>
-    </div>
-    <div class="sv-row">
-      <label>目标日期</label>
-      <input type="date" id="svDate">
-    </div>
-    <button class="sv-save-btn" id="svSaveBtn">保存目标</button>
-
-    <!-- Summary & Daily Log (shown after goal is set) -->
-    <div id="svLogSection" style="display:none">
-      <!-- Auto-calculated total -->
-      <div class="sv-auto-total">
-        <div class="sv-at-lbl">当前存款总额</div>
-        <div class="sv-at-num" id="svAutoTotal">0.0 万</div>
+  <div class="finance-body">
+    <!-- ===== CREDIT CARD SECTION ===== -->
+    <div class="finance-section">
+      <div class="finance-section-title">💳 信用卡还款计算器</div>
+      <div class="mtg-row">
+        <label>欠款金额</label>
+        <input type="number" id="ccBal" placeholder="10000" min="0" step="1000">
+        <span class="mtg-unit">元</span>
       </div>
-
-      <div class="sv-summary" id="svSummary">
-        <div class="sv-sr"><span class="sv-srl">目标</span><span class="sv-srv" id="svDispGoal">—</span></div>
-        <div class="sv-progress"><div class="sv-bar" id="svBar" style="width:0%"></div></div>
-        <div class="sv-sr highlight"><span class="sv-srl">完成度</span><span class="sv-srv" id="svDispPct">0%</span></div>
-        <div class="sv-sr"><span class="sv-srl">剩余</span><span class="sv-srv" id="svDispRemain">—</span></div>
+      <div class="mtg-row">
+        <label>年利率</label>
+        <input type="number" id="ccRate" placeholder="18.25" min="0" max="36" step="0.05" value="18.25">
+        <span class="mtg-unit">%</span>
       </div>
-
-      <!-- Daily Log -->
-      <div class="sv-section-title">📋 流水账</div>
-      <div class="sv-log-actions">
-        <button class="sv-log-btn sv-save" id="svLogSaveBtn">💰 省钱 +</button>
-        <button class="sv-log-btn sv-earn" id="svLogEarnBtn">💼 赚钱 +</button>
-        <button class="sv-log-btn sv-spend" id="svLogSpendBtn">🛒 用钱 −</button>
+      <div class="mtg-row">
+        <label>每月还款</label>
+        <input type="number" id="ccPay" placeholder="500" min="0" step="100">
+        <span class="mtg-unit">元</span>
       </div>
-      <div id="svLogList" class="sv-log-list"></div>
+      <button class="mtg-calc-btn" id="ccCalcBtn">计算</button>
+      <div class="mtg-result" id="ccResult" style="display:none">
+        <div class="mtg-r"><span class="mtg-rl">预计还清</span><span class="mtg-rv" id="ccMonths">—</span></div>
+        <div class="mtg-r"><span class="mtg-rl">利息总额</span><span class="mtg-rv" id="ccInterest">—</span></div>
+        <div class="mtg-r highlight"><span class="mtg-rl">总还款额</span><span class="mtg-rv" id="ccTotal">—</span></div>
+        <div class="mtg-note">最低还款利息测算，实际以账单为准</div>
+      </div>
+    </div>
+
+    <div class="finance-divider"></div>
+
+    <!-- ===== SAVINGS SECTION ===== -->
+    <div class="finance-section">
+      <div class="finance-section-title">💰 存款目标</div>
+      <!-- Goal Setup -->
+      <div class="sv-row">
+        <label>目标金额</label>
+        <input type="number" id="svGoal" placeholder="50" min="0" step="1">
+        <span class="sv-unit">万元</span>
+      </div>
+      <div class="sv-row">
+        <label>初始存款</label>
+        <input type="number" id="svInitial" placeholder="0" min="0" step="0.5">
+        <span class="sv-unit">万元</span>
+      </div>
+      <div class="sv-row">
+        <label>目标日期</label>
+        <input type="date" id="svDate">
+      </div>
+      <button class="sv-save-btn" id="svSaveBtn">保存目标</button>
+
+      <!-- Summary & Daily Log (shown after goal is set) -->
+      <div id="svLogSection" style="display:none">
+        <!-- Auto-calculated total -->
+        <div class="sv-auto-total">
+          <div class="sv-at-lbl">当前存款总额</div>
+          <div class="sv-at-num" id="svAutoTotal">0.0 万</div>
+        </div>
+
+        <div class="sv-summary" id="svSummary">
+          <div class="sv-sr"><span class="sv-srl">目标</span><span class="sv-srv" id="svDispGoal">—</span></div>
+          <div class="sv-progress"><div class="sv-bar" id="svBar" style="width:0%"></div></div>
+          <div class="sv-sr highlight"><span class="sv-srl">完成度</span><span class="sv-srv" id="svDispPct">0%</span></div>
+          <div class="sv-sr"><span class="sv-srl">剩余</span><span class="sv-srv" id="svDispRemain">—</span></div>
+        </div>
+
+        <!-- Daily Log -->
+        <div class="sv-section-title">📋 流水账</div>
+        <div class="sv-log-actions">
+          <button class="sv-log-btn sv-save" id="svLogSaveBtn">💰 省钱 +</button>
+          <button class="sv-log-btn sv-earn" id="svLogEarnBtn">💼 赚钱 +</button>
+          <button class="sv-log-btn sv-spend" id="svLogSpendBtn">🛒 用钱 −</button>
+        </div>
+        <div id="svLogList" class="sv-log-list"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -5301,34 +5313,8 @@ setTimeout(showDailyOverview, 1200);
 })();
 console.log('DBG: pomodoro OK, about to init cc feature');
 
-try{
-// ======================== FEATURE: Credit Card Calculator ========================
-console.log('DBG: cc try block entered');
-;(function(){
-  var btn = document.getElementById('ccBtn');
-  if(!btn){ console.warn('ccBtn not found'); return; }
-  btn.addEventListener('click', function(){
-    try{
-      console.log('DBG: ccBtn clicked');
-      var ov = document.getElementById('ccOverlay');
-      var md = document.getElementById('ccModal');
-      if(!ov||!md){ console.warn('cc overlay/modal missing'); return; }
-      ov.classList.add('s');
-      md.classList.add('s');
-      var _d = window.data || {};
-      var last = _d._ccLast||{};
-      var balEl = document.getElementById('ccBal');
-      var rateEl = document.getElementById('ccRate');
-      var payEl = document.getElementById('ccPay');
-      if(balEl&&last.bal) balEl.value = last.bal;
-      if(rateEl&&last.rate) rateEl.value = last.rate;
-      if(payEl&&last.pay) payEl.value = last.pay;
-    }catch(e){ console.error('cc click error:',e); }
-  });
-  var ovEl = document.getElementById('ccOverlay');
-  var clEl = document.getElementById('ccClose');
-  if(ovEl) ovEl.addEventListener('click', function(){ ovEl.classList.remove('s'); var m=document.getElementById('ccModal'); if(m)m.classList.remove('s'); });
-  if(clEl) clEl.addEventListener('click', function(){ var o=document.getElementById('ccOverlay'); if(o)o.classList.remove('s'); var m=document.getElementById('ccModal'); if(m)m.classList.remove('s'); });
+// Credit Card Calculator (reused by finance feature)
+function financeInitCC_(){
   document.getElementById('ccCalcBtn').addEventListener('click', function(){
     try{
       var bal = parseFloat(document.getElementById('ccBal').value)||0;
@@ -5348,14 +5334,12 @@ console.log('DBG: cc try block entered');
       if(rEl) rEl.style.display = 'block';
     }catch(e){ console.error('cc calc error:',e); }
   });
-})();
-}catch(e){console.error('cc init error:',e)}
+}
 
 try{
 // ======================== FEATURE: Savings Settings (with Daily Log) ========================
 console.log('DBG: sv try block entered');
 ;(function(){
-  // Helper functions use window.data consistently
   function svGetData(){ return window.data || {}; }
   function svCalcTotal_(){
     var sv = svGetData()._savings||{};
@@ -5419,26 +5403,14 @@ console.log('DBG: sv try block entered');
     if(bEl) bEl.style.width = pct+'%';
     svRenderLog_();
   }
-  var svBtn = document.getElementById('svBtn');
-  if(!svBtn){ console.warn('svBtn not found'); return; }
-  svBtn.addEventListener('click', function(){
-    try{
-      console.log('DBG: svBtn clicked');
-      var ov = document.getElementById('svOverlay'), md = document.getElementById('svModal');
-      if(!ov||!md){ console.warn('sv overlay/modal missing'); return; }
-      ov.classList.add('s'); md.classList.add('s');
-      var sv = svGetData()._savings||{};
-      var gEl=document.getElementById('svGoal'), iEl=document.getElementById('svInitial'), dEl=document.getElementById('svDate');
-      if(gEl&&sv.goal) gEl.value = sv.goal;
-      if(iEl&&sv.initial!==undefined) iEl.value = sv.initial;
-      if(dEl&&sv.date) dEl.value = sv.date;
-      svRenderSummary_();
-    }catch(e2){ console.error('sv click error:',e2); }
-  });
-  var svOv = document.getElementById('svOverlay');
-  var svCl = document.getElementById('svClose');
-  if(svOv) svOv.addEventListener('click', function(){ svOv.classList.remove('s'); var m=document.getElementById('svModal'); if(m)m.classList.remove('s'); });
-  if(svCl) svCl.addEventListener('click', function(){ var o=document.getElementById('svOverlay'); if(o)o.classList.remove('s'); var m=document.getElementById('svModal'); if(m)m.classList.remove('s'); });
+  window.financeOpenSavings_ = function(){
+    var sv = svGetData()._savings||{};
+    var gEl=document.getElementById('svGoal'), iEl=document.getElementById('svInitial'), dEl=document.getElementById('svDate');
+    if(gEl&&sv.goal) gEl.value = sv.goal;
+    if(iEl&&sv.initial!==undefined) iEl.value = sv.initial;
+    if(dEl&&sv.date) dEl.value = sv.date;
+    svRenderSummary_();
+  };
   var svSave = document.getElementById('svSaveBtn');
   if(svSave) svSave.addEventListener('click', function(){
     try{
@@ -5480,6 +5452,38 @@ console.log('DBG: sv try block entered');
   setTimeout(svRenderSummary_, 1000);
 })();
 }catch(e){console.error('sv init error:',e)}
+
+// ======================== FEATURE: Unified Finance Modal (CC + Savings) ========================
+try{
+console.log('DBG: finance try block entered');
+;(function(){
+  var btn = document.getElementById('financeBtn');
+  if(!btn){ console.warn('financeBtn not found'); return; }
+  btn.addEventListener('click', function(){
+    try{
+      console.log('DBG: financeBtn clicked');
+      var ov = document.getElementById('financeOverlay'), md = document.getElementById('financeModal');
+      if(!ov||!md){ console.warn('finance overlay/modal missing'); return; }
+      ov.classList.add('s'); md.classList.add('s');
+      // Restore CC last values
+      var _d = window.data || {};
+      var last = _d._ccLast||{};
+      var balEl=document.getElementById('ccBal'), rateEl=document.getElementById('ccRate'), payEl=document.getElementById('ccPay');
+      if(balEl&&last.bal) balEl.value = last.bal;
+      if(rateEl&&last.rate) rateEl.value = last.rate;
+      if(payEl&&last.pay) payEl.value = last.pay;
+      // Restore and render savings
+      if(typeof window.financeOpenSavings_ === 'function') window.financeOpenSavings_();
+    }catch(e2){ console.error('finance click error:',e2); }
+  });
+  var ovEl = document.getElementById('financeOverlay');
+  var clEl = document.getElementById('financeClose');
+  if(ovEl) ovEl.addEventListener('click', function(){ ovEl.classList.remove('s'); var m=document.getElementById('financeModal'); if(m)m.classList.remove('s'); });
+  if(clEl) clEl.addEventListener('click', function(){ var o=document.getElementById('financeOverlay'); if(o)o.classList.remove('s'); var m=document.getElementById('financeModal'); if(m)m.classList.remove('s'); });
+  // Init CC calculator
+  if(typeof financeInitCC_ === 'function') financeInitCC_();
+})();
+}catch(e){console.error('finance init error:',e)}
 
 // ======================== FEATURE: Snapshot Comparison ========================
 try{
