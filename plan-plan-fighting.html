@@ -5223,51 +5223,60 @@ if ('serviceWorker' in navigator) {
 
 // ======================== FEATURE: Daily Overview ========================
 function showDailyOverview(){
-  var last = localStorage.getItem('doLast') || '';
-  var today = new Date().toDateString();
-  if(last === today) return;
-  localStorage.setItem('doLast', today);
-  var total = 0, done = 0;
-  for(var cid in data){
-    if(cid.startsWith('_') || !Array.isArray(data[cid])) continue;
-    (data[cid]||[]).forEach(function(w){
-      (w.d||[]).forEach(function(t){ total++; if(typeof t==='object'&&t.done) done++; });
-    });
-  }
-  var weekTotal = 0, weekDone = 0;
-  for(var cid2 in data){
-    if(cid2.startsWith('_') || !Array.isArray(data[cid2])) continue;
-    var ws = data[cid2]; if(!ws.length) continue;
-    var lastW = ws[ws.length-1];
-    if(lastW && lastW.w && lastW.d){ weekTotal += lastW.d.length;
-      lastW.d.forEach(function(t){ if(typeof t==='object'&&t.done) weekDone++; });
+  try{
+    var last = localStorage.getItem('doLast') || '';
+    var today = new Date().toDateString();
+    if(last === today) return;
+    localStorage.setItem('doLast', today);
+    var _d = window.data || {};
+    var total = 0, done = 0;
+    for(var cid in _d){
+      if(cid.startsWith('_') || !Array.isArray(_d[cid])) continue;
+      (_d[cid]||[]).forEach(function(w){
+        (w.d||[]).forEach(function(t){ total++; if(typeof t==='object'&&t.done) done++; });
+      });
     }
-  }
-  var weekPct = weekTotal === 0 ? 0 : Math.round(weekDone / weekTotal * 100);
-  document.getElementById('doTodoDone').textContent = done;
-  document.getElementById('doTodoTotal').textContent = total;
-  document.getElementById('doTodoWeek').textContent = weekPct + '%';
-  var now = new Date();
-  document.getElementById('doDate').textContent = now.getFullYear()+'年'+(now.getMonth()+1)+'月'+now.getDate()+'日 周'+(['日','一','二','三','四','五','六'][now.getDay()]);
-  var tips = [
-    weekPct === 0 ? '💡 今天还没有完成的任务，先从一件小事开始吧' :
-    weekPct < 30 ? '💪 本周进度 '+weekPct+'%，继续加油！' :
-    weekPct < 60 ? '👍 本周 '+weekPct+'% 已完成，保持节奏' :
-    weekPct < 90 ? '🎯 本周 '+weekPct+'%，冲刺完成！' : '🎉 本周任务接近完成，轻松一下！',
-    total > 0 ? '📊 总进度：'+Math.round(done/total*100)+'%，共 '+total+' 项任务' : '📝 开始制定你的周计划吧',
-    done === 0 && total > 0 ? '🎯 试试用 AI 助手生成任务？点右下角 🤖' : ''
-  ];
-  document.getElementById('doTip').innerHTML = tips.filter(Boolean).join('<br>');
-  document.getElementById('doOverlay').classList.add('s');
-  document.getElementById('doModal').classList.add('s');
+    var weekTotal = 0, weekDone = 0;
+    for(var cid2 in _d){
+      if(cid2.startsWith('_') || !Array.isArray(_d[cid2])) continue;
+      var ws = _d[cid2]; if(!ws.length) continue;
+      var lastW = ws[ws.length-1];
+      if(lastW && lastW.w && lastW.d){ weekTotal += lastW.d.length;
+        lastW.d.forEach(function(t){ if(typeof t==='object'&&t.done) weekDone++; });
+      }
+    }
+    var weekPct = weekTotal === 0 ? 0 : Math.round(weekDone / weekTotal * 100);
+    var todoEl=document.getElementById('doTodoDone'), totalEl=document.getElementById('doTodoTotal'), weekEl=document.getElementById('doTodoWeek');
+    if(todoEl) todoEl.textContent = done;
+    if(totalEl) totalEl.textContent = total;
+    if(weekEl) weekEl.textContent = weekPct + '%';
+    var now = new Date();
+    var dateEl=document.getElementById('doDate');
+    if(dateEl) dateEl.textContent = now.getFullYear()+'年'+(now.getMonth()+1)+'月'+now.getDate()+'日 周'+(['日','一','二','三','四','五','六'][now.getDay()]);
+    var tips = [
+      weekPct === 0 ? '💡 今天还没有完成的任务，先从一件小事开始吧' :
+      weekPct < 30 ? '💪 本周进度 '+weekPct+'%，继续加油！' :
+      weekPct < 60 ? '👍 本周 '+weekPct+'% 已完成，保持节奏' :
+      weekPct < 90 ? '🎯 本周 '+weekPct+'%，冲刺完成！' : '🎉 本周任务接近完成，轻松一下！',
+      total > 0 ? '📊 总进度：'+Math.round(done/total*100)+'%，共 '+total+' 项任务' : '📝 开始制定你的周计划吧',
+      done === 0 && total > 0 ? '🎯 试试用 AI 助手生成任务？点右下角 🤖' : ''
+    ];
+    var tipEl=document.getElementById('doTip');
+    if(tipEl) tipEl.innerHTML = tips.filter(Boolean).join('<br>');
+    var ov=document.getElementById('doOverlay'), md=document.getElementById('doModal');
+    if(ov) ov.classList.add('s');
+    if(md) md.classList.add('s');
+  }catch(e){ console.error('daily overview error:',e); }
 }
 function doClose_(){
-  document.getElementById('doOverlay').classList.remove('s');
-  document.getElementById('doModal').classList.remove('s');
+  var ov=document.getElementById('doOverlay'), md=document.getElementById('doModal');
+  if(ov) ov.classList.remove('s');
+  if(md) md.classList.remove('s');
 }
-document.getElementById('doClose').addEventListener('click', doClose_);
-document.getElementById('doOverlay').addEventListener('click', doClose_);
-document.getElementById('doCloseBtn').addEventListener('click', doClose_);
+var doCl=document.getElementById('doClose'), doOv=document.getElementById('doOverlay'), doBtn=document.getElementById('doCloseBtn');
+if(doCl) doCl.addEventListener('click', doClose_);
+if(doOv) doOv.addEventListener('click', doClose_);
+if(doBtn) doBtn.addEventListener('click', doClose_);
 setTimeout(showDailyOverview, 1200);
 
 // ======================== FEATURE: Browser Notification ========================
@@ -5290,196 +5299,267 @@ setTimeout(showDailyOverview, 1200);
     _pomoRunning = isRun;
   }, 1000);
 })();
+console.log('DBG: pomodoro OK, about to init cc feature');
 
 try{
 // ======================== FEATURE: Credit Card Calculator ========================
-document.getElementById('ccBtn').addEventListener('click', function(){
-  document.getElementById('ccOverlay').classList.add('s');
-  document.getElementById('ccModal').classList.add('s');
-  var last = data._ccLast||{};
-  if(last.bal) document.getElementById('ccBal').value = last.bal;
-  if(last.rate) document.getElementById('ccRate').value = last.rate;
-  if(last.pay) document.getElementById('ccPay').value = last.pay;
-});
-function ccClose_(){ document.getElementById('ccOverlay').classList.remove('s'); document.getElementById('ccModal').classList.remove('s'); }
-document.getElementById('ccOverlay').addEventListener('click', ccClose_);
-document.getElementById('ccClose').addEventListener('click', ccClose_);
-document.getElementById('ccCalcBtn').addEventListener('click', function(){
-  var bal = parseFloat(document.getElementById('ccBal').value)||0;
-  var rate = parseFloat(document.getElementById('ccRate').value)||18.25;
-  var pay = parseFloat(document.getElementById('ccPay').value)||500;
-  if(bal<=0||pay<=0){ showToast('⚠️ 请输入金额'); return; }
-  if(pay<=bal*rate/100/12){ showToast('⚠️ 月还款需大于最低利息'); return; }
-  data._ccLast = {bal:bal,rate:rate,pay:pay}; save();
-  var mr = rate/100/12, r = bal, m = 0, ti = 0;
-  while(r>0&&m<600){ var i=r*mr; ti+=i; var p=pay-i; if(p<=0)break; r-=p; m++; }
-  if(m>=600){ showToast('⚠️ 还款金额过低'); return; }
-  document.getElementById('ccMonths').textContent = m+' 个月 ('+Math.floor(m/12)+'年'+m%12+'个月)';
-  document.getElementById('ccInterest').textContent = ti.toFixed(1).replace(/\B(?=(\d{3})+(?!\d))/g,',')+' 元';
-  document.getElementById('ccTotal').textContent = (m*pay).toFixed(1).replace(/\B(?=(\d{3})+(?!\d))/g,',')+' 元';
-  document.getElementById('ccResult').style.display = 'block';
-});
+console.log('DBG: cc try block entered');
+;(function(){
+  var btn = document.getElementById('ccBtn');
+  if(!btn){ console.warn('ccBtn not found'); return; }
+  btn.addEventListener('click', function(){
+    try{
+      console.log('DBG: ccBtn clicked');
+      var ov = document.getElementById('ccOverlay');
+      var md = document.getElementById('ccModal');
+      if(!ov||!md){ console.warn('cc overlay/modal missing'); return; }
+      ov.classList.add('s');
+      md.classList.add('s');
+      var _d = window.data || {};
+      var last = _d._ccLast||{};
+      var balEl = document.getElementById('ccBal');
+      var rateEl = document.getElementById('ccRate');
+      var payEl = document.getElementById('ccPay');
+      if(balEl&&last.bal) balEl.value = last.bal;
+      if(rateEl&&last.rate) rateEl.value = last.rate;
+      if(payEl&&last.pay) payEl.value = last.pay;
+    }catch(e){ console.error('cc click error:',e); }
+  });
+  var ovEl = document.getElementById('ccOverlay');
+  var clEl = document.getElementById('ccClose');
+  if(ovEl) ovEl.addEventListener('click', function(){ ovEl.classList.remove('s'); var m=document.getElementById('ccModal'); if(m)m.classList.remove('s'); });
+  if(clEl) clEl.addEventListener('click', function(){ var o=document.getElementById('ccOverlay'); if(o)o.classList.remove('s'); var m=document.getElementById('ccModal'); if(m)m.classList.remove('s'); });
+  document.getElementById('ccCalcBtn').addEventListener('click', function(){
+    try{
+      var bal = parseFloat(document.getElementById('ccBal').value)||0;
+      var rate = parseFloat(document.getElementById('ccRate').value)||18.25;
+      var pay = parseFloat(document.getElementById('ccPay').value)||500;
+      if(bal<=0||pay<=0){ showToast('⚠️ 请输入金额'); return; }
+      if(pay<=bal*rate/100/12){ showToast('⚠️ 月还款需大于最低利息'); return; }
+      var _d = window.data || {};
+      _d._ccLast = {bal:bal,rate:rate,pay:pay}; if(window.save) window.save();
+      var mr = rate/100/12, r = bal, m = 0, ti = 0;
+      while(r>0&&m<600){ var i=r*mr; ti+=i; var p=pay-i; if(p<=0)break; r-=p; m++; }
+      if(m>=600){ showToast('⚠️ 还款金额过低'); return; }
+      var mEl=document.getElementById('ccMonths'),iEl=document.getElementById('ccInterest'),tEl=document.getElementById('ccTotal'),rEl=document.getElementById('ccResult');
+      if(mEl) mEl.textContent = m+' 个月 ('+Math.floor(m/12)+'年'+m%12+'个月)';
+      if(iEl) iEl.textContent = ti.toFixed(1).replace(/\B(?=(\d{3})+(?!\d))/g,',')+' 元';
+      if(tEl) tEl.textContent = (m*pay).toFixed(1).replace(/\B(?=(\d{3})+(?!\d))/g,',')+' 元';
+      if(rEl) rEl.style.display = 'block';
+    }catch(e){ console.error('cc calc error:',e); }
+  });
+})();
 }catch(e){console.error('cc init error:',e)}
 
 try{
 // ======================== FEATURE: Savings Settings (with Daily Log) ========================
-function svCalcTotal_(){
-  var sv = data._savings||{};
-  var total = parseFloat(sv.initial)||0;
-  (sv.log||[]).forEach(function(e){
-    if(e.type==='save'||e.type==='earn') total += parseFloat(e.amount)||0;
-    else if(e.type==='spend') total -= parseFloat(e.amount)||0;
-  });
-  return Math.max(0, total);
-}
-function svRenderLog_(){
-  var sv = data._savings||{};
-  var list = document.getElementById('svLogList');
-  if(!list) return;
-  var log = sv.log||[];
-  if(!log.length){ list.innerHTML = '<div class="sv-log-empty">暂无流水记录，点击上方按钮添加</div>'; return; }
-  var typeLabels = {save:'省钱',earn:'赚钱',spend:'用钱'};
-  var html = '';
-  var sorted = log.slice().sort(function(a,b){ return (a.date||'') < (b.date||'') ? 1 : -1; });
-  sorted.forEach(function(e, idx){
-    // Find original index in log for deletion
-    var origIdx = log.indexOf(e);
-    var isPlus = (e.type==='save'||e.type==='earn');
-    var sign = isPlus ? '+' : '−';
-    var cls = isPlus ? 'plus' : 'minus';
-    var tCls = 'sv-t-' + e.type;
-    html += '<div class="sv-log-item">'
-      + '<span class="sv-li-date">' + (e.date||'') + '</span>'
-      + '<span class="sv-li-type ' + tCls + '">' + (typeLabels[e.type]||e.type) + '</span>'
-      + '<span class="sv-li-amt ' + cls + '">' + sign + (parseFloat(e.amount)||0).toFixed(2) + '万</span>'
-      + '<span class="sv-li-note">' + (e.note||'') + '</span>'
-      + '<button class="sv-li-del" data-idx="' + origIdx + '" title="删除">✕</button>'
-      + '</div>';
-  });
-  list.innerHTML = html;
-  // Wire delete buttons
-  list.querySelectorAll('.sv-li-del').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      var idx = parseInt(this.dataset.idx);
-      sv.log.splice(idx, 1);
-      data._savings = sv; save();
-      svRenderSummary_(); svRenderLog_();
+console.log('DBG: sv try block entered');
+;(function(){
+  // Helper functions use window.data consistently
+  function svGetData(){ return window.data || {}; }
+  function svCalcTotal_(){
+    var sv = svGetData()._savings||{};
+    var total = parseFloat(sv.initial)||0;
+    (sv.log||[]).forEach(function(e){
+      if(e.type==='save'||e.type==='earn') total += parseFloat(e.amount)||0;
+      else if(e.type==='spend') total -= parseFloat(e.amount)||0;
     });
+    return Math.max(0, total);
+  }
+  function svRenderLog_(){
+    var sv = svGetData()._savings||{};
+    var list = document.getElementById('svLogList');
+    if(!list) return;
+    var log = sv.log||[];
+    if(!log.length){ list.innerHTML = '<div class="sv-log-empty">暂无流水记录，点击上方按钮添加</div>'; return; }
+    var typeLabels = {save:'省钱',earn:'赚钱',spend:'用钱'};
+    var html = '';
+    var sorted = log.slice().sort(function(a,b){ return (a.date||'') < (b.date||'') ? 1 : -1; });
+    sorted.forEach(function(e, idx){
+      var origIdx = log.indexOf(e);
+      var isPlus = (e.type==='save'||e.type==='earn');
+      var sign = isPlus ? '+' : '−';
+      var cls = isPlus ? 'plus' : 'minus';
+      var tCls = 'sv-t-' + e.type;
+      html += '<div class="sv-log-item">'
+        + '<span class="sv-li-date">' + (e.date||'') + '</span>'
+        + '<span class="sv-li-type ' + tCls + '">' + (typeLabels[e.type]||e.type) + '</span>'
+        + '<span class="sv-li-amt ' + cls + '">' + sign + (parseFloat(e.amount)||0).toFixed(2) + '万</span>'
+        + '<span class="sv-li-note">' + (e.note||'') + '</span>'
+        + '<button class="sv-li-del" data-idx="' + origIdx + '" title="删除">✕</button>'
+        + '</div>';
+    });
+    list.innerHTML = html;
+    list.querySelectorAll('.sv-li-del').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        try{
+          var idx = parseInt(this.dataset.idx);
+          var _d = svGetData();
+          var sv2 = _d._savings||{};
+          if(!sv2.log) return;
+          sv2.log.splice(idx, 1);
+          _d._savings = sv2; if(window.save) window.save();
+          svRenderSummary_(); svRenderLog_();
+        }catch(e2){ console.error('sv del error:',e2); }
+      });
+    });
+  }
+  function svRenderSummary_(){
+    var sv = svGetData()._savings||{};
+    var total = svCalcTotal_();
+    var logSection = document.getElementById('svLogSection');
+    if(!sv.goal){ if(logSection) logSection.style.display='none'; return; }
+    if(logSection) logSection.style.display='block';
+    var gEl=document.getElementById('svDispGoal'), aEl=document.getElementById('svAutoTotal'), pEl=document.getElementById('svDispPct'), rEl=document.getElementById('svDispRemain'), bEl=document.getElementById('svBar');
+    if(gEl) gEl.textContent = (sv.goal||0).toFixed(1)+' 万';
+    if(aEl) aEl.textContent = total.toFixed(1)+' 万 / '+(sv.goal||0).toFixed(1)+' 万';
+    var pct = sv.goal>0 ? Math.min(100, Math.round(total/sv.goal*100)) : 0;
+    if(pEl) pEl.textContent = pct+'%';
+    if(rEl) rEl.textContent = Math.max(0,(sv.goal||0)-total).toFixed(1)+' 万';
+    if(bEl) bEl.style.width = pct+'%';
+    svRenderLog_();
+  }
+  var svBtn = document.getElementById('svBtn');
+  if(!svBtn){ console.warn('svBtn not found'); return; }
+  svBtn.addEventListener('click', function(){
+    try{
+      console.log('DBG: svBtn clicked');
+      var ov = document.getElementById('svOverlay'), md = document.getElementById('svModal');
+      if(!ov||!md){ console.warn('sv overlay/modal missing'); return; }
+      ov.classList.add('s'); md.classList.add('s');
+      var sv = svGetData()._savings||{};
+      var gEl=document.getElementById('svGoal'), iEl=document.getElementById('svInitial'), dEl=document.getElementById('svDate');
+      if(gEl&&sv.goal) gEl.value = sv.goal;
+      if(iEl&&sv.initial!==undefined) iEl.value = sv.initial;
+      if(dEl&&sv.date) dEl.value = sv.date;
+      svRenderSummary_();
+    }catch(e2){ console.error('sv click error:',e2); }
   });
-}
-function svRenderSummary_(){
-  var sv = data._savings||{};
-  var total = svCalcTotal_();
-  var logSection = document.getElementById('svLogSection');
-  if(!sv.goal){ if(logSection) logSection.style.display='none'; return; }
-  if(logSection) logSection.style.display='block';
-  document.getElementById('svDispGoal').textContent = (sv.goal||0).toFixed(1)+' 万';
-  document.getElementById('svAutoTotal').textContent = total.toFixed(1)+' 万 / '+(sv.goal||0).toFixed(1)+' 万';
-  var pct = sv.goal>0 ? Math.min(100, Math.round(total/sv.goal*100)) : 0;
-  document.getElementById('svDispPct').textContent = pct+'%';
-  document.getElementById('svDispRemain').textContent = Math.max(0,(sv.goal||0)-total).toFixed(1)+' 万';
-  document.getElementById('svBar').style.width = pct+'%';
-  svRenderLog_();
-}
-document.getElementById('svBtn').addEventListener('click', function(){
-  document.getElementById('svOverlay').classList.add('s');
-  document.getElementById('svModal').classList.add('s');
-  var sv = data._savings||{};
-  if(sv.goal) document.getElementById('svGoal').value = sv.goal;
-  if(sv.initial!==undefined) document.getElementById('svInitial').value = sv.initial;
-  if(sv.date) document.getElementById('svDate').value = sv.date;
-  svRenderSummary_();
-});
-document.getElementById('svOverlay').addEventListener('click', function(){ document.getElementById('svOverlay').classList.remove('s'); document.getElementById('svModal').classList.remove('s'); });
-document.getElementById('svClose').addEventListener('click', function(){ document.getElementById('svOverlay').classList.remove('s'); document.getElementById('svModal').classList.remove('s'); });
-document.getElementById('svSaveBtn').addEventListener('click', function(){
-  var goal = parseFloat(document.getElementById('svGoal').value)||0;
-  var initial = parseFloat(document.getElementById('svInitial').value)||0;
-  var date = document.getElementById('svDate').value||'';
-  if(goal<=0){ showToast('⚠️ 请输入目标金额'); return; }
-  var sv = data._savings||{};
-  sv.goal = goal; sv.initial = initial; sv.date = date;
-  if(!sv.log) sv.log = [];
-  data._savings = sv; save();
-  svRenderSummary_(); showToast('✅ 存款目标已保存');
-});
-// Quick log entry: type in ('save'|'earn'|'spend')
-function svPromptAdd_(type){
-  var typeLabels = {save:'省钱',earn:'赚钱',spend:'用钱'};
-  var label = typeLabels[type] || type;
-  var amtStr = prompt('💰 ' + label + ' 金额（万元）：');
-  if(amtStr === null) return;
-  var amt = parseFloat(amtStr);
-  if(isNaN(amt) || amt <= 0){ showToast('⚠️ 请输入有效金额'); return; }
-  var note = prompt('📝 备注（可选）：') || '';
-  var sv = data._savings||{};
-  if(!sv.log) sv.log = [];
-  sv.log.push({ date: new Date().toISOString().slice(0,10), type: type, amount: amt, note: note });
-  data._savings = sv; save();
-  svRenderSummary_(); showToast('✅ 已记录'+label+' '+amt.toFixed(2)+'万');
-}
-document.getElementById('svLogSaveBtn').addEventListener('click', function(){ svPromptAdd_('save'); });
-document.getElementById('svLogEarnBtn').addEventListener('click', function(){ svPromptAdd_('earn'); });
-document.getElementById('svLogSpendBtn').addEventListener('click', function(){ svPromptAdd_('spend'); });
-setTimeout(svRenderSummary_, 1000);
+  var svOv = document.getElementById('svOverlay');
+  var svCl = document.getElementById('svClose');
+  if(svOv) svOv.addEventListener('click', function(){ svOv.classList.remove('s'); var m=document.getElementById('svModal'); if(m)m.classList.remove('s'); });
+  if(svCl) svCl.addEventListener('click', function(){ var o=document.getElementById('svOverlay'); if(o)o.classList.remove('s'); var m=document.getElementById('svModal'); if(m)m.classList.remove('s'); });
+  var svSave = document.getElementById('svSaveBtn');
+  if(svSave) svSave.addEventListener('click', function(){
+    try{
+      var goal = parseFloat(document.getElementById('svGoal').value)||0;
+      var initial = parseFloat(document.getElementById('svInitial').value)||0;
+      var date = document.getElementById('svDate').value||'';
+      if(goal<=0){ showToast('⚠️ 请输入目标金额'); return; }
+      var _d = svGetData();
+      var sv = _d._savings||{};
+      sv.goal = goal; sv.initial = initial; sv.date = date;
+      if(!sv.log) sv.log = [];
+      _d._savings = sv; if(window.save) window.save();
+      svRenderSummary_(); showToast('✅ 存款目标已保存');
+    }catch(e2){ console.error('sv save error:',e2); }
+  });
+  function svPromptAdd_(type){
+    try{
+      var typeLabels = {save:'省钱',earn:'赚钱',spend:'用钱'};
+      var label = typeLabels[type] || type;
+      var amtStr = prompt('💰 ' + label + ' 金额（万元）：');
+      if(amtStr === null) return;
+      var amt = parseFloat(amtStr);
+      if(isNaN(amt) || amt <= 0){ showToast('⚠️ 请输入有效金额'); return; }
+      var note = prompt('📝 备注（可选）：') || '';
+      var _d = svGetData();
+      var sv = _d._savings||{};
+      if(!sv.log) sv.log = [];
+      sv.log.push({ date: new Date().toISOString().slice(0,10), type: type, amount: amt, note: note });
+      _d._savings = sv; if(window.save) window.save();
+      svRenderSummary_(); showToast('✅ 已记录'+label+' '+amt.toFixed(2)+'万');
+    }catch(e2){ console.error('sv prompt error:',e2); }
+  }
+  var svLogSave = document.getElementById('svLogSaveBtn');
+  var svLogEarn = document.getElementById('svLogEarnBtn');
+  var svLogSpend = document.getElementById('svLogSpendBtn');
+  if(svLogSave) svLogSave.addEventListener('click', function(){ svPromptAdd_('save'); });
+  if(svLogEarn) svLogEarn.addEventListener('click', function(){ svPromptAdd_('earn'); });
+  if(svLogSpend) svLogSpend.addEventListener('click', function(){ svPromptAdd_('spend'); });
+  setTimeout(svRenderSummary_, 1000);
+})();
 }catch(e){console.error('sv init error:',e)}
 
 // ======================== FEATURE: Snapshot Comparison ========================
 try{
-document.getElementById('snBtn').addEventListener('click', function(){
-  document.getElementById('snOverlay').classList.add('s');
-  document.getElementById('snModal').classList.add('s'); snRenderList_();
-});
-document.getElementById('snOverlay').addEventListener('click', function(){ document.getElementById('snOverlay').classList.remove('s'); document.getElementById('snModal').classList.remove('s'); });
-document.getElementById('snClose').addEventListener('click', function(){ document.getElementById('snOverlay').classList.remove('s'); document.getElementById('snModal').classList.remove('s'); });
-document.getElementById('snNewBtn').addEventListener('click', function(){
-  var total=0,done=0;
-  for(var cid in data){ if(cid.startsWith('_')||!Array.isArray(data[cid]))continue; (data[cid]||[]).forEach(function(w){(w.d||[]).forEach(function(t){total++;if(typeof t==='object'&&t.done)done++})}); }
-  var pct=total===0?0:Math.round(done/total*100);
-  if(!data._snapshots) data._snapshots=[];
-  data._snapshots.push({ts:Date.now(),total:total,done:done,pct:pct,label:new Date().toLocaleDateString('zh-CN',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})});
-  save(); snRenderList_(); showToast('📸 快照已保存');
-});
-function snRenderList_(){
-  var list = data._snapshots||[];
-  var el = document.getElementById('snList');
-  var ce = document.getElementById('snCompare');
-  if(!list.length){ el.innerHTML='<div class="sn-empty">暂无快照，点击上方按钮记录当前进度</div>'; ce.innerHTML=''; return; }
-  el.innerHTML = list.map(function(s,i){
-    var d = new Date(s.ts);
-    return '<div class="sn-item" data-si="'+i+'"><span class="sn-date">'+d.toLocaleDateString('zh-CN',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})+' — '+s.label+'</span><span class="sn-pct">'+s.done+'/'+s.total+' ('+s.pct+'%)</span><button class="sn-del" data-si="'+i+'">✕</button></div>';
-  }).join('');
-  var sel = null;
-  el.querySelectorAll('.sn-item').forEach(function(item){
-    item.addEventListener('click', function(){
-      var si = parseInt(this.dataset.si);
-      if(sel===si){ sel=null; ce.innerHTML=''; return; }
-      if(sel===null){ sel=si; return; }
-      var a=list[sel], b=list[si]; if(!a||!b){ sel=null; return; }
-      var diff = b.pct-a.pct;
-      var dc = diff>0?'up':diff<0?'down':'same';
-      ce.innerHTML = '<div class="sn-compare">'+
-        '<div class="sn-col"><div class="sn-col-label">📸 基准</div><div class="sn-col-date">'+new Date(a.ts).toLocaleDateString('zh-CN',{month:'short',day:'numeric'})+'</div>'+
-        '<div class="sn-col-stat"><span class="sn-csl">已完成</span><span class="sn-csv">'+a.done+'</span></div>'+
-        '<div class="sn-col-stat"><span class="sn-csl">总任务</span><span class="sn-csv">'+a.total+'</span></div>'+
-        '<div class="sn-col-stat" style="border-top:1px solid var(--line);margin-top:.1rem;padding-top:.15rem"><span class="sn-csl">进度</span><span class="sn-csv" style="color:var(--accent)">'+a.pct+'%</span></div></div>'+
-        '<div class="sn-col"><div class="sn-col-label">📸 对比</div><div class="sn-col-date">'+new Date(b.ts).toLocaleDateString('zh-CN',{month:'short',day:'numeric'})+'</div>'+
-        '<div class="sn-col-stat"><span class="sn-csl">已完成</span><span class="sn-csv">'+b.done+'</span></div>'+
-        '<div class="sn-col-stat"><span class="sn-csl">总任务</span><span class="sn-csv">'+b.total+'</span></div>'+
-        '<div class="sn-col-stat" style="border-top:1px solid var(--line);margin-top:.1rem;padding-top:.15rem"><span class="sn-csl">进度</span><span class="sn-csv" style="color:var(--accent)">'+b.pct+'%</span></div></div>'+
-        '<div class="sn-diff">变化：<span class="sn-dp '+dc+'">'+(diff>0?'+'+diff+'% ↑':diff<0?diff+'% ↓':'持平 —')+'</span></div></div>';
-      sel=null;
-    });
+console.log('DBG: sn try block entered');
+;(function(){
+  var snBtn = document.getElementById('snBtn');
+  if(!snBtn){ console.warn('snBtn not found'); return; }
+  snBtn.addEventListener('click', function(){
+    try{
+      console.log('DBG: snBtn clicked');
+      var ov = document.getElementById('snOverlay'), md = document.getElementById('snModal');
+      if(!ov||!md){ console.warn('sn overlay/modal missing'); return; }
+      ov.classList.add('s'); md.classList.add('s');
+      if(typeof snRenderList_ === 'function') snRenderList_();
+    }catch(e2){ console.error('sn click error:',e2); }
   });
-  el.querySelectorAll('.sn-del').forEach(function(btn){
-    btn.addEventListener('click', function(e){
-      e.stopPropagation();
-      var si = parseInt(this.dataset.si);
-      if(!confirm('删除此快照？')) return;
-      data._snapshots.splice(si,1); save(); snRenderList_();
-    });
+  var snOv = document.getElementById('snOverlay');
+  var snCl = document.getElementById('snClose');
+  if(snOv) snOv.addEventListener('click', function(){ snOv.classList.remove('s'); var m=document.getElementById('snModal'); if(m)m.classList.remove('s'); });
+  if(snCl) snCl.addEventListener('click', function(){ var o=document.getElementById('snOverlay'); if(o)o.classList.remove('s'); var m=document.getElementById('snModal'); if(m)m.classList.remove('s'); });
+  var snNew = document.getElementById('snNewBtn');
+  if(snNew) snNew.addEventListener('click', function(){
+    try{
+      var _d = window.data || {};
+      var total=0,done=0;
+      for(var cid in _d){ if(cid.startsWith('_')||!Array.isArray(_d[cid]))continue; (_d[cid]||[]).forEach(function(w){(w.d||[]).forEach(function(t){total++;if(typeof t==='object'&&t.done)done++})}); }
+      var pct=total===0?0:Math.round(done/total*100);
+      if(!_d._snapshots) _d._snapshots=[];
+      _d._snapshots.push({ts:Date.now(),total:total,done:done,pct:pct,label:new Date().toLocaleDateString('zh-CN',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})});
+      if(window.save) window.save();
+      if(typeof snRenderList_ === 'function') snRenderList_();
+      showToast('📸 快照已保存');
+    }catch(e2){ console.error('sn new error:',e2); }
   });
-}
+  function snRenderList_(){
+    try{
+      var _d = window.data || {};
+      var list = _d._snapshots||[];
+      var el = document.getElementById('snList');
+      var ce = document.getElementById('snCompare');
+      if(!el) return;
+      if(!list.length){ el.innerHTML='<div class="sn-empty">暂无快照，点击上方按钮记录当前进度</div>'; if(ce)ce.innerHTML=''; return; }
+      el.innerHTML = list.map(function(s,i){
+        return '<div class="sn-item" data-si="'+i+'"><span class="sn-date">'+new Date(s.ts).toLocaleDateString('zh-CN',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})+' — '+s.label+'</span><span class="sn-pct">'+s.done+'/'+s.total+' ('+s.pct+'%)</span><button class="sn-del" data-si="'+i+'">✕</button></div>';
+      }).join('');
+      var sel = null;
+      el.querySelectorAll('.sn-item').forEach(function(item){
+        item.addEventListener('click', function(){
+          var si = parseInt(this.dataset.si);
+          if(sel===si){ sel=null; if(ce)ce.innerHTML=''; return; }
+          if(sel===null){ sel=si; return; }
+          var a=list[sel], b=list[si]; if(!a||!b){ sel=null; return; }
+          var diff = b.pct-a.pct;
+          var dc = diff>0?'up':diff<0?'down':'same';
+          if(ce) ce.innerHTML = '<div class="sn-compare">'+
+            '<div class="sn-col"><div class="sn-col-label">📸 基准</div><div class="sn-col-date">'+new Date(a.ts).toLocaleDateString('zh-CN',{month:'short',day:'numeric'})+'</div>'+
+            '<div class="sn-col-stat"><span class="sn-csl">已完成</span><span class="sn-csv">'+a.done+'</span></div>'+
+            '<div class="sn-col-stat"><span class="sn-csl">总任务</span><span class="sn-csv">'+a.total+'</span></div>'+
+            '<div class="sn-col-stat" style="border-top:1px solid var(--line);margin-top:.1rem;padding-top:.15rem"><span class="sn-csl">进度</span><span class="sn-csv" style="color:var(--accent)">'+a.pct+'%</span></div></div>'+
+            '<div class="sn-col"><div class="sn-col-label">📸 对比</div><div class="sn-col-date">'+new Date(b.ts).toLocaleDateString('zh-CN',{month:'short',day:'numeric'})+'</div>'+
+            '<div class="sn-col-stat"><span class="sn-csl">已完成</span><span class="sn-csv">'+b.done+'</span></div>'+
+            '<div class="sn-col-stat"><span class="sn-csl">总任务</span><span class="sn-csv">'+b.total+'</span></div>'+
+            '<div class="sn-col-stat" style="border-top:1px solid var(--line);margin-top:.1rem;padding-top:.15rem"><span class="sn-csl">进度</span><span class="sn-csv" style="color:var(--accent)">'+b.pct+'%</span></div></div>'+
+            '<div class="sn-diff">变化：<span class="sn-dp '+dc+'">'+(diff>0?'+'+diff+'% ↑':diff<0?diff+'% ↓':'持平 —')+'</span></div></div>';
+          sel=null;
+        });
+      });
+      el.querySelectorAll('.sn-del').forEach(function(btn){
+        btn.addEventListener('click', function(e){
+          e.stopPropagation();
+          var si = parseInt(this.dataset.si);
+          if(!confirm('删除此快照？')) return;
+          _d._snapshots.splice(si,1); if(window.save) window.save(); snRenderList_();
+        });
+      });
+    }catch(e2){ console.error('sn render error:',e2); }
+  }
+  // Expose snRenderList_ to outer scope for reuse
+  window.snRenderList_ = snRenderList_;
+})();
 }catch(e){console.error('sn init error:',e)}
 
 // ======================== BOTTOM BAR CHAPTER INFO ========================

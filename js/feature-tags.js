@@ -118,8 +118,8 @@
         dot.title = TAG_COLORS[t].label;
         picker.querySelectorAll('.tgp-btn').forEach(function(b){ b.classList.remove('a'); });
         if(t) btn.classList.add('a');
-        // Update filter
-        applyTagFilter();
+        // Update filter (per-week)
+        var pw = row.closest('.week'); if(pw) applyTagFilterForWeek(pw);
       });
       if(i < 7) row1.appendChild(btn);
       else row2.appendChild(btn);
@@ -147,28 +147,37 @@
     else row.appendChild(wrap);
   }
 
-  // ===== Apply tag filter =====
-  var activeTagFilter = '';
-  function applyTagFilter(){
-    document.querySelectorAll('.weeks-wrap .dr').forEach(function(row){
+  // ===== Per-week tag filter (independent per week) =====
+  function getWeekKey(weekEl){
+    var wi = weekEl.dataset.wi;
+    var ta = weekEl.querySelector('.di');
+    if(!ta) return '';
+    return ta.dataset.c + '-' + wi;
+  }
+
+  function applyTagFilterForWeek(weekEl){
+    var key = getWeekKey(weekEl);
+    var filter = weekEl.dataset.tagFilter || '';
+    weekEl.querySelectorAll('.dr').forEach(function(row){
       var tg = row.querySelector('.tg-wrap');
-      if(!activeTagFilter) row.style.display = '';
-      else {
-        var dot = tg ? tg.querySelector('.tag-dot2') : null;
-        var tagKey = '';
-        if(dot){
-          for(var k in TAG_COLORS){
-            if(dot.classList.contains(k)){ tagKey = k; break; }
-          }
+      if(!filter) { row.style.display = ''; return; }
+      var dot = tg ? tg.querySelector('.tag-dot2') : null;
+      var tagKey = '';
+      if(dot){
+        for(var k in TAG_COLORS){
+          if(dot.classList.contains(k)){ tagKey = k; break; }
         }
-        row.style.display = (tagKey === activeTagFilter) ? '' : 'none';
       }
+      row.style.display = (tagKey === filter) ? '' : 'none';
     });
   }
 
-  // ===== Build compact filter bar =====
-  function buildFilterBar(wrap){
-    if(wrap.querySelector('.tag-filter-bar2')) return;
+  // ===== Build compact filter bar per week =====
+  function buildWeekFilterBar(weekEl){
+    if(weekEl.querySelector('.tag-filter-bar2')) return;
+    var wkBody = weekEl.querySelector('.wk-body');
+    if(!wkBody) return;
+
     var bar = document.createElement('div');
     bar.className = 'tag-filter-bar2';
     bar.innerHTML = '<span class="tfb-lbl">🏷</span>';
@@ -176,26 +185,29 @@
     TAG_KEYS.forEach(function(t){
       var btn = document.createElement('button');
       btn.className = 'tfb-b2';
-      // Set background color via inline style
       var bg = TAG_COLORS[t].bg;
       btn.style.background = (t ? bg : 'var(--line-2)');
       btn.style.position = 'relative';
-      if(t) btn.style.opacity = '0.5';
-      else { btn.style.opacity = '0.3'; }
+      btn.style.opacity = (t ? '0.5' : '0.3');
       btn.title = TAG_COLORS[t].label;
 
       btn.addEventListener('click', function(){
-        if(activeTagFilter === t) activeTagFilter = '';
-        else activeTagFilter = t;
+        var cur = weekEl.dataset.tagFilter || '';
+        if(cur === t) {
+          delete weekEl.dataset.tagFilter;
+        } else {
+          weekEl.dataset.tagFilter = t;
+        }
+        var active = weekEl.dataset.tagFilter || '';
         bar.querySelectorAll('.tfb-b2').forEach(function(b){
           b.classList.remove('a');
-          b.style.opacity = (b.title && activeTagFilter === b.title.split('(')[0].trim()) ? '1' : (b.title ? '0.5' : '0.3');
+          b.style.opacity = (b.title && active === b.title.split('(')[0].trim()) ? '1' : (b.title ? '0.5' : '0.3');
         });
-        if(activeTagFilter) {
+        if(active) {
           btn.classList.add('a');
           btn.style.opacity = '1';
         }
-        applyTagFilter();
+        applyTagFilterForWeek(weekEl);
       });
       bar.appendChild(btn);
     });
@@ -204,22 +216,23 @@
     clear.className = 'tfb-clr';
     clear.textContent = '✕';
     clear.addEventListener('click', function(){
-      activeTagFilter = '';
+      delete weekEl.dataset.tagFilter;
       bar.querySelectorAll('.tfb-b2').forEach(function(b){
         b.classList.remove('a');
         b.style.opacity = b.title ? '0.5' : '0.3';
       });
-      applyTagFilter();
+      applyTagFilterForWeek(weekEl);
     });
     bar.appendChild(clear);
-    wrap.parentNode.insertBefore(bar, wrap);
+
+    wkBody.insertBefore(bar, wkBody.firstChild);
   }
 
   // ===== Main enhance function =====
   function enhanceAll(){
-    document.querySelectorAll('.weeks-wrap').forEach(function(wrap){
-      wrap.querySelectorAll('.dr').forEach(enhanceRow);
-      buildFilterBar(wrap);
+    document.querySelectorAll('.week').forEach(function(weekEl){
+      weekEl.querySelectorAll('.dr').forEach(enhanceRow);
+      buildWeekFilterBar(weekEl);
     });
   }
 
