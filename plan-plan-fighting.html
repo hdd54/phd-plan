@@ -2138,6 +2138,21 @@ window.addEventListener('hashchange',function(){if(location.hash==='')render()})
 (function(){
 'use strict';
 
+// Ensure feature scripts get access even if IIFE crashes mid-way
+try{
+  var _featExported=false;
+  function _exportFeatVars(){
+    if(_featExported)return;_featExported=true;
+    try{
+      if(typeof data!=='undefined'){window.data=data}
+      if(typeof showToast==='function'){window.showToast=showToast}
+      if(typeof save==='function'){window.save=save}
+      if(typeof renderWeeks==='function'){window.renderWeeks=renderWeeks}
+    }catch(e){}
+  }
+  setTimeout(_exportFeatVars,50);
+}catch(e){}
+
 // ── Cover Enter Animation ──
 window.enterPlan = function(){
   var cover = document.getElementById('coverSection');
@@ -4929,7 +4944,7 @@ document.querySelectorAll('.pomo-type').forEach(function(btn){
 })
 // Keyboard: Escape to close
 document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(document.getElementById('sleepOverlay').classList.contains('s'))sleepExit();else if(document.getElementById('pomoModal').classList.contains('s'))pomoClose();else if(document.getElementById('housingOverlay')&&document.getElementById('housingOverlay').classList.contains('s')){var ce=document.getElementById('housingClose');if(ce)ce.click()}}})
-pomoLoad();pomoLoadPos()
+try{pomoLoad()}catch(e){}void(pomoLoadPos)
 
 // Left sidebar toggle
 (function(){
@@ -6113,6 +6128,11 @@ function snRenderList_(){
   }
 })();
 
+// Expose IIFE-scoped vars to window for external feature scripts
+window.data = data;
+window.showToast = showToast;
+window.save = save;
+window.renderWeeks = renderWeeks;
 })();
 </script>
 <script src="js/core.js"></script>
