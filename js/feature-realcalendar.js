@@ -23,8 +23,12 @@
     .rc-grid .rc-cell:hover{background:rgba(255,255,255,.04);border-color:var(--line-2)}
     .rc-grid .rc-cell.rc-other{opacity:.25;pointer-events:none}
     .rc-grid .rc-cell.rc-today{border-color:var(--accent)!important;box-shadow:0 0 8px rgba(212,165,116,.3)}
+    .rc-grid .rc-cell.rc-has-event{background:rgba(212,165,116,.14);border-color:rgba(212,165,116,.52);box-shadow:inset 0 0 0 1px rgba(212,165,116,.14)}
+    .rc-grid .rc-cell.rc-has-event .rc-day{color:var(--accent);font-weight:700}
+    .rc-grid .rc-cell.rc-reminder{background:color-mix(in srgb,var(--accent) 18%,transparent);border-color:var(--accent);box-shadow:0 0 12px rgba(212,165,116,.34),inset 0 0 0 1px rgba(255,255,255,.08)}
     .rc-grid .rc-cell .rc-day{font-size:clamp(.5rem,.75vw,.58rem);line-height:1.2}
-    .rc-grid .rc-cell .rc-cnt{position:absolute;top:1px;right:3px;font-size:clamp(.35rem,.45vw,.4rem);color:var(--muted);background:rgba(255,255,255,.04);border-radius:8px;padding:0 3px;line-height:1.2}
+    .rc-grid .rc-cell .rc-cnt{position:absolute;top:1px;right:3px;font-size:clamp(.35rem,.45vw,.4rem);color:var(--fg);background:rgba(212,165,116,.2);border:1px solid rgba(212,165,116,.34);border-radius:8px;padding:0 3px;line-height:1.2}
+    .rc-grid .rc-cell .rc-remind-dot{position:absolute;left:3px;bottom:2px;color:var(--accent);font-size:clamp(.36rem,.52vw,.42rem);letter-spacing:.02em}
     .rc-nav{display:flex;align-items:center;justify-content:space-between;gap:clamp(.15rem,.3vw,.25rem);padding:0 0 clamp(.3rem,.5vw,.4rem) 0;margin-bottom:clamp(.2rem,.4vw,.3rem);border-bottom:1px solid var(--line)}
     .rc-nav .rc-title{font-family:var(--font-serif);font-size:clamp(.75rem,1.3vw,.95rem);color:var(--fg);font-weight:400;letter-spacing:.05em;cursor:pointer;padding:.05rem .25rem;border-radius:6px;transition:all .15s;user-select:none}
     .rc-nav .rc-title:hover{background:rgba(255,255,255,.06)}
@@ -62,6 +66,9 @@
     .rc-popup .rc-pop-close{position:absolute;top:4px;right:6px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:clamp(.5rem,.7vw,.55rem);padding:2px 4px;line-height:1}
     .rc-popup .rc-pop-close:hover{color:var(--fg)}
     .rc-popup .rc-pop-empty{padding:clamp(.3rem,.5vw,.5rem);text-align:center;color:var(--muted);font-size:clamp(.42rem,.6vw,.48rem)}
+    .rc-reminder-panel{border:1px solid rgba(212,165,116,.36);background:rgba(212,165,116,.08);border-radius:8px;padding:clamp(.28rem,.45vw,.4rem);margin:0 0 clamp(.28rem,.45vw,.4rem);color:var(--fg-dim);font-size:clamp(.46rem,.7vw,.54rem);line-height:1.5}
+    .rc-reminder-panel strong{display:block;color:var(--accent);font-weight:500;margin-bottom:.12rem;letter-spacing:.05em}
+    .rc-reminder-panel span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .rc-empty{padding:clamp(1rem,2vw,2rem);text-align:center;color:var(--muted);font-size:clamp(.5rem,.8vw,.6rem)}
   `;
   document.head.appendChild(style);
@@ -124,11 +131,40 @@
     } else {
       window.data._calEntries[dateStr] = entries;
     }
+    if (typeof window.save === 'function') window.save();
   }
 
   // ===== Format date to YYYY-MM-DD =====
   function fmtDate(y, m, d) {
     return y + '-' + (m < 9 ? '0' : '') + (m + 1) + '-' + (d < 10 ? '0' : '') + d;
+  }
+
+  function dateFromKey(dateStr) {
+    var parts = dateStr.split('-').map(function(v){ return parseInt(v, 10); });
+    return new Date(parts[0], parts[1] - 1, parts[2]);
+  }
+
+  function daysUntil(dateStr) {
+    var today = new Date();
+    var base = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    return Math.round((dateFromKey(dateStr) - base) / 86400000);
+  }
+
+  function reminderItems() {
+    var all = (window.data && window.data._calEntries) || {};
+    var items = [];
+    Object.keys(all).forEach(function(dateStr) {
+      var entries = Array.isArray(all[dateStr]) ? all[dateStr] : [];
+      if (!entries.length) return;
+      var left = daysUntil(dateStr);
+      if (left < 0 || left > 7) return;
+      entries.forEach(function(entry) {
+        if (!entry || entry.done) return;
+        items.push({ date: dateStr, days: left, label: entry.label || '未命名事件' });
+      });
+    });
+    items.sort(function(a,b){ return a.days - b.days || a.date.localeCompare(b.date); });
+    return items;
   }
 
   // ===== esc helper =====
@@ -308,6 +344,16 @@
     html += '<button class="rc-btn rc-today" id="rcTodayBtn">今天</button>';
     html += '</div>';
 
+    var reminders = reminderItems();
+    if (reminders.length) {
+      html += '<div class="rc-reminder-panel"><strong>未来7天提醒</strong>';
+      reminders.slice(0, 5).forEach(function(item) {
+        html += '<span>' + esc(item.date.slice(5)) + ' · ' + (item.days === 0 ? '今天' : item.days + '天后') + ' · ' + esc(item.label) + '</span>';
+      });
+      if (reminders.length > 5) html += '<span>还有 ' + (reminders.length - 5) + ' 条提醒...</span>';
+      html += '</div>';
+    }
+
     // Grid header
     html += '<div class="rc-grid">';
     for (var di = 0; di < 7; di++) {
@@ -334,15 +380,22 @@
       }
 
       var dateStr = fmtDate(cellYear, cellMonth, displayDay);
-      var entryCount = isOther ? 0 : getEntriesForDate(dateStr).length;
+      var entries = isOther ? [] : getEntriesForDate(dateStr);
+      var entryCount = entries.length;
+      var hasOpenEntry = entries.some(function(entry){ return !entry.done; });
+      var leftDays = entryCount > 0 ? daysUntil(dateStr) : 9999;
+      var remindSoon = hasOpenEntry && leftDays >= 0 && leftDays <= 7;
       var cls = 'rc-cell';
       if (isOther) cls += ' rc-other';
       if (dateStr === todayStr) cls += ' rc-today';
+      if (entryCount > 0) cls += ' rc-has-event';
+      if (remindSoon) cls += ' rc-reminder';
 
       html += '<div class="' + cls + '" data-date="' + dateStr + '">';
       html += '<span class="rc-day">' + displayDay + '</span>';
       if (entryCount > 0) {
         html += '<span class="rc-cnt">' + entryCount + '</span>';
+        if (remindSoon) html += '<span class="rc-remind-dot">提醒</span>';
       }
 
       html += '</div>';
