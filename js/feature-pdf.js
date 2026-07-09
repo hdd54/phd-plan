@@ -12,7 +12,7 @@
       '@media print {',
       '  body * { visibility: hidden; }',
       '  #' + REPORT_ID + ', #' + REPORT_ID + ' * { visibility: visible; }',
-      '  #' + REPORT_ID + ' { position: fixed; inset: 0; background: white; color: black; padding: .8in; overflow-y: auto; z-index: 99999; font-family: sans-serif; }',
+      '  #' + REPORT_ID + ' { display: block !important; position: fixed; inset: 0; background: white !important; color: black !important; padding: .8in; overflow-y: auto; z-index: 99999; font-family: sans-serif; }',
       '  .btm-bar, .nav-rail, .pomo-overlay, .pomo-modal, .help-overlay, .help-modal, .ai-fab, .pomo-btn, .pomo-float, .stat-toggle, #pc, .fm-exit, .kbd-hint { display: none !important; }',
       '}',
       '#' + REPORT_ID + ' { display: none; }',

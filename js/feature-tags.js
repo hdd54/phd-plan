@@ -39,7 +39,7 @@
     .tag-dot2.k{background:#e91e63}.tag-dot2.t{background:#00bcd4}.tag-dot2.s{background:#64b5f6}
     .tag-dot2.l{background:#8bc34a}.tag-dot2.w{background:#795548}.tag-dot2.v{background:#9e9e9e}
     /* Compact inline picker */
-    .tg-picker{display:none;position:absolute;top:100%;left:calc(100% + 3px);transform:none;z-index:50;background:var(--bg3);border:1px solid var(--line);border-radius:8px;padding:3px;box-shadow:0 8px 32px rgba(0,0,0,.5);white-space:nowrap;margin-top:3px}
+    .tg-picker{display:none;position:absolute;top:100%;left:calc(100% + 3px);transform:none;z-index:600;background:var(--bg3);border:1px solid var(--line);border-radius:8px;padding:3px;box-shadow:0 8px 32px rgba(0,0,0,.5);white-space:nowrap;margin-top:3px}
     .tg-picker.s{display:flex;gap:2px;flex-wrap:wrap;width:max-content}
     .tg-picker .tgp-btn{width:clamp(18px,2vw,20px);height:clamp(18px,2vw,20px);border-radius:50%;border:1.5px solid transparent;cursor:pointer;padding:0;background:transparent;transition:all .15s;font-size:clamp(8px,.85vw,9px);line-height:clamp(18px,2vw,20px);text-align:center;color:rgba(255,255,255,.9);font-weight:600;font-family:var(--font-sans);overflow:hidden}
     .tg-picker .tgp-btn:hover{transform:scale(1.3)}
@@ -92,6 +92,7 @@
     if(isNaN(wi) || isNaN(di)) return;
 
     var tag = getTaskTag(cid, wi, di);
+    var currentTag = tag || '';
 
     // Create tag wrapper
     var wrap = document.createElement('span');
@@ -100,6 +101,7 @@
     // Create dot
     var dot = document.createElement('span');
     dot.className = 'tag-dot2 ' + (tag ? tag : 'n');
+    dot.dataset.tag = currentTag;
     dot.textContent = TAG_NUM[tag] || '';
     wrap.appendChild(dot);
     // Label text next to dot (show tag name when assigned)
@@ -118,21 +120,30 @@
     row2.style.cssText = 'display:flex;gap:2px;margin-top:2px';
     TAG_KEYS.forEach(function(t, i){
       var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.dataset.tag = t;
       btn.className = 'tgp-btn tgp-' + (t || 'n');
       btn.textContent = TAG_NUM[t] || '';
       btn.title = TAG_COLORS[t].label;
-      if(t === tag) btn.classList.add('a');
+      if(t === currentTag) btn.classList.add('a');
       btn.addEventListener('click', function(e){
         e.stopPropagation();
-        if(t === tag) t = ''; // toggle off
-        setTaskTag(cid, wi, di, t);
-        dot.className = 'tag-dot2 ' + (t || 'n');
-        dot.textContent = TAG_NUM[t] || '';
-        dot.title = TAG_COLORS[t].label;
-        tagLabel.textContent = t ? TAG_COLORS[t].label : '';
-        tagLabel.className = 'tg-lbl' + (t ? '' : ' n');
+        e.preventDefault();
+        var picked = btn.dataset.tag || '';
+        var nextTag = picked === currentTag ? '' : picked;
+        currentTag = nextTag;
+        setTaskTag(cid, wi, di, nextTag);
+        dot.className = 'tag-dot2 ' + (nextTag || 'n');
+        dot.dataset.tag = nextTag;
+        dot.textContent = TAG_NUM[nextTag] || '';
+        dot.title = TAG_COLORS[nextTag].label;
+        tagLabel.textContent = nextTag ? TAG_COLORS[nextTag].label : '';
+        tagLabel.className = 'tg-lbl' + (nextTag ? '' : ' n');
         picker.querySelectorAll('.tgp-btn').forEach(function(b){ b.classList.remove('a'); });
-        if(t) btn.classList.add('a');
+        if(nextTag) {
+          var activeBtn = picker.querySelector('.tgp-btn[data-tag="' + nextTag + '"]');
+          if(activeBtn) activeBtn.classList.add('a');
+        }
         // Update filter (per-week)
         var pw = row.closest('.week'); if(pw) applyTagFilterForWeek(pw);
       });
@@ -144,8 +155,9 @@
     wrap.appendChild(picker);
 
     // Toggle picker on dot click — use position:fixed to bypass ancestor overflow clipping
-    dot.addEventListener('click', function(e){
+    function togglePicker(e){
       e.stopPropagation();
+      e.preventDefault();
       var all = document.querySelectorAll('.tg-picker.s');
       all.forEach(function(p){
         if(p !== picker) {
@@ -182,7 +194,9 @@
           picker.style.top = Math.max(6, newTop) + 'px';
         }
       }
-    });
+    }
+    dot.addEventListener('click', togglePicker);
+    tagLabel.addEventListener('click', togglePicker);
 
     // Close picker on outside click (also reset fixed position on other pickers)
     document.addEventListener('click', function(e){
@@ -215,12 +229,7 @@
       var tg = row.querySelector('.tg-wrap');
       if(!filter) { row.style.display = ''; return; }
       var dot = tg ? tg.querySelector('.tag-dot2') : null;
-      var tagKey = '';
-      if(dot){
-        for(var k in TAG_COLORS){
-          if(dot.classList.contains(k)){ tagKey = k; break; }
-        }
-      }
+      var tagKey = dot ? (dot.dataset.tag || '') : '';
       row.style.display = (tagKey === filter) ? '' : 'none';
     });
   }
@@ -237,6 +246,8 @@
 
     TAG_KEYS.forEach(function(t){
       var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.dataset.tag = t;
       btn.className = 'tfb-b2';
       var bg = TAG_COLORS[t].bg;
       btn.style.background = (t ? bg : 'var(--line-2)');
@@ -255,7 +266,7 @@
         var active = weekEl.dataset.tagFilter || '';
         bar.querySelectorAll('.tfb-b2').forEach(function(b){
           b.classList.remove('a');
-          b.style.opacity = (b.title && active === b.title.split('(')[0].trim()) ? '1' : (b.title ? '0.5' : '0.3');
+          b.style.opacity = (active && b.dataset.tag === active) ? '1' : (b.dataset.tag ? '0.5' : '0.3');
         });
         if(active) {
           btn.classList.add('a');

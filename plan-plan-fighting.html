@@ -473,6 +473,9 @@ body{padding-left:var(--sb-w);transition:padding-left .3s cubic-bezier(.2,.9,.3,
 .copied-map .page-tabs{display:flex;gap:2px;background:color-mix(in srgb,var(--fg) 4%,transparent);border-radius:7px;padding:3px;border:1px solid var(--line);margin-left:.35rem}
 .copied-map .page-tab{padding:.22rem .7rem;border-radius:5px;font-size:clamp(.54rem,.78vw,.62rem);cursor:pointer;color:var(--muted);transition:all .2s;border:none;background:none;font-family:var(--font-sans);white-space:nowrap}
 .copied-map .page-tab.active{background:var(--accent);color:var(--bg);font-weight:600}
+.copied-map-zoom{display:flex;align-items:center;gap:.25rem;margin-left:auto}
+.copied-map-zoom button{width:1.7rem;height:1.7rem;border-radius:6px;border:1px solid var(--line);background:color-mix(in srgb,var(--bg3) 70%,transparent);color:var(--fg-dim);font-family:var(--font-sans);font-size:.72rem;cursor:pointer;transition:all .18s}
+.copied-map-zoom button:hover{border-color:var(--accent);color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,transparent)}
 .copied-map-main{display:grid;grid-template-columns:minmax(0,1fr) minmax(270px,32%);min-height:0;flex:1}
 .copied-map-pages{position:relative;min-width:0;min-height:0;background:radial-gradient(circle at 50% 20%,color-mix(in srgb,var(--accent) 14%,transparent),transparent 34%),linear-gradient(180deg,var(--bg3),var(--bg))}
 .copied-map .map-page{position:absolute;inset:0;display:none;min-height:0}
@@ -4781,7 +4784,7 @@ function initMapApp(){
   var titleEl=modal.querySelector('.map-header h3'), closeEl=document.getElementById('mapClose');
   if(titleEl)titleEl.textContent='世界地图 / 中国地图';
   if(closeEl)closeEl.textContent='×';
-  body.innerHTML='<div class="map-app copied-map"><header class="copied-map-topbar" id="topbar"><div class="copied-map-logo">🌍</div><div class="copied-map-title">Map<span>Notes</span></div><div class="page-tabs"><button class="page-tab active" data-page="world">世界地图</button><button class="page-tab" data-page="china">中国地图</button></div><div style="margin-left:auto;font-size:10px;color:var(--muted);letter-spacing:.12em">MAP</div></header><div class="copied-map-main"><div class="copied-map-pages"><div class="map-page active" id="page-world"><div id="globe-wrap"><svg id="globe-svg" viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid meet"></svg></div></div><div class="map-page" id="page-china"><div id="china-map-wrap"><svg id="china-svg" viewBox="70 70 900 620" preserveAspectRatio="xMidYMid meet"></svg></div></div><div id="tooltip"><div class="tt-name" id="tt-name"></div><div class="tt-sub" id="tt-sub"></div></div><div class="map-status"><span>悬停查看时间和基本信息，点击国家/省份编辑备注</span><span>备注自动保存在本地</span></div></div><aside class="copied-map-note"><div class="map-note-kicker" id="mapScope">World</div><div class="map-note-title" id="mapSelected">请选择一个国家或省份</div><div class="map-note-meta" id="mapMeta">鼠标放在地图区域上会显示当地时间和基本信息；点击后可在这里记录时间、事件、景点、计划等。</div><div class="map-note-form"><label>时间<input id="mapNoteTime" type="text" placeholder="例如：2026-10-01 / 上午 / 第3周"></label><label>事件<textarea id="mapNoteEvent" placeholder="发生了什么，或打算做什么"></textarea></label><label>景点<textarea id="mapNotePlace" placeholder="想去的城市、景点、路线"></textarea></label><label>计划<textarea id="mapNotePlan" placeholder="交通、预算、待办、资料链接"></textarea></label><div class="map-note-actions"><button class="map-note-btn primary" id="mapNoteSave">保存备注</button><button class="map-note-btn" id="mapNoteClear">清空当前</button></div></div><div class="map-note-list" id="mapNoteList"></div></aside></div></div>';
+  body.innerHTML='<div class="map-app copied-map"><header class="copied-map-topbar" id="topbar"><div class="copied-map-logo">🌍</div><div class="copied-map-title">Map<span>Notes</span></div><div class="page-tabs"><button class="page-tab active" data-page="world">世界地图</button><button class="page-tab" data-page="china">中国地图</button></div><div class="copied-map-zoom"><button id="mapZoomIn" title="放大">+</button><button id="mapZoomOut" title="缩小">−</button><button id="mapZoomReset" title="重置">⌂</button></div></header><div class="copied-map-main"><div class="copied-map-pages"><div class="map-page active" id="page-world"><div id="globe-wrap"><svg id="globe-svg" viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid meet"></svg></div></div><div class="map-page" id="page-china"><div id="china-map-wrap"><svg id="china-svg" viewBox="70 70 900 620" preserveAspectRatio="xMidYMid meet"></svg></div></div><div id="tooltip"><div class="tt-name" id="tt-name"></div><div class="tt-sub" id="tt-sub"></div></div><div class="map-status"><span>悬停查看时间和基本信息，点击国家/省份编辑备注；滚轮或按钮可缩放地图</span><span>备注自动保存在本地</span></div></div><aside class="copied-map-note"><div class="map-note-kicker" id="mapScope">World</div><div class="map-note-title" id="mapSelected">请选择一个国家或省份</div><div class="map-note-meta" id="mapMeta">鼠标放在地图区域上会显示当地时间和基本信息；点击后可在这里记录时间、事件、景点、计划等。</div><div class="map-note-form"><label>时间<input id="mapNoteTime" type="text" placeholder="例如：2026-10-01 / 上午 / 第3周"></label><label>事件<textarea id="mapNoteEvent" placeholder="发生了什么，或打算做什么"></textarea></label><label>景点<textarea id="mapNotePlace" placeholder="想去的城市、景点、路线"></textarea></label><label>计划<textarea id="mapNotePlan" placeholder="交通、预算、待办、资料链接"></textarea></label><div class="map-note-actions"><button class="map-note-btn primary" id="mapNoteSave">保存备注</button><button class="map-note-btn" id="mapNoteClear">清空当前</button></div></div><div class="map-note-list" id="mapNoteList"></div></aside></div></div>';
 
   var tabs=[].slice.call(document.querySelectorAll('.map-tab'));
   var pageTabs=[].slice.call(body.querySelectorAll('.page-tab'));
@@ -4789,6 +4792,8 @@ function initMapApp(){
   var selectedTitle=document.getElementById('mapSelected'), scopeEl=document.getElementById('mapScope'), metaEl=document.getElementById('mapMeta');
   var inputTime=document.getElementById('mapNoteTime'), inputEvent=document.getElementById('mapNoteEvent'), inputPlace=document.getElementById('mapNotePlace'), inputPlan=document.getElementById('mapNotePlan'), listEl=document.getElementById('mapNoteList');
   var current='world', selected=null, notes=loadNotes();
+  var baseViews={world:{x:0,y:40,w:1000,h:540},worldFull:{x:0,y:0,w:1000,h:560},china:{x:70,y:70,w:900,h:620}};
+  var views={world:{x:0,y:40,w:1000,h:540},china:{x:70,y:70,w:900,h:620}};
   var worldRegions=[
     {id:'world:CN',name:'中国',tz:'Asia/Shanghai',info:'东亚国家，首都北京。',pop:'约14亿',points:[[690,210],[735,200],[790,220],[805,260],[780,305],[720,315],[670,285],[660,240]]},
     {id:'world:US',name:'美国',tz:'America/New_York',info:'北美国家，首都华盛顿。',pop:'约3.3亿',points:[[160,205],[250,175],[320,205],[305,260],[245,295],[170,270]]},
@@ -4832,6 +4837,11 @@ function initMapApp(){
   function pathFrom(points){return points.map(function(p,i){return (i?'L':'M')+p[0]+' '+p[1]}).join(' ')+' Z'}
   function getTime(r){try{return new Date().toLocaleString('zh-CN',{timeZone:r.tz||'Asia/Shanghai',hour12:false,month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})}catch(e){return new Date().toLocaleString('zh-CN',{hour12:false})}}
   function colorFor(i,total){var hue=(i/Math.max(1,total))*120+150;return 'hsl('+hue+' 36% 34%)'}
+  function setView(target, view){(target==='china'?chinaSvg:worldSvg).setAttribute('viewBox',view.x+' '+view.y+' '+view.w+' '+view.h)}
+  function baseViewFor(target){return target==='china'?baseViews.china:(worldFullRegions?baseViews.worldFull:baseViews.world)}
+  function syncBase(target){var b=baseViewFor(target);var v=views[target];if(!v||Math.abs((v.baseW||0)-b.w)>1||Math.abs((v.baseH||0)-b.h)>1){views[target]={x:b.x,y:b.y,w:b.w,h:b.h,baseW:b.w,baseH:b.h}}}
+  function zoomMap(target, factor){syncBase(target);var v=views[target], minW=(target==='china'?260:220), maxW=baseViewFor(target).w;var nw=Math.max(minW,Math.min(maxW,v.w*factor));var nh=nw*(v.h/v.w);if(nh>baseViewFor(target).h){nh=baseViewFor(target).h;nw=nh*(v.w/v.h)}var cx=v.x+v.w/2,cy=v.y+v.h/2;v.x=cx-nw/2;v.y=cy-nh/2;v.w=nw;v.h=nh;setView(target,v)}
+  function resetMapZoom(target){var b=baseViewFor(target);views[target]={x:b.x,y:b.y,w:b.w,h:b.h,baseW:b.w,baseH:b.h};setView(target,views[target])}
   function render(){
     var data=current==='china'?chinaRegions:(worldFullRegions||worldRegions);
     scopeEl.textContent=current==='china'?'China':'World';
@@ -4841,7 +4851,8 @@ function initMapApp(){
     if(page)page.classList.add('active');
     if(current==='world'&&worldFullRegions&&window.d3){renderWorldFull(data);return}
     if(current==='world'&&!worldFullRegions&&!worldLoading)ensureWorldData();
-    svg.setAttribute('viewBox',current==='china'?'70 70 900 620':'0 40 1000 540');
+    syncBase(current);
+    setView(current,views[current]);
     var grid='';
     for(var x=100;x<1000;x+=100)grid+='<path class="map-graticule" d="M'+x+' 40 L'+x+' 580"/>';
     for(var y=100;y<600;y+=80)grid+='<path class="map-graticule" d="M0 '+y+' L1000 '+y+'"/>';
@@ -4878,7 +4889,8 @@ function initMapApp(){
   function tzForCountry(id){return {'156':'Asia/Shanghai','840':'America/New_York','124':'America/Toronto','076':'America/Sao_Paulo','826':'Europe/London','250':'Europe/Paris','276':'Europe/Berlin','643':'Europe/Moscow','356':'Asia/Kolkata','392':'Asia/Tokyo','036':'Australia/Sydney','710':'Africa/Johannesburg','818':'Africa/Cairo'}[id]||'UTC'}
   function renderWorldFull(data){
     svg=worldSvg;
-    svg.setAttribute('viewBox','0 0 1000 560');
+    syncBase('world');
+    setView('world',views.world);
     var fc={type:'FeatureCollection',features:data.map(function(r){return r.feature})};
     var projection=d3.geoNaturalEarth1().fitSize([980,520],fc).translate([500,285]);
     var path=d3.geoPath(projection);
@@ -4911,6 +4923,16 @@ function initMapApp(){
   }
   tabs.forEach(function(tab){tab.addEventListener('click',function(){switchMap(tab.dataset.map||'world')})});
   pageTabs.forEach(function(tab){tab.addEventListener('click',function(){switchMap(tab.dataset.page||'world')})});
+  document.getElementById('mapZoomIn').onclick=function(){zoomMap(current,.78)};
+  document.getElementById('mapZoomOut').onclick=function(){zoomMap(current,1.28)};
+  document.getElementById('mapZoomReset').onclick=function(){resetMapZoom(current)};
+  [document.getElementById('globe-wrap'),document.getElementById('china-map-wrap')].forEach(function(wrap){
+    if(!wrap)return;
+    wrap.addEventListener('wheel',function(e){
+      e.preventDefault();
+      zoomMap(current,e.deltaY < 0 ? 0.86 : 1.16);
+    },{passive:false});
+  });
   mapApp={render:render};
   render();
 }
