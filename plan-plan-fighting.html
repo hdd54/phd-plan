@@ -2637,8 +2637,24 @@ document.addEventListener('click', e => {
       data[cid].push(newWeek);
     }
     if (!openState[cid]) openState[cid] = {};
-    openState[cid][insertAt >= 0 ? insertAt : data[cid].length - 1] = true;
+    var newWi = insertAt >= 0 ? insertAt : data[cid].length - 1;
+    openState[cid][newWi] = true;
     save(); renderWeeks(cid);
+    // renderWeeks's DOM state-save loop overwrites openState entries at old wi indices,
+    // which can corrupt the new week's state (when inserted mid-list). Re-assert it here.
+    openState[cid][newWi] = true;
+    saveOpenState();
+    // Force-open the new week in DOM (guaranteed even if openState was corrupted)
+    var _cont = document.querySelector(`.wp[data-c="${cid}"]`);
+    if (_cont) {
+      var _nw = _cont.querySelector(`.week[data-wi="${newWi}"]`);
+      if (_nw) {
+        var _nb = _nw.querySelector('.wk-body');
+        var _nt = _nw.querySelector('.wk-toggle');
+        if (_nb) _nb.classList.add('o');
+        if (_nt) _nt.classList.add('o');
+      }
+    }
     // Auto-open the card body so the new week is visible in real-time
     var _ab = document.getElementById('plan-body-'+cid);
     var _at = _ab && _ab.parentElement ? _ab.parentElement.querySelector('.wt') : null;

@@ -36,7 +36,7 @@
     .tag-dot2.k{background:#e91e63}.tag-dot2.t{background:#00bcd4}.tag-dot2.s{background:#64b5f6}
     .tag-dot2.l{background:#8bc34a}.tag-dot2.w{background:#795548}.tag-dot2.v{background:#9e9e9e}
     /* Compact inline picker */
-    .tg-picker{display:none;position:absolute;top:100%;left:50%;transform:translateX(-50%);z-index:50;background:var(--bg3);border:1px solid var(--line);border-radius:8px;padding:3px;box-shadow:0 8px 32px rgba(0,0,0,.5);white-space:nowrap;margin-top:3px}
+    .tg-picker{display:none;position:absolute;top:100%;left:calc(100% + 3px);transform:none;z-index:50;background:var(--bg3);border:1px solid var(--line);border-radius:8px;padding:3px;box-shadow:0 8px 32px rgba(0,0,0,.5);white-space:nowrap;margin-top:3px}
     .tg-picker.s{display:flex;gap:2px;flex-wrap:wrap;width:max-content}
     .tg-picker .tgp-btn{width:clamp(18px,2vw,20px);height:clamp(18px,2vw,20px);border-radius:50%;border:1.5px solid transparent;cursor:pointer;padding:0;background:transparent;transition:all .15s;font-size:clamp(8px,.85vw,9px);line-height:clamp(18px,2vw,20px);text-align:center;color:rgba(255,255,255,.9);font-weight:600;font-family:var(--font-sans);overflow:hidden}
     .tg-picker .tgp-btn:hover{transform:scale(1.3)}
