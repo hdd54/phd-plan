@@ -92,7 +92,7 @@
 
   // Persistent picker close-on-outside (single handler, never leaks)
   var _pickOpen = false;
-  document.addEventListener('click', function(e) {
+  var onPickClick = function(e) {
     if (!_pickOpen) return;
     var tb = document.getElementById('rcTitleBtn');
     if (!tb) { _pickOpen = false; return; }
@@ -100,7 +100,8 @@
       pickerEl.style.display = 'none';
       _pickOpen = false;
     }
-  });
+  };
+  document.addEventListener('click', onPickClick);
 
   // ===== Initialize to current month =====
   function initView() {
@@ -451,10 +452,6 @@
         renderCalendar();
       });
     });
-
-    // Close picker when clicking outside
-    document.removeEventListener('click', onPickClick);
-    document.addEventListener('click', onPickClick);
 
     // Wire cell clicks
     body.querySelectorAll('.rc-cell:not(.rc-other)').forEach(function(cell) {
