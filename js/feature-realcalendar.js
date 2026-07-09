@@ -32,7 +32,7 @@
     .rc-nav .rc-btn:hover{border-color:var(--accent);color:var(--accent)}
     .rc-nav .rc-today{background:rgba(212,165,116,.1);border-color:var(--accent);color:var(--accent)}
     .rc-nav .rc-today:hover{background:rgba(212,165,116,.2)}
-    .rc-picker{position:absolute;z-index:1000;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:clamp(.5rem,.8vw,.7rem);box-shadow:0 8px 32px rgba(0,0,0,.35);top:100%;left:50%;transform:translateX(-50%);min-width:clamp(240px,30vw,320px);margin-top:4px}
+    .rc-picker{position:fixed;z-index:2000;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:clamp(.5rem,.8vw,.7rem);box-shadow:0 8px 32px rgba(0,0,0,.35);min-width:clamp(240px,30vw,320px);margin-top:4px}
     .rc-picker .rc-pick-year{display:flex;align-items:center;justify-content:center;gap:clamp(.5rem,1vw,.8rem);margin-bottom:clamp(.4rem,.6vw,.5rem)}
     .rc-picker .rc-pick-year .rc-py-btn{background:none;border:1px solid var(--line-2);border-radius:6px;color:var(--fg-dim);cursor:pointer;padding:clamp(.1rem,.15vw,.15rem) clamp(.25rem,.4vw,.35rem);font-size:clamp(.55rem,.85vw,.6rem);transition:all .15s;line-height:1}
     .rc-picker .rc-pick-year .rc-py-btn:hover{border-color:var(--accent);color:var(--accent)}
@@ -375,7 +375,18 @@
     titleBtn.addEventListener('click', function(e) {
       e.stopPropagation();
       pickerOpen = !pickerOpen;
-      picker.style.display = pickerOpen ? 'block' : 'none';
+      if (pickerOpen) {
+        picker.style.display = 'block';
+        var rect = titleBtn.getBoundingClientRect();
+        var pW = picker.offsetWidth;
+        var left = rect.left + rect.width / 2 - pW / 2;
+        left = Math.max(4, Math.min(left, window.innerWidth - pW - 4));
+        picker.style.left = left + 'px';
+        picker.style.top = (rect.bottom + 6) + 'px';
+        picker.style.transform = 'none';
+      } else {
+        picker.style.display = 'none';
+      }
     });
 
     document.getElementById('rcPyPrev').addEventListener('click', function() {
