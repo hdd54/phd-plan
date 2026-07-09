@@ -2639,6 +2639,10 @@ document.addEventListener('click', e => {
     if (!openState[cid]) openState[cid] = {};
     openState[cid][insertAt >= 0 ? insertAt : data[cid].length - 1] = true;
     save(); renderWeeks(cid);
+    // Auto-open the card body so the new week is visible in real-time
+    var _ab = document.getElementById('plan-body-'+cid);
+    var _at = _ab && _ab.parentElement ? _ab.parentElement.querySelector('.wt') : null;
+    if (_ab && _at) { _ab.classList.add('o'); _at.classList.add('o'); }
     showToast('✓ 已添加');
     return;
   }
