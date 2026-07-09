@@ -465,6 +465,30 @@ body{padding-left:var(--sb-w);transition:padding-left .3s cubic-bezier(.2,.9,.3,
 .map-source{position:absolute;right:clamp(.55rem,1.4vw,.9rem);bottom:clamp(.55rem,1.4vw,.9rem);max-width:min(46vw,360px);z-index:2;color:rgba(255,255,255,.34);font-size:clamp(.46rem,.72vw,.54rem);line-height:1.55;text-align:right;letter-spacing:.04em;pointer-events:none}
 .map-fallback{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:.66rem;letter-spacing:.04em}
 .map-app{position:absolute;inset:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,32%);background:linear-gradient(180deg,var(--bg2),var(--bg));color:var(--fg);min-height:0}
+.map-app.copied-map{display:flex;flex-direction:column}
+.copied-map-topbar{height:46px;display:flex;align-items:center;gap:.55rem;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--bg2) 90%,transparent);padding:0 .8rem;flex-shrink:0}
+.copied-map-logo{width:26px;height:26px;border-radius:6px;background:linear-gradient(135deg,var(--accent),var(--accent-3));display:grid;place-items:center;color:var(--bg);font-size:.8rem}
+.copied-map-title{font-family:var(--font-sans);font-size:clamp(.68rem,.96vw,.78rem);font-weight:500;color:var(--fg);letter-spacing:.02em}
+.copied-map-title span{color:var(--accent)}
+.copied-map .page-tabs{display:flex;gap:2px;background:color-mix(in srgb,var(--fg) 4%,transparent);border-radius:7px;padding:3px;border:1px solid var(--line);margin-left:.35rem}
+.copied-map .page-tab{padding:.22rem .7rem;border-radius:5px;font-size:clamp(.54rem,.78vw,.62rem);cursor:pointer;color:var(--muted);transition:all .2s;border:none;background:none;font-family:var(--font-sans);white-space:nowrap}
+.copied-map .page-tab.active{background:var(--accent);color:var(--bg);font-weight:600}
+.copied-map-main{display:grid;grid-template-columns:minmax(0,1fr) minmax(270px,32%);min-height:0;flex:1}
+.copied-map-pages{position:relative;min-width:0;min-height:0;background:radial-gradient(circle at 50% 20%,color-mix(in srgb,var(--accent) 14%,transparent),transparent 34%),linear-gradient(180deg,var(--bg3),var(--bg))}
+.copied-map .map-page{position:absolute;inset:0;display:none;min-height:0}
+.copied-map .map-page.active{display:flex}
+.copied-map #page-world,.copied-map #page-china{flex-direction:column}
+.copied-map #globe-wrap,.copied-map #china-map-wrap{position:relative;flex:1;min-height:0;cursor:grab}
+.copied-map #globe-wrap:active,.copied-map #china-map-wrap:active{cursor:grabbing}
+.copied-map #globe-svg,.copied-map #china-svg{width:100%;height:100%;display:block}
+.copied-map .country-path,.copied-map .china-province{stroke:color-mix(in srgb,var(--fg) 18%,transparent);stroke-width:.5;cursor:pointer;transition:fill-opacity .15s,stroke .15s,stroke-width .15s}
+.copied-map .country-path:hover,.copied-map .china-province:hover{stroke:var(--fg);stroke-width:1;fill-opacity:1!important}
+.copied-map .country-path.selected,.copied-map .china-province.selected{stroke:var(--accent);stroke-width:1.6;filter:drop-shadow(0 0 8px color-mix(in srgb,var(--accent) 55%,transparent))}
+.copied-map #tooltip{position:absolute;z-index:20;pointer-events:none;background:color-mix(in srgb,var(--bg2) 94%,transparent);backdrop-filter:blur(16px);border:1px solid var(--line-2);border-radius:9px;padding:.55rem .7rem;opacity:0;transition:opacity .1s;box-shadow:0 8px 28px rgba(0,0,0,.5);max-width:240px;color:var(--fg);font-size:clamp(.54rem,.78vw,.62rem);line-height:1.55}
+.copied-map #tooltip.visible{opacity:1}
+.copied-map .tt-name{font-weight:600;font-size:clamp(.64rem,.92vw,.74rem);margin-bottom:.12rem;color:var(--accent)}
+.copied-map .tt-sub{font-size:clamp(.52rem,.76vw,.6rem);color:var(--fg-dim);line-height:1.6}
+.copied-map-note{border-left:1px solid var(--line);background:color-mix(in srgb,var(--bg2) 90%,transparent);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:clamp(.7rem,1.4vw,1rem);overflow:auto;display:flex;flex-direction:column;gap:.65rem}
 .map-pane{position:relative;min-width:0;overflow:hidden;background:radial-gradient(circle at 45% 28%,color-mix(in srgb,var(--accent) 14%,transparent),transparent 34%),linear-gradient(180deg,color-mix(in srgb,var(--bg3) 82%,#000),var(--bg))}
 .map-svg{width:100%;height:100%;display:block}
 .map-region{stroke:color-mix(in srgb,var(--fg) 16%,transparent);stroke-width:.45;cursor:pointer;transition:fill .18s,stroke .18s,stroke-width .18s,opacity .18s}
@@ -4757,10 +4781,11 @@ function initMapApp(){
   var titleEl=modal.querySelector('.map-header h3'), closeEl=document.getElementById('mapClose');
   if(titleEl)titleEl.textContent='世界地图 / 中国地图';
   if(closeEl)closeEl.textContent='×';
-  body.innerHTML='<div class="map-app"><div class="map-pane"><svg class="map-svg" id="mapSvg" viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid meet"></svg><div class="map-tooltip" id="mapTooltip"></div><div class="map-status"><span id="mapHint">悬停查看时间和基本信息，点击国家/省份编辑备注</span><span>备注自动保存在本地</span></div></div><aside class="map-note-panel"><div class="map-note-kicker" id="mapScope">World</div><div class="map-note-title" id="mapSelected">请选择一个国家或省份</div><div class="map-note-meta" id="mapMeta">鼠标放在地图区域上会显示当地时间和基本信息；点击后可在这里记录时间、事件、景点、计划等。</div><div class="map-note-form"><label>时间<input id="mapNoteTime" type="text" placeholder="例如：2026-10-01 / 上午 / 第3周"></label><label>事件<textarea id="mapNoteEvent" placeholder="发生了什么，或打算做什么"></textarea></label><label>景点<textarea id="mapNotePlace" placeholder="想去的城市、景点、路线"></textarea></label><label>计划<textarea id="mapNotePlan" placeholder="交通、预算、待办、资料链接"></textarea></label><div class="map-note-actions"><button class="map-note-btn primary" id="mapNoteSave">保存备注</button><button class="map-note-btn" id="mapNoteClear">清空当前</button></div></div><div class="map-note-list" id="mapNoteList"></div></aside></div>';
+  body.innerHTML='<div class="map-app copied-map"><header class="copied-map-topbar" id="topbar"><div class="copied-map-logo">🌍</div><div class="copied-map-title">Map<span>Notes</span></div><div class="page-tabs"><button class="page-tab active" data-page="world">世界地图</button><button class="page-tab" data-page="china">中国地图</button></div><div style="margin-left:auto;font-size:10px;color:var(--muted);letter-spacing:.12em">MAP</div></header><div class="copied-map-main"><div class="copied-map-pages"><div class="map-page active" id="page-world"><div id="globe-wrap"><svg id="globe-svg" viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid meet"></svg></div></div><div class="map-page" id="page-china"><div id="china-map-wrap"><svg id="china-svg" viewBox="70 70 900 620" preserveAspectRatio="xMidYMid meet"></svg></div></div><div id="tooltip"><div class="tt-name" id="tt-name"></div><div class="tt-sub" id="tt-sub"></div></div><div class="map-status"><span>悬停查看时间和基本信息，点击国家/省份编辑备注</span><span>备注自动保存在本地</span></div></div><aside class="copied-map-note"><div class="map-note-kicker" id="mapScope">World</div><div class="map-note-title" id="mapSelected">请选择一个国家或省份</div><div class="map-note-meta" id="mapMeta">鼠标放在地图区域上会显示当地时间和基本信息；点击后可在这里记录时间、事件、景点、计划等。</div><div class="map-note-form"><label>时间<input id="mapNoteTime" type="text" placeholder="例如：2026-10-01 / 上午 / 第3周"></label><label>事件<textarea id="mapNoteEvent" placeholder="发生了什么，或打算做什么"></textarea></label><label>景点<textarea id="mapNotePlace" placeholder="想去的城市、景点、路线"></textarea></label><label>计划<textarea id="mapNotePlan" placeholder="交通、预算、待办、资料链接"></textarea></label><div class="map-note-actions"><button class="map-note-btn primary" id="mapNoteSave">保存备注</button><button class="map-note-btn" id="mapNoteClear">清空当前</button></div></div><div class="map-note-list" id="mapNoteList"></div></aside></div></div>';
 
   var tabs=[].slice.call(document.querySelectorAll('.map-tab'));
-  var svg=document.getElementById('mapSvg'), tip=document.getElementById('mapTooltip');
+  var pageTabs=[].slice.call(body.querySelectorAll('.page-tab'));
+  var worldSvg=document.getElementById('globe-svg'), chinaSvg=document.getElementById('china-svg'), svg=worldSvg, tip=document.getElementById('tooltip'), ttName=document.getElementById('tt-name'), ttSub=document.getElementById('tt-sub');
   var selectedTitle=document.getElementById('mapSelected'), scopeEl=document.getElementById('mapScope'), metaEl=document.getElementById('mapMeta');
   var inputTime=document.getElementById('mapNoteTime'), inputEvent=document.getElementById('mapNoteEvent'), inputPlace=document.getElementById('mapNotePlace'), inputPlan=document.getElementById('mapNotePlan'), listEl=document.getElementById('mapNoteList');
   var current='world', selected=null, notes=loadNotes();
@@ -4810,14 +4835,18 @@ function initMapApp(){
   function render(){
     var data=current==='china'?chinaRegions:(worldFullRegions||worldRegions);
     scopeEl.textContent=current==='china'?'China':'World';
+    svg=current==='china'?chinaSvg:worldSvg;
+    body.querySelectorAll('.map-page').forEach(function(p){p.classList.remove('active')});
+    var page=document.getElementById(current==='china'?'page-china':'page-world');
+    if(page)page.classList.add('active');
     if(current==='world'&&worldFullRegions&&window.d3){renderWorldFull(data);return}
     if(current==='world'&&!worldFullRegions&&!worldLoading)ensureWorldData();
     svg.setAttribute('viewBox',current==='china'?'70 70 900 620':'0 40 1000 540');
     var grid='';
     for(var x=100;x<1000;x+=100)grid+='<path class="map-graticule" d="M'+x+' 40 L'+x+' 580"/>';
     for(var y=100;y<600;y+=80)grid+='<path class="map-graticule" d="M0 '+y+' L1000 '+y+'"/>';
-    svg.innerHTML='<rect x="-20" y="20" width="1040" height="620" fill="var(--bg3)"/>'+grid+data.map(function(r,i){var sel=selected&&selected.id===r.id?' selected':'';return '<path class="map-region'+sel+'" data-id="'+r.id+'" d="'+pathFrom(r.points)+'" fill="'+colorFor(i,data.length)+'" opacity=".9"></path>'}).join('');
-    svg.querySelectorAll('.map-region').forEach(function(el){
+    svg.innerHTML='<rect x="-20" y="20" width="1040" height="620" fill="var(--bg3)"/>'+grid+data.map(function(r,i){var cls=current==='china'?'china-province':'country-path';var sel=selected&&selected.id===r.id?' selected':'';return '<path class="'+cls+sel+'" data-id="'+r.id+'" d="'+pathFrom(r.points)+'" fill="'+colorFor(i,data.length)+'" opacity=".9"></path>'}).join('');
+    svg.querySelectorAll('.country-path,.china-province').forEach(function(el){
       el.addEventListener('mouseenter',onHover);
       el.addEventListener('mousemove',moveTip);
       el.addEventListener('mouseleave',hideTip);
@@ -4848,20 +4877,21 @@ function initMapApp(){
   }
   function tzForCountry(id){return {'156':'Asia/Shanghai','840':'America/New_York','124':'America/Toronto','076':'America/Sao_Paulo','826':'Europe/London','250':'Europe/Paris','276':'Europe/Berlin','643':'Europe/Moscow','356':'Asia/Kolkata','392':'Asia/Tokyo','036':'Australia/Sydney','710':'Africa/Johannesburg','818':'Africa/Cairo'}[id]||'UTC'}
   function renderWorldFull(data){
+    svg=worldSvg;
     svg.setAttribute('viewBox','0 0 1000 560');
     var fc={type:'FeatureCollection',features:data.map(function(r){return r.feature})};
     var projection=d3.geoNaturalEarth1().fitSize([980,520],fc).translate([500,285]);
     var path=d3.geoPath(projection);
     var graticule=d3.geoGraticule10();
-    svg.innerHTML='<rect x="0" y="0" width="1000" height="560" fill="var(--bg3)"/><path class="map-graticule" d="'+path(graticule)+'"/>'+data.map(function(r,i){var sel=selected&&selected.id===r.id?' selected':'';return '<path class="map-region'+sel+'" data-id="'+r.id+'" d="'+path(r.feature)+'" fill="'+colorFor(i,data.length)+'" opacity=".88"></path>'}).join('');
-    svg.querySelectorAll('.map-region').forEach(function(el){el.addEventListener('mouseenter',onHover);el.addEventListener('mousemove',moveTip);el.addEventListener('mouseleave',hideTip);el.addEventListener('click',function(){selectRegion(findRegion(el.dataset.id))})});
+    svg.innerHTML='<rect x="0" y="0" width="1000" height="560" fill="var(--bg3)"/><path class="map-graticule" d="'+path(graticule)+'"/>'+data.map(function(r,i){var sel=selected&&selected.id===r.id?' selected':'';return '<path class="country-path'+sel+'" data-id="'+r.id+'" d="'+path(r.feature)+'" fill="'+colorFor(i,data.length)+'" opacity=".88"></path>'}).join('');
+    svg.querySelectorAll('.country-path').forEach(function(el){el.addEventListener('mouseenter',onHover);el.addEventListener('mousemove',moveTip);el.addEventListener('mouseleave',hideTip);el.addEventListener('click',function(){selectRegion(findRegion(el.dataset.id))})});
     if(!selected)selectRegion(data.filter(function(r){return r.id==='world:156'})[0]||data[0],true); else renderPanel();
   }
   function findRegion(id){return (worldFullRegions||worldRegions).concat(chinaRegions).filter(function(r){return r.id===id})[0]}
   function noteFor(r){if(!r)return {};return notes[r.id]||{}}
-  function onHover(e){var r=findRegion(e.currentTarget.dataset.id), n=noteFor(r);tip.innerHTML='<strong>'+esc(r.name)+'</strong><div>当地时间：'+esc(getTime(r))+'</div><div>'+esc(r.info)+'</div><div>人口：'+esc(r.pop||'--')+'</div>'+(n.time?'<div>备注时间：'+esc(n.time)+'</div>':'');tip.classList.add('s');moveTip(e)}
-  function moveTip(e){var box=body.getBoundingClientRect();tip.style.left=(e.clientX-box.left)+'px';tip.style.top=(e.clientY-box.top)+'px'}
-  function hideTip(){tip.classList.remove('s')}
+  function onHover(e){var r=findRegion(e.currentTarget.dataset.id), n=noteFor(r);ttName.textContent=r.name;ttSub.innerHTML='当地时间：'+esc(getTime(r))+'<br>'+esc(r.info)+'<br>人口：'+esc(r.pop||'--')+(n.time?'<br>备注时间：'+esc(n.time):'');tip.classList.add('visible');moveTip(e)}
+  function moveTip(e){var box=body.getBoundingClientRect();tip.style.left=(e.clientX-box.left+12)+'px';tip.style.top=(e.clientY-box.top+12)+'px'}
+  function hideTip(){tip.classList.remove('visible')}
   function selectRegion(r,silent){if(!r)return;selected=r;renderPanel();if(!silent)render()}
   function renderPanel(){
     var n=noteFor(selected);
@@ -4873,7 +4903,14 @@ function initMapApp(){
   }
   document.getElementById('mapNoteSave').onclick=function(){if(!selected)return;notes[selected.id]={time:inputTime.value.trim(),event:inputEvent.value.trim(),place:inputPlace.value.trim(),plan:inputPlan.value.trim(),updatedAt:new Date().toISOString()};saveNotes();renderPanel();toast('地图备注已保存')};
   document.getElementById('mapNoteClear').onclick=function(){if(!selected)return;delete notes[selected.id];saveNotes();renderPanel();toast('当前地图备注已清空')};
-  tabs.forEach(function(tab){tab.addEventListener('click',function(){tabs.forEach(function(t){t.classList.remove('a')});tab.classList.add('a');current=tab.dataset.map||'world';selected=null;hideTip();render()})});
+  function switchMap(target){
+    current=target||'world';selected=null;hideTip();
+    tabs.forEach(function(t){t.classList.toggle('a',(t.dataset.map||'world')===current)});
+    pageTabs.forEach(function(t){t.classList.toggle('active',(t.dataset.page||'world')===current)});
+    render();
+  }
+  tabs.forEach(function(tab){tab.addEventListener('click',function(){switchMap(tab.dataset.map||'world')})});
+  pageTabs.forEach(function(tab){tab.addEventListener('click',function(){switchMap(tab.dataset.page||'world')})});
   mapApp={render:render};
   render();
 }
