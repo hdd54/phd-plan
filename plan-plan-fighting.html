@@ -432,6 +432,39 @@ body{padding-left:var(--sb-w);transition:padding-left .3s cubic-bezier(.2,.9,.3,
 .finance-section{margin-bottom:.25rem}
 .finance-section-title{font-size:clamp(.6rem,.95vw,.68rem);color:var(--accent);letter-spacing:.06em;margin-bottom:clamp(.3rem,.5vw,.4rem);font-weight:400;font-family:var(--font-sans)}
 .finance-divider{height:1px;background:var(--line);margin:clamp(.4rem,.7vw,.55rem) 0;opacity:.5}
+/* ===== Map Modal ===== */
+.map-overlay{position:fixed;inset:0;z-index:390;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .25s}
+.map-overlay.s{opacity:1;pointer-events:auto}
+.map-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.92);z-index:395;width:clamp(340px,86vw,1060px);height:clamp(470px,78vh,760px);background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 24px 80px rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:all .3s cubic-bezier(.2,.9,.3,1);overflow:hidden;display:flex;flex-direction:column;max-height:85vh}
+.map-modal.s{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+.map-header{display:flex;align-items:center;justify-content:space-between;padding:clamp(.5rem,1vw,.65rem) clamp(.6rem,1.2vw,.85rem);border-bottom:1px solid var(--line);flex-shrink:0}
+.map-header h3{margin:0;font-size:clamp(.7rem,1.1vw,.8rem);font-weight:400;color:var(--accent);letter-spacing:.04em;font-family:var(--font-sans)}
+.map-close{background:none;border:none;color:var(--muted);font-size:clamp(1rem,1.5vw,1.2rem);cursor:pointer;padding:.15rem;line-height:1;border-radius:4px;transition:color .2s}
+.map-close:hover{color:var(--accent)}
+.map-tabs{display:flex;gap:0;border-bottom:1px solid var(--line);flex-shrink:0}
+.map-tab{padding:clamp(.3rem,.6vw,.4rem) clamp(.6rem,1.2vw,.8rem);border:none;background:transparent;color:var(--muted);font-family:var(--font-sans);font-size:clamp(.6rem,.95vw,.68rem);cursor:pointer;transition:all .2s;border-bottom:2px solid transparent;letter-spacing:.05em}
+.map-tab:hover{color:var(--fg-dim)}
+.map-tab.a{color:var(--accent);border-bottom-color:var(--accent)}
+.map-body{position:relative;flex:1;overflow:hidden;padding:0;background:radial-gradient(circle at 50% 18%,rgba(61,142,151,.18),transparent 34%),linear-gradient(180deg,rgba(12,18,21,.95),rgba(8,8,7,.98));min-height:0}
+.map-stage{position:absolute;inset:0;cursor:grab;touch-action:none}
+.map-stage:active{cursor:grabbing}
+.map-stage canvas{display:block;width:100%;height:100%}
+.map-hud{position:absolute;left:clamp(.55rem,1.4vw,.9rem);top:clamp(.55rem,1.4vw,.9rem);display:grid;gap:.35rem;z-index:2;pointer-events:none}
+.map-title{font-family:var(--font-sans);font-size:clamp(.62rem,.95vw,.78rem);color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
+.map-sub{max-width:min(58vw,520px);font-size:clamp(.52rem,.82vw,.62rem);line-height:1.65;color:var(--muted);letter-spacing:.04em}
+.map-controls{position:absolute;right:clamp(.55rem,1.4vw,.9rem);top:clamp(.55rem,1.4vw,.9rem);display:flex;gap:.35rem;z-index:3}
+.map-ctl{width:2rem;height:2rem;display:grid;place-items:center;border:1px solid var(--line);border-radius:6px;background:rgba(10,9,8,.72);color:var(--fg-dim);font-family:var(--font-sans);font-size:.82rem;cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.map-ctl:hover{background:rgba(212,165,116,.12);color:var(--accent);border-color:rgba(212,165,116,.45)}
+.map-legend{position:absolute;left:clamp(.55rem,1.4vw,.9rem);bottom:clamp(.55rem,1.4vw,.9rem);display:flex;flex-wrap:wrap;gap:.45rem .75rem;z-index:2;color:var(--muted);font-size:clamp(.5rem,.78vw,.58rem);letter-spacing:.04em;pointer-events:none}
+.map-legend span{display:inline-flex;align-items:center;gap:.28rem}
+.map-swatch{width:.55rem;height:.55rem;border-radius:2px;background:var(--accent);box-shadow:0 0 12px rgba(212,165,116,.45)}
+.map-swatch.cn{background:var(--cinnabar)}
+.map-swatch.city{border-radius:999px;background:#8fd0d3}
+.map-tip{position:absolute;z-index:4;min-width:7rem;max-width:14rem;padding:.45rem .55rem;border:1px solid rgba(212,165,116,.35);border-radius:6px;background:rgba(9,9,8,.88);box-shadow:0 14px 40px rgba(0,0,0,.38);color:var(--fg);font-size:.58rem;line-height:1.55;letter-spacing:.04em;pointer-events:none;opacity:0;transform:translate(12px,12px);transition:opacity .12s}
+.map-tip strong{display:block;color:var(--accent);font-weight:400;font-size:.66rem;margin-bottom:.12rem}
+.map-source{position:absolute;right:clamp(.55rem,1.4vw,.9rem);bottom:clamp(.55rem,1.4vw,.9rem);max-width:min(46vw,360px);z-index:2;color:rgba(255,255,255,.34);font-size:clamp(.46rem,.72vw,.54rem);line-height:1.55;text-align:right;letter-spacing:.04em;pointer-events:none}
+.map-fallback{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:.66rem;letter-spacing:.04em}
+
 /* ---- Drag & Drop ---- */
 .di.dragging{opacity:.4;cursor:grabbing}
 .di.drag-over{border-color:var(--accent)!important;box-shadow:0 0 0 2px rgba(212,165,116,.2)!important}
@@ -1187,6 +1220,163 @@ body{padding-left:var(--sb-w);transition:padding-left .3s cubic-bezier(.2,.9,.3,
   <button class="bb" id="statBtn" title="统计分析"><span class="bb-icon">📊</span><span class="lb-lbl">统计</span></button>
   <button class="bb" id="housingBtn" title="购房综合（贷款+成本+清单）"><span class="bb-icon">🏠</span><span class="lb-lbl">购房</span></button>
   <button class="bb" id="pdfBtn" title="打印报告"><span class="bb-icon">📄</span><span class="lb-lbl">打印</span></button>
+</div>
+
+<!-- ===== MAP MODAL ===== -->
+<div class="map-overlay" id="mapOverlay"></div>
+<div class="map-modal" id="mapModal">
+  <div class="map-header">
+    <h3>🌍 世界地图 / 中国地图</h3>
+    <button class="map-close" id="mapClose">✕</button>
+  </div>
+  <div class="map-tabs">
+    <button class="map-tab a" data-map="world">世界地图</button>
+    <button class="map-tab" data-map="china">中国地图</button>
+  </div>
+  <div class="map-body" id="mapBody">
+    <!-- World Map SVG -->
+    <div class="map-placeholder a" data-map="world" style="display:block">
+      <svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="200" height="100" class="map-water"/>
+        <text x="100" y="50" text-anchor="middle" dominant-baseline="middle" class="map-ocean-label" font-size="0">太平洋</text>
+        <!-- Simplified continent paths (Robinson-like projection) -->
+        <g stroke="#3a6a4a" stroke-width=".4">
+          <!-- North America -->
+          <path class="map-land" d="M18,5 L25,3 L32,4 L36,7 L38,12 L40,15 L38,20 L35,25 L30,30 L28,32 L25,31 L22,28 L20,25 L17,22 L15,18 L14,14 L15,10 Z" fill="#2a4a3a"/>
+          <!-- Greenland -->
+          <path class="map-land" d="M38,3 L44,2 L46,5 L45,9 L42,11 L39,10 L37,7 Z" fill="#2a4a3a"/>
+          <!-- South America -->
+          <path class="map-land" d="M26,34 L30,32 L33,33 L35,37 L36,42 L35,47 L33,52 L30,55 L28,53 L27,48 L26,43 L25,38 Z" fill="#2a4a3a"/>
+          <!-- Europe -->
+          <path class="map-land" d="M50,3 L54,2 L58,3 L61,5 L63,8 L62,11 L60,14 L57,16 L54,17 L51,16 L49,13 L48,9 L49,6 Z" fill="#2a4a3a"/>
+          <!-- UK/Ireland -->
+          <path class="map-land" d="M49,5 L51,4 L52,6 L51,8 L49,7 Z" fill="#2a4a3a"/>
+          <!-- Scandinavia -->
+          <path class="map-land" d="M55,1 L58,0 L60,1 L62,4 L61,7 L59,6 L57,5 L55,3 Z" fill="#2a4a3a"/>
+          <!-- Africa -->
+          <path class="map-land" d="M50,18 L54,17 L58,18 L62,20 L65,25 L66,30 L65,36 L62,42 L58,45 L55,44 L53,40 L51,35 L49,30 L48,25 L48,21 Z" fill="#2a4a3a"/>
+          <!-- Madagascar -->
+          <path class="map-land" d="M64,38 L66,37 L67,40 L66,43 L64,42 Z" fill="#2a4a3a"/>
+          <!-- Asia (Russia) -->
+          <path class="map-land" d="M62,3 L65,1 L70,0 L76,1 L82,2 L86,4 L88,7 L87,10 L84,13 L80,14 L75,15 L70,15 L65,14 L61,12 L60,8 Z" fill="#2a4a3a"/>
+          <!-- Central/East Asia -->
+          <path class="map-land" d="M60,14 L63,14 L66,15 L70,16 L74,17 L78,19 L80,22 L79,26 L76,30 L73,32 L70,33 L66,32 L63,30 L61,27 L59,23 L58,19 Z" fill="#2a4a3a"/>
+          <!-- China highlighted -->
+          <path class="map-land cn" d="M66,20 L70,19 L74,20 L77,22 L78,26 L77,30 L74,32 L71,33 L68,32 L65,30 L64,26 L64,23 Z" fill="#3a5a4a"/>
+          <!-- India -->
+          <path class="map-land" d="M64,28 L67,27 L70,28 L72,31 L71,35 L68,37 L65,36 L63,33 L62,30 Z" fill="#2a4a3a"/>
+          <!-- Southeast Asia -->
+          <path class="map-land" d="M73,30 L76,29 L78,31 L79,34 L77,37 L75,37 L73,35 L72,32 Z" fill="#2a4a3a"/>
+          <!-- Japan -->
+          <path class="map-land" d="M82,20 L84,19 L85,21 L84,24 L82,23 Z" fill="#2a4a3a"/>
+          <!-- Korean Peninsula -->
+          <path class="map-land" d="M78,20 L80,19 L81,21 L80,23 L78,22 Z" fill="#2a4a3a"/>
+          <!-- Middle East -->
+          <path class="map-land" d="M58,20 L60,19 L63,20 L64,23 L63,26 L60,25 L58,23 Z" fill="#2a4a3a"/>
+          <!-- Australia -->
+          <path class="map-land" d="M78,56 L84,54 L90,55 L94,58 L95,63 L93,68 L88,70 L83,70 L79,67 L76,63 L75,59 Z" fill="#2a4a3a"/>
+          <!-- New Zealand -->
+          <path class="map-land" d="M96,65 L98,64 L99,67 L98,70 L96,69 Z" fill="#2a4a3a"/>
+          <!-- Antarctica (partial) -->
+          <path class="map-land" d="M10,96 L30,94 L50,93 L70,94 L90,95 L110,94 L130,95 L150,94 L170,95 L185,96 L180,99 L150,98 L120,99 L90,98 L60,99 L30,98 L10,99 Z" fill="#2a4a3a" opacity=".5"/>
+        </g>
+        <!-- Country labels -->
+        <text x="30" y="12" class="map-country-label">北美洲</text>
+        <text x="30" y="42" class="map-country-label">南美洲</text>
+        <text x="55" y="10" class="map-country-label">欧洲</text>
+        <text x="57" y="30" class="map-country-label">非洲</text>
+        <text x="72" y="18" class="map-country-label">亚洲</text>
+        <text x="87" y="62" class="map-country-label">澳洲</text>
+        <text x="72" y="26" class="map-country-label" fill="var(--cinnabar)" font-weight="600">中国</text>
+        <!-- Grid lines -->
+        <line x1="0" y1="25" x2="200" y2="25" stroke="rgba(255,255,255,.03)" stroke-width=".3"/>
+        <line x1="0" y1="50" x2="200" y2="50" stroke="rgba(255,255,255,.03)" stroke-width=".3"/>
+        <line x1="0" y1="75" x2="200" y2="75" stroke="rgba(255,255,255,.03)" stroke-width=".3"/>
+        <line x1="50" y1="0" x2="50" y2="100" stroke="rgba(255,255,255,.03)" stroke-width=".3"/>
+        <line x1="100" y1="0" x2="100" y2="100" stroke="rgba(255,255,255,.03)" stroke-width=".3"/>
+        <line x1="150" y1="0" x2="150" y2="100" stroke="rgba(255,255,255,.03)" stroke-width=".3"/>
+      </svg>
+    </div>
+    <!-- China Map SVG -->
+    <div class="map-placeholder" data-map="china">
+      <svg viewBox="0 0 200 170" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="200" height="170" class="map-water"/>
+        <text x="100" y="85" text-anchor="middle" dominant-baseline="middle" class="map-ocean-label" font-size="0" fill="none">东中国海</text>
+        <!-- Simplified province outlines -->
+        <g stroke="#3a6a4a" stroke-width=".4">
+          <!-- Xinjiang -->
+          <path class="map-land" d="M28,10 L52,8 L60,12 L62,18 L60,24 L55,28 L48,30 L40,30 L34,28 L30,24 L28,18 Z" fill="#2a4a3a"/>
+          <!-- Tibet -->
+          <path class="map-land" d="M30,30 L40,28 L48,30 L54,33 L56,38 L54,42 L50,44 L44,44 L38,42 L34,38 L30,34 Z" fill="#2a4a3a"/>
+          <!-- Qinghai -->
+          <path class="map-land" d="M46,30 L54,28 L60,30 L64,34 L62,38 L58,40 L52,40 L48,38 L44,34 Z" fill="#2a4a3a"/>
+          <!-- Gansu / Ningxia -->
+          <path class="map-land" d="M56,22 L64,20 L68,24 L68,28 L64,32 L60,30 L56,28 L54,24 Z" fill="#2a4a3a"/>
+          <!-- Inner Mongolia -->
+          <path class="map-land" d="M52,12 L62,10 L72,10 L82,12 L88,16 L86,20 L80,22 L72,22 L64,20 L58,18 L54,14 Z" fill="#2a4a3a"/>
+          <!-- Shaanxi -->
+          <path class="map-land" d="M60,28 L66,26 L70,28 L70,32 L66,36 L62,34 L60,30 Z" fill="#2a4a3a"/>
+          <!-- Sichuan / Chongqing -->
+          <path class="map-land" d="M52,34 L62,32 L68,34 L70,40 L68,44 L62,46 L56,44 L52,40 Z" fill="#2a4a3a"/>
+          <!-- Guizhou / Yunnan -->
+          <path class="map-land" d="M50,44 L58,42 L64,44 L66,48 L64,52 L58,54 L52,52 L48,48 Z" fill="#2a4a3a"/>
+          <!-- Guangxi / Hainan -->
+          <path class="map-land" d="M56,52 L64,50 L70,52 L72,56 L70,60 L64,62 L58,60 L54,56 Z" fill="#2a4a3a"/>
+          <path class="map-land" d="M64,62 L68,60 L70,64 L68,66 L64,65 Z" fill="#2a4a3a"/>
+          <!-- Hunan / Hubei -->
+          <path class="map-land" d="M64,40 L70,38 L76,40 L78,44 L76,48 L72,50 L66,48 L64,44 Z" fill="#2a4a3a"/>
+          <!-- Henan -->
+          <path class="map-land" d="M66,30 L74,28 L78,30 L78,34 L74,36 L70,36 L66,34 Z" fill="#2a4a3a"/>
+          <!-- Shandong -->
+          <path class="map-land" d="M80,26 L88,24 L92,26 L94,30 L90,34 L86,34 L82,32 L80,30 Z" fill="#2a4a3a"/>
+          <!-- Jiangxi / Fujian -->
+          <path class="map-land" d="M74,44 L82,42 L88,44 L90,48 L88,54 L84,56 L78,54 L74,50 Z" fill="#2a4a3a"/>
+          <!-- Jiangsu / Shanghai / Zhejiang -->
+          <path class="map-land" d="M82,34 L90,32 L96,34 L98,38 L94,42 L90,44 L86,42 L82,40 Z" fill="#2a4a3a"/>
+          <!-- Anhui -->
+          <path class="map-land" d="M74,38 L82,36 L86,38 L86,42 L82,44 L78,42 L74,40 Z" fill="#2a4a3a"/>
+          <!-- Guangdong / Macau / Hong Kong -->
+          <path class="map-land" d="M66,58 L74,56 L82,58 L86,62 L84,66 L78,68 L72,66 L68,62 Z" fill="#2a4a3a"/>
+          <!-- Taiwan -->
+          <path class="map-land" d="M90,54 L94,52 L96,56 L94,60 L90,58 Z" fill="#2a4a3a"/>
+          <!-- Northeast (Manchuria) -->
+          <path class="map-land" d="M76,8 L84,6 L92,6 L100,8 L104,12 L102,16 L96,20 L88,22 L82,20 L78,16 L76,12 Z" fill="#2a4a3a"/>
+          <!-- Beijing/Tianjin/Hebei -->
+          <path class="map-land" d="M76,22 L82,20 L86,22 L86,26 L82,28 L78,28 L76,26 Z" fill="#2a4a3a"/>
+        </g>
+        <!-- Major cities -->
+        <circle cx="80" cy="24" r="1" class="map-city-dot"/><text x="81" y="23" class="map-city-label">北京</text>
+        <circle cx="90" cy="38" r="1" class="map-city-dot"/><text x="91" y="37" class="map-city-label">上海</text>
+        <circle cx="74" cy="42" r=".8" class="map-city-dot"/><text x="75" y="41" class="map-city-label">武汉</text>
+        <circle cx="82" cy="42" r=".8" class="map-city-dot"/><text x="83" y="41" class="map-city-label">杭州</text>
+        <circle cx="72" cy="34" r=".8" class="map-city-dot"/><text x="73" y="33" class="map-city-label">成都</text>
+        <circle cx="56" cy="12" r=".7" class="map-city-dot"/><text x="57" y="11" class="map-city-label">乌鲁木齐</text>
+        <circle cx="38" cy="16" r=".7" class="map-city-dot"/><text x="39" y="15" class="map-city-label">喀什</text>
+        <circle cx="60" cy="32" r=".7" class="map-city-dot"/><text x="61" y="31" class="map-city-label">兰州</text>
+        <circle cx="74" cy="58" r=".8" class="map-city-dot"/><text x="75" y="57" class="map-city-label">广州</text>
+        <circle cx="86" cy="28" r=".7" class="map-city-dot"/><text x="87" y="27" class="map-city-label">青岛</text>
+        <circle cx="90" cy="12" r=".7" class="map-city-dot"/><text x="91" y="11" class="map-city-label">哈尔滨</text>
+        <circle cx="82" cy="12" r=".7" class="map-city-dot"/><text x="83" y="11" class="map-city-label">沈阳</text>
+        <circle cx="68" cy="48" r=".7" class="map-city-dot"/><text x="69" y="47" class="map-city-label">桂林</text>
+        <circle cx="78" cy="64" r=".7" class="map-city-dot"/><text x="79" y="63" class="map-city-label">深圳</text>
+        <!-- Province labels (select few) -->
+        <text x="40" y="18" class="map-country-label" font-size="1.6px">新疆</text>
+        <text x="38" y="36" class="map-country-label" font-size="1.6px">西藏</text>
+        <text x="68" y="18" class="map-country-label" font-size="1.6px">内蒙古</text>
+        <!-- Surrounding countries -->
+        <g fill="none" stroke="rgba(255,255,255,.08)" stroke-width=".3">
+          <path d="M22,14 L30,10 L34,12 L34,18 L32,22 L28,24 L24,22 L22,18 Z"/><text x="26" y="16" class="map-country-label" font-size="1.4px" fill="rgba(255,255,255,.2)">哈萨克斯坦</text>
+          <path d="M22,24 L30,22 L34,24 L34,30 L32,34 L28,34 L24,32 L22,28 Z"/><text x="24" y="27" class="map-country-label" font-size="1.4px" fill="rgba(255,255,255,.2)">印度</text>
+          <path d="M22,34 L28,32 L32,34 L32,40 L30,44 L26,44 L24,40 L22,36 Z"/><text x="24" y="38" class="map-country-label" font-size="1.4px" fill="rgba(255,255,255,.2)">缅甸</text>
+          <path d="M104,12 L110,10 L114,12 L114,18 L112,22 L108,22 L106,18 Z"/><text x="113" y="16" class="map-country-label" font-size="1.4px" fill="rgba(255,255,255,.2)">俄</text>
+        </g>
+        <!-- East China Sea / South China Sea labels -->
+        <text x="110" y="30" class="map-ocean-label" font-size="2px" fill="rgba(255,255,255,.08)">黄海</text>
+        <text x="110" y="40" class="map-ocean-label" font-size="2px" fill="rgba(255,255,255,.08)">东海</text>
+        <text x="100" y="70" class="map-ocean-label" font-size="2px" fill="rgba(255,255,255,.08)">南海</text>
+      </svg>
+    </div>
+  </div>
 </div>
 
 <!-- ===== HELP MODAL ===== -->
@@ -4383,7 +4573,7 @@ document.querySelectorAll('.pomo-type').forEach(function(btn){
   btn.addEventListener('click',function(){pomoSetType(btn)})
 })
 // Keyboard: Escape to close
-document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(document.getElementById('sleepOverlay').classList.contains('s'))sleepExit();else if(document.getElementById('pomoModal').classList.contains('s'))pomoClose();else if(document.getElementById('housingOverlay')&&document.getElementById('housingOverlay').classList.contains('s')){var ce=document.getElementById('housingClose');if(ce)ce.click()}}})
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(document.getElementById('sleepOverlay').classList.contains('s'))sleepExit();else if(document.getElementById('pomoModal').classList.contains('s'))pomoClose();else if(document.getElementById('housingOverlay')&&document.getElementById('housingOverlay').classList.contains('s')){var ce=document.getElementById('housingClose');if(ce)ce.click()}else if(document.getElementById('mapOverlay')&&document.getElementById('mapOverlay').classList.contains('s'))mapClose_()}})
 try{pomoLoad()}catch(e){}try{pomoLoadPos}catch(e){}
 
 // ======================== FEATURE: Milestone Timeline ========================
@@ -4517,6 +4707,121 @@ try{
 document.getElementById('helpBtn').onclick=helpOpen
 document.getElementById('helpOverlay').onclick=helpClose_
 document.getElementById('helpClose').onclick=helpClose_
+// Map modal
+var map3d=null;
+function mapOpen(){
+  document.getElementById('mapOverlay').classList.add('s');
+  document.getElementById('mapModal').classList.add('s');
+  initMap3D();
+  setTimeout(function(){ if(map3d) map3d.resize(); },60);
+}
+function mapClose_(){document.getElementById('mapOverlay').classList.remove('s');document.getElementById('mapModal').classList.remove('s')}
+var mapBtnEl=document.getElementById('mapBtn'), mapOverlayEl=document.getElementById('mapOverlay'), mapCloseEl=document.getElementById('mapClose');
+if(mapBtnEl)mapBtnEl.onclick=mapOpen
+if(mapOverlayEl)mapOverlayEl.onclick=mapClose_
+if(mapCloseEl)mapCloseEl.onclick=mapClose_
+function initMap3D(){
+  if(map3d){map3d.resize();return}
+  var modal=document.getElementById('mapModal'), body=document.getElementById('mapBody');
+  if(!modal||!body)return;
+  var h=modal.querySelector('.map-header h3'), c=document.getElementById('mapClose');
+  if(h)h.textContent='三维交互地图';
+  if(c)c.textContent='×';
+  body.innerHTML='<div class="map-stage" id="mapStage"></div><div class="map-hud"><div class="map-title" id="mapTitle">世界三维地图</div><div class="map-sub" id="mapSub">拖拽旋转视角，滚轮缩放；悬停查看地区信息。</div></div><div class="map-controls"><button class="map-ctl" id="mapZoomIn" title="放大">+</button><button class="map-ctl" id="mapZoomOut" title="缩小">−</button><button class="map-ctl" id="mapReset" title="重置视角">⌂</button></div><div class="map-legend"><span><i class="map-swatch"></i>陆地/省区</span><span><i class="map-swatch cn"></i>中国重点区域</span><span><i class="map-swatch city"></i>主要城市</span></div><div class="map-source">参考自然资源部标准地图服务与天地图公开底图样式绘制；用于学习计划可视化，不作为测绘审图成果。</div><div class="map-tip" id="mapTip"></div>';
+  if(typeof THREE==='undefined'){body.insertAdjacentHTML('beforeend','<div class="map-fallback">Three.js 未加载，无法渲染三维地图。</div>');return}
+
+  var datasets={
+    world:{
+      title:'世界三维地图',
+      sub:'以官方标准地图/天地图视觉为参考，按经纬度投影为低浮雕世界地图；中国区域用朱砂色凸显。',
+      camera:8.2,
+      regions:[
+        {n:'北美洲',type:'land',d:'加拿大、美国、墨西哥及格陵兰周边轮廓',p:[[-168,70],[-145,72],[-125,67],[-110,58],[-95,52],[-82,45],[-76,35],[-94,22],[-110,18],[-125,25],[-139,38],[-155,50]]},
+        {n:'南美洲',type:'land',d:'安第斯山脉与亚马孙流域所在大陆',p:[[-82,12],[-70,8],[-58,-4],[-48,-16],[-43,-28],[-55,-42],[-65,-55],[-73,-40],[-79,-18]]},
+        {n:'欧洲',type:'land',d:'欧洲大陆与地中海北岸',p:[[-11,60],[5,66],[28,62],[42,52],[36,42],[18,36],[0,40],[-10,50]]},
+        {n:'非洲',type:'land',d:'非洲大陆轮廓',p:[[-18,36],[8,34],[32,24],[43,5],[36,-18],[24,-34],[8,-35],[-5,-20],[-16,4]]},
+        {n:'亚洲',type:'land',d:'欧亚大陆东部与西亚、中亚、东亚',p:[[30,68],[65,72],[110,68],[145,58],[160,45],[145,30],[118,22],[96,25],[75,35],[52,30],[35,45]]},
+        {n:'中国',type:'china',d:'中国区域高亮，切换“中国地图”可查看省区与城市',p:[[73,48],[90,50],[111,47],[124,42],[132,32],[122,23],[107,18],[92,22],[80,30],[73,39]]},
+        {n:'印度次大陆',type:'land',d:'南亚次大陆',p:[[68,28],[82,27],[91,20],[86,8],[78,7],[70,18]]},
+        {n:'东南亚',type:'land',d:'中南半岛与马来群岛概略',p:[[96,22],[108,18],[117,8],[110,-4],[100,5]]},
+        {n:'澳大利亚',type:'land',d:'澳大利亚大陆',p:[[113,-12],[132,-10],[153,-24],[146,-38],[122,-38],[112,-28]]},
+        {n:'南极洲',type:'land',d:'南极大陆概略轮廓',p:[[-170,-72],[-120,-68],[-40,-70],[25,-66],[105,-69],[170,-72],[160,-82],[-160,-82]]}
+      ],
+      cities:[{n:'北京',lon:116.4,lat:39.9,d:'中国首都'},{n:'上海',lon:121.5,lat:31.2,d:'长三角核心城市'},{n:'纽约',lon:-74,lat:40.7,d:'北美重要城市'},{n:'伦敦',lon:-.1,lat:51.5,d:'欧洲重要城市'},{n:'东京',lon:139.7,lat:35.7,d:'东亚重要城市'},{n:'悉尼',lon:151.2,lat:-33.9,d:'澳大利亚重要城市'}]
+    },
+    china:{
+      title:'中国三维地图',
+      sub:'按中国行政区轮廓概略绘制低浮雕省区，并标注重点城市；南海诸岛以提示点列示。',
+      camera:7.5,
+      regions:[
+        {n:'新疆',type:'land',d:'西北边疆省级行政区',p:[[73,49],[82,49],[91,46],[96,42],[94,37],[86,35],[78,36],[73,40]]},
+        {n:'西藏',type:'land',d:'青藏高原主体区域',p:[[78,36],[88,35],[97,32],[99,28],[92,26],[82,28],[76,31]]},
+        {n:'青海',type:'land',d:'三江源所在省份',p:[[90,39],[99,39],[104,35],[101,32],[96,32],[90,35]]},
+        {n:'内蒙古',type:'land',d:'北方草原与边境带',p:[[97,45],[110,48],[123,50],[126,45],[118,41],[106,41],[98,43]]},
+        {n:'东北',type:'land',d:'辽宁、吉林、黑龙江概略区域',p:[[120,53],[130,51],[135,47],[132,42],[124,40],[118,44]]},
+        {n:'华北',type:'land',d:'北京、天津、河北、山西周边',p:[[108,41],[119,41],[121,36],[115,34],[108,36]]},
+        {n:'西北中部',type:'land',d:'甘肃、宁夏、陕西概略区域',p:[[98,41],[108,40],[110,35],[105,33],[99,35]]},
+        {n:'四川重庆',type:'land',d:'成渝地区双城经济圈',p:[[98,33],[108,33],[111,29],[105,27],[98,29]]},
+        {n:'云贵',type:'land',d:'云南、贵州概略区域',p:[[97,28],[106,27],[109,24],[103,22],[97,24]]},
+        {n:'华中',type:'land',d:'河南、湖北、湖南概略区域',p:[[108,35],[116,34],[117,28],[111,26],[106,30]]},
+        {n:'华东',type:'land',d:'山东、江苏、安徽、浙江、福建与上海概略区域',p:[[116,38],[124,37],[123,30],[119,25],[114,27],[116,33]]},
+        {n:'华南',type:'land',d:'广东、广西、海南、港澳概略区域',p:[[106,25],[116,25],[119,21],[112,19],[106,21]]},
+        {n:'台湾',type:'china',d:'台湾岛',p:[[120.3,25.5],[122.1,24],[121.6,21.8],[120,22.5]]},
+        {n:'南海诸岛',type:'china',d:'南海诸岛示意',p:[[112,16],[117,15],[118,10],[112,9],[110,13]]}
+      ],
+      cities:[{n:'北京',lon:116.4,lat:39.9,d:'首都'},{n:'上海',lon:121.5,lat:31.2,d:'长三角核心'},{n:'广州',lon:113.3,lat:23.1,d:'粤港澳大湾区'},{n:'深圳',lon:114.1,lat:22.5,d:'创新与口岸城市'},{n:'杭州',lon:120.2,lat:30.3,d:'数字经济城市'},{n:'成都',lon:104.1,lat:30.7,d:'成渝核心'},{n:'武汉',lon:114.3,lat:30.6,d:'中部枢纽'},{n:'西安',lon:108.9,lat:34.3,d:'西北门户'},{n:'乌鲁木齐',lon:87.6,lat:43.8,d:'新疆首府'},{n:'拉萨',lon:91.1,lat:29.7,d:'西藏首府'}]
+    }
+  };
+
+  var stage=document.getElementById('mapStage'), tip=document.getElementById('mapTip'), title=document.getElementById('mapTitle'), sub=document.getElementById('mapSub');
+  var scene=new THREE.Scene(), camera=new THREE.PerspectiveCamera(38,1,.1,100), renderer=new THREE.WebGLRenderer({alpha:true,antialias:true});
+  renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1)); stage.appendChild(renderer.domElement);
+  scene.add(new THREE.AmbientLight(0xffffff,.72));
+  var key=new THREE.DirectionalLight(0xffe2b0,.8); key.position.set(-3,-4,6); scene.add(key);
+  var group=new THREE.Group(); scene.add(group);
+  var raycaster=new THREE.Raycaster(), pointer=new THREE.Vector2(), interactive=[], active=null, current='world', dragging=false, last={x:0,y:0};
+  var baseRot={x:-.78,z:0}, zoom=8.2;
+
+  function bounds(ds){var xs=[],ys=[]; ds.regions.forEach(function(r){r.p.forEach(function(pt){xs.push(pt[0]);ys.push(pt[1])})}); return {minX:Math.min.apply(null,xs),maxX:Math.max.apply(null,xs),minY:Math.min.apply(null,ys),maxY:Math.max.apply(null,ys)}}
+  function makeProject(ds){var b=bounds(ds), cx=(b.minX+b.maxX)/2, cy=(b.minY+b.maxY)/2, s=6.5/Math.max(b.maxX-b.minX,b.maxY-b.minY); return function(lon,lat){return new THREE.Vector2((lon-cx)*s,(lat-cy)*s)}}
+  function mat(color,opacity){return new THREE.MeshStandardMaterial({color:color,roughness:.72,metalness:.08,transparent:true,opacity:opacity||.92})}
+  function clearGroup(){while(group.children.length){var o=group.children.pop(); if(o.geometry)o.geometry.dispose(); if(o.material){if(o.material.map)o.material.map.dispose(); o.material.dispose&&o.material.dispose()}} interactive=[]; active=null}
+  function labelSprite(text,color,size){var cv=document.createElement('canvas'), cx=cv.getContext('2d'); cv.width=256; cv.height=64; cx.font='28px sans-serif'; cx.textAlign='center'; cx.textBaseline='middle'; cx.fillStyle=color; cx.shadowColor='rgba(0,0,0,.8)'; cx.shadowBlur=8; cx.fillText(text,128,32); var tex=new THREE.CanvasTexture(cv), sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthWrite:false})); sp.scale.set(size*4,size,1); return sp}
+  function setActive(obj){if(active&&active.material&&active.userData.baseColor)active.material.color.set(active.userData.baseColor); active=obj; if(active&&active.material)active.material.color.set(active.userData.hotColor||0xd4a574)}
+  function renderDataset(name){
+    current=name; clearGroup();
+    var ds=datasets[name], project=makeProject(ds); zoom=ds.camera; title.textContent=ds.title; sub.textContent=ds.sub;
+    group.rotation.x=baseRot.x; group.rotation.z=baseRot.z; camera.position.set(0,-1.2,zoom);
+    ds.regions.forEach(function(r,i){
+      var shp=new THREE.Shape(); r.p.forEach(function(pt,j){var v=project(pt[0],pt[1]); if(j===0)shp.moveTo(v.x,v.y); else shp.lineTo(v.x,v.y)}); shp.closePath();
+      var color=r.type==='china'?0xa64935:0x3f7450;
+      var mesh=new THREE.Mesh(new THREE.ExtrudeGeometry(shp,{depth:r.type==='china' ? .22 : .14,bevelEnabled:true,bevelSize:.025,bevelThickness:.025,bevelSegments:1}),mat(color,.9));
+      mesh.position.z=(i%4)*.01; mesh.userData={name:r.n,desc:r.d,baseColor:color,hotColor:r.type==='china'?0xd55e42:0xd4a574}; group.add(mesh); interactive.push(mesh);
+      var cen=r.p.reduce(function(a,p){a.lon+=p[0];a.lat+=p[1];return a},{lon:0,lat:0}); cen.lon/=r.p.length; cen.lat/=r.p.length; var cp=project(cen.lon,cen.lat);
+      if((name==='china'||r.type==='china'||['亚洲','欧洲','非洲','澳大利亚'].indexOf(r.n)>=0)){var lb=labelSprite(r.n,r.type==='china'?'#f08a70':'#d4a574',.22); lb.position.set(cp.x,cp.y,.42); group.add(lb)}
+    });
+    ds.cities.forEach(function(c){
+      var p=project(c.lon,c.lat), dot=new THREE.Mesh(new THREE.SphereGeometry(.055,16,12),new THREE.MeshBasicMaterial({color:0x8fd0d3}));
+      dot.position.set(p.x,p.y,.5); dot.userData={name:c.n,desc:c.d||'主要城市',hotColor:0xffffff}; group.add(dot); interactive.push(dot);
+      var lb=labelSprite(c.n,'#d7eceb',.16); lb.position.set(p.x+.18,p.y+.13,.56); group.add(lb);
+    });
+    var grid=new THREE.GridHelper(7.2,12,0x31515a,0x26363b); grid.rotation.x=Math.PI/2; grid.position.z=-.04; grid.material.transparent=true; grid.material.opacity=.18; group.add(grid);
+  }
+  function resize(){var r=stage.getBoundingClientRect(); if(!r.width||!r.height)return; camera.aspect=r.width/r.height; camera.updateProjectionMatrix(); renderer.setSize(r.width,r.height,false)}
+  function animate(){requestAnimationFrame(animate); group.rotation.z+=dragging?0:.0008; renderer.render(scene,camera)}
+  function pick(e){var rect=stage.getBoundingClientRect(); pointer.x=((e.clientX-rect.left)/rect.width)*2-1; pointer.y=-((e.clientY-rect.top)/rect.height)*2+1; raycaster.setFromCamera(pointer,camera); var hit=raycaster.intersectObjects(interactive,false)[0]; if(hit){setActive(hit.object); tip.innerHTML='<strong>'+hit.object.userData.name+'</strong>'+(hit.object.userData.desc||''); tip.style.left=(e.clientX-rect.left)+'px'; tip.style.top=(e.clientY-rect.top)+'px'; tip.style.opacity=1}else{setActive(null); tip.style.opacity=0}}
+  stage.addEventListener('pointerdown',function(e){dragging=true;last.x=e.clientX;last.y=e.clientY;stage.setPointerCapture(e.pointerId)});
+  stage.addEventListener('pointermove',function(e){if(dragging){group.rotation.z+=(e.clientX-last.x)*.006; group.rotation.x+=(e.clientY-last.y)*.004; group.rotation.x=Math.max(-1.2,Math.min(-.3,group.rotation.x)); last.x=e.clientX; last.y=e.clientY}else pick(e)});
+  stage.addEventListener('pointerup',function(e){dragging=false;try{stage.releasePointerCapture(e.pointerId)}catch(_){}}); stage.addEventListener('pointerleave',function(){dragging=false;setActive(null);tip.style.opacity=0});
+  stage.addEventListener('wheel',function(e){e.preventDefault(); zoom=Math.max(4.6,Math.min(12.5,zoom+e.deltaY*.006)); camera.position.z=zoom},{passive:false});
+  document.getElementById('mapZoomIn').onclick=function(){zoom=Math.max(4.6,zoom-.7);camera.position.z=zoom};
+  document.getElementById('mapZoomOut').onclick=function(){zoom=Math.min(12.5,zoom+.7);camera.position.z=zoom};
+  document.getElementById('mapReset').onclick=function(){group.rotation.x=baseRot.x;group.rotation.z=baseRot.z;zoom=datasets[current].camera;camera.position.z=zoom};
+  document.querySelectorAll('.map-tab').forEach(function(tab){tab.addEventListener('click',function(){document.querySelectorAll('.map-tab').forEach(function(t){t.classList.remove('a')});tab.classList.add('a');renderDataset(tab.dataset.map||'world');resize()})});
+  window.addEventListener('resize',resize);
+  map3d={resize:resize,render:renderDataset};
+  renderDataset('world'); resize(); animate();
+}
 document.addEventListener('keydown',function(e){
   if(e.key==='?'&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!e.target.closest('input,textarea,[contentEditable]')){
     e.preventDefault();var m=document.getElementById('helpModal');if(m.classList.contains('s'))helpClose_();else helpOpen()
