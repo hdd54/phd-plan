@@ -46,11 +46,11 @@
     .tg-picker .tgp-btn.a{border-color:var(--accent);box-shadow:0 0 0 2px rgba(212,165,116,.25),0 0 8px rgba(212,165,116,.45);transform:translateY(-1px) scale(1.08)}
     .tgp-num{font-weight:700;font-size:.9em;opacity:.95}
     .tgp-text{font-size:.95em}
-    .tgp-n{background:var(--line-2);opacity:.4}
-    .tgp-r{background:#e74c3c}.tgp-g{background:#2ecc71}.tgp-y{background:#c9a040}
-    .tgp-b{background:var(--accent-3)}.tgp-p{background:#8b5cf6}.tgp-o{background:#d4a574}
-    .tgp-k{background:#e91e63}.tgp-t{background:#00bcd4}.tgp-s{background:#64b5f6}
-    .tgp-l{background:#8bc34a}.tgp-w{background:#795548}.tgp-v{background:#9e9e9e}
+    .tg-picker .tgp-btn.tgp-n{background:var(--line-2);opacity:.6}
+    .tg-picker .tgp-btn.tgp-r{background:#e74c3c}.tg-picker .tgp-btn.tgp-g{background:#2ecc71}.tg-picker .tgp-btn.tgp-y{background:#c9a040}
+    .tg-picker .tgp-btn.tgp-b{background:var(--accent-3)}.tg-picker .tgp-btn.tgp-p{background:#8b5cf6}.tg-picker .tgp-btn.tgp-o{background:#d4a574}
+    .tg-picker .tgp-btn.tgp-k{background:#e91e63}.tg-picker .tgp-btn.tgp-t{background:#00bcd4}.tg-picker .tgp-btn.tgp-s{background:#64b5f6}
+    .tg-picker .tgp-btn.tgp-l{background:#8bc34a}.tg-picker .tgp-btn.tgp-w{background:#795548}.tg-picker .tgp-btn.tgp-v{background:#9e9e9e}
     /* Compact filter bar */
     .tag-filter-bar2{display:flex;gap:.15rem;align-items:center;padding:clamp(.1rem,.2vw,.15rem) 0;flex-wrap:wrap}
     .tag-filter-bar2 .tfb-lbl{font-size:clamp(.45rem,.65vw,.5rem);color:var(--muted);margin-right:.05rem}
@@ -114,6 +114,7 @@
     // Create inline picker
     var picker = document.createElement('span');
     picker.className = 'tg-picker';
+    picker.__tagWrap = wrap;
     // Add tag buttons as a horizontal bar at the click point
     TAG_KEYS.forEach(function(t, i){
       var btn = document.createElement('button');
@@ -148,45 +149,52 @@
     });
     wrap.appendChild(picker);
 
-    // Toggle picker on dot click — use position:fixed to bypass ancestor overflow clipping
+    // Toggle picker on dot click; fixed positioning avoids ancestor clipping.
+    function closePicker(p){
+      p.classList.remove('s');
+      p.style.position = '';
+      p.style.top = '';
+      p.style.left = '';
+      p.style.maxWidth = '';
+      if(p.__tagWrap && p.parentNode !== p.__tagWrap) p.__tagWrap.appendChild(p);
+    }
+
     function togglePicker(e){
       e.stopPropagation();
       e.preventDefault();
       var all = document.querySelectorAll('.tg-picker.s');
       all.forEach(function(p){
-        if(p !== picker) {
-          p.classList.remove('s');
-          p.style.position = '';
-          p.style.top = '';
-          p.style.left = '';
-        }
+        if(p !== picker) closePicker(p);
       });
       if(picker.classList.contains('s')) {
         // Closing
-        picker.classList.remove('s');
-        picker.style.position = '';
-        picker.style.top = '';
-        picker.style.left = '';
+        closePicker(picker);
       } else {
-        // Opening — position at viewport coordinates to avoid overflow clipping
+        // Opening: position at viewport coordinates to avoid overflow clipping.
         var rect = dot.getBoundingClientRect();
+        var boundsEl = row.closest('.week') || document.body;
+        var bounds = boundsEl.getBoundingClientRect();
+        if(picker.parentNode !== document.body) document.body.appendChild(picker);
         picker.style.position = 'fixed';
-        picker.style.top = ((e.clientY || rect.bottom) + 8) + 'px';
-        picker.style.left = ((e.clientX || rect.left) + 8) + 'px';
+        picker.style.maxWidth = Math.max(180, Math.min(window.innerWidth - 12, bounds.width - 12)) + 'px';
+        picker.style.top = '-9999px';
+        picker.style.left = '-9999px';
         picker.classList.add('s');
-        // Check viewport boundaries and flip if overflowing
+        // Keep inside the current week card and viewport.
         var pRect = picker.getBoundingClientRect();
         var vw = window.innerWidth, vh = window.innerHeight;
-        if (pRect.right > vw) {
-          // Overflowing right edge → flip to left of dot
-          var newLeft = (e.clientX || rect.left) - pRect.width - 8;
-          picker.style.left = Math.max(6, newLeft) + 'px';
-        }
-        if (pRect.bottom > vh) {
-          // Overflowing bottom edge → flip above dot
-          var newTop = (e.clientY || rect.top) - pRect.height - 8;
-          picker.style.top = Math.max(6, newTop) + 'px';
-        }
+        var minLeft = Math.max(6, bounds.left + 6);
+        var maxRight = Math.min(vw - 6, bounds.right - 6);
+        var minTop = Math.max(6, bounds.top + 6);
+        var maxBottom = Math.min(vh - 6, bounds.bottom - 6);
+        var left = (e.clientX || rect.left) + 8;
+        var top = (e.clientY || rect.bottom) + 8;
+        if(left + pRect.width > maxRight) left = maxRight - pRect.width;
+        if(left < minLeft) left = minLeft;
+        if(top + pRect.height > maxBottom) top = (e.clientY || rect.top) - pRect.height - 8;
+        if(top < minTop) top = minTop;
+        picker.style.left = Math.round(left) + 'px';
+        picker.style.top = Math.round(top) + 'px';
       }
     }
     dot.addEventListener('click', togglePicker);
@@ -194,12 +202,7 @@
 
     // Close picker on outside click (also reset fixed position on other pickers)
     document.addEventListener('click', function(e){
-      if(!wrap.contains(e.target)) {
-        picker.classList.remove('s');
-        picker.style.position = '';
-        picker.style.top = '';
-        picker.style.left = '';
-      }
+      if(!wrap.contains(e.target) && !picker.contains(e.target)) closePicker(picker);
     });
 
     // Insert before day label (left side, avoid md-btn overlap on right)
