@@ -76,6 +76,32 @@
     '</div>';
   document.body.appendChild(div);
 
+  // ===== Create picker element (appended to body, outside modal) =====
+  var pickerEl = document.createElement('div');
+  pickerEl.className = 'rc-picker';
+  pickerEl.id = 'rcPicker';
+  pickerEl.style.display = 'none';
+  pickerEl.innerHTML =
+    '<div class="rc-pick-year">' +
+      '<button class="rc-py-btn" id="rcPyPrev">◀</button>' +
+      '<span class="rc-py-val" id="rcPyVal"></span>' +
+      '<button class="rc-py-btn" id="rcPyNext">▶</button>' +
+    '</div>' +
+    '<div class="rc-pick-months" id="rcPickMonths"></div>';
+  document.body.appendChild(pickerEl);
+
+  // Persistent picker close-on-outside (single handler, never leaks)
+  var _pickOpen = false;
+  document.addEventListener('click', function(e) {
+    if (!_pickOpen) return;
+    var tb = document.getElementById('rcTitleBtn');
+    if (!tb) { _pickOpen = false; return; }
+    if (!pickerEl.contains(e.target) && e.target !== tb && !tb.contains(e.target)) {
+      pickerEl.style.display = 'none';
+      _pickOpen = false;
+    }
+  });
+
   // ===== Initialize to current month =====
   function initView() {
     var now = new Date();
@@ -281,25 +307,6 @@
     html += '<button class="rc-btn rc-today" id="rcTodayBtn">今天</button>';
     html += '</div>';
 
-    // Year/Month picker (hidden by default)
-    html += '<div class="rc-picker" id="rcPicker" style="display:none">';
-    html += '<div class="rc-pick-year">';
-    html += '<button class="rc-py-btn" id="rcPyPrev">◀</button>';
-    html += '<span class="rc-py-val" id="rcPyVal">' + viewYear + '</span>';
-    html += '<button class="rc-py-btn" id="rcPyNext">▶</button>';
-    html += '</div>';
-    html += '<div class="rc-pick-months" id="rcPickMonths">';
-    var todayM = new Date().getMonth();
-    var todayY = new Date().getFullYear();
-    for (var mi = 0; mi < 12; mi++) {
-      var mCls = 'rc-pm-btn';
-      if (mi === viewMonth) mCls += ' rc-pm-cur';
-      if (mi === todayM && viewYear === todayY) mCls += ' rc-pm-today';
-      html += '<button class="' + mCls + '" data-m="' + mi + '">' + MONTH_NAMES[mi] + '</button>';
-    }
-    html += '</div>';
-    html += '</div>';
-
     // Grid header
     html += '<div class="rc-grid">';
     for (var di = 0; di < 7; di++) {
@@ -364,43 +371,12 @@
 
     // Wire year/month picker
     var titleBtn = document.getElementById('rcTitleBtn');
-    var picker = document.getElementById('rcPicker');
-    var pickerOpen = false;
 
-    function closePicker() {
-      picker.style.display = 'none';
-      pickerOpen = false;
-    }
+    // Set picker year value
+    document.getElementById('rcPyVal').textContent = viewYear;
 
-    titleBtn.addEventListener('click', function(e) {
-      e.stopPropagation();
-      pickerOpen = !pickerOpen;
-      if (pickerOpen) {
-        picker.style.display = 'block';
-        var rect = titleBtn.getBoundingClientRect();
-        var pW = picker.offsetWidth;
-        var left = rect.left + rect.width / 2 - pW / 2;
-        left = Math.max(4, Math.min(left, window.innerWidth - pW - 4));
-        picker.style.left = left + 'px';
-        picker.style.top = (rect.bottom + 6) + 'px';
-        picker.style.transform = 'none';
-      } else {
-        picker.style.display = 'none';
-      }
-    });
-
-    document.getElementById('rcPyPrev').addEventListener('click', function() {
-      viewYear--;
-      updatePickerYear();
-    });
-    document.getElementById('rcPyNext').addEventListener('click', function() {
-      viewYear++;
-      updatePickerYear();
-    });
-
-    function updatePickerYear() {
-      document.getElementById('rcPyVal').textContent = viewYear;
-      // Rebuild month buttons to update rc-pm-cur class
+    // Rebuild month buttons
+    (function rebuildMonths() {
       var mContainer = document.getElementById('rcPickMonths');
       var todayM = new Date().getMonth();
       var todayY = new Date().getFullYear();
@@ -412,28 +388,73 @@
         if (mi === todayM && viewYear === todayY) mBtn.classList.add('rc-pm-today');
         mBtn.dataset.m = mi;
         mBtn.textContent = MONTH_NAMES[mi];
-        mBtn.addEventListener('click', pickMonth);
+        mContainer.appendChild(mBtn);
+      }
+    })();
+
+    titleBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (!_pickOpen) {
+        var rect = titleBtn.getBoundingClientRect();
+        var pW = pickerEl.offsetWidth || 280;
+        var left = rect.left + rect.width / 2 - pW / 2;
+        left = Math.max(4, Math.min(left, window.innerWidth - pW - 4));
+        pickerEl.style.left = left + 'px';
+        pickerEl.style.top = (rect.bottom + 6) + 'px';
+        pickerEl.style.display = 'block';
+        _pickOpen = true;
+      } else {
+        pickerEl.style.display = 'none';
+        _pickOpen = false;
+      }
+    });
+
+    document.getElementById('rcPyPrev').addEventListener('click', function(e) {
+      e.stopPropagation();
+      viewYear--;
+      document.getElementById('rcPyVal').textContent = viewYear;
+      rebuildPickerMonths();
+    });
+    document.getElementById('rcPyNext').addEventListener('click', function(e) {
+      e.stopPropagation();
+      viewYear++;
+      document.getElementById('rcPyVal').textContent = viewYear;
+      rebuildPickerMonths();
+    });
+
+    function rebuildPickerMonths() {
+      var mContainer = document.getElementById('rcPickMonths');
+      var todayM = new Date().getMonth();
+      var todayY = new Date().getFullYear();
+      mContainer.innerHTML = '';
+      for (var mi = 0; mi < 12; mi++) {
+        var mBtn = document.createElement('button');
+        mBtn.className = 'rc-pm-btn';
+        if (mi === viewMonth) mBtn.classList.add('rc-pm-cur');
+        if (mi === todayM && viewYear === todayY) mBtn.classList.add('rc-pm-today');
+        mBtn.dataset.m = mi;
+        mBtn.textContent = MONTH_NAMES[mi];
+        mBtn.addEventListener('click', function() {
+          viewMonth = parseInt(this.dataset.m);
+          pickerEl.style.display = 'none';
+          renderCalendar();
+        });
         mContainer.appendChild(mBtn);
       }
     }
 
-    function pickMonth() {
-      viewMonth = parseInt(this.dataset.m);
-      closePicker();
-      renderCalendar();
-    }
-
+    // Wire month buttons
     document.querySelectorAll('#rcPickMonths .rc-pm-btn').forEach(function(b) {
-      b.addEventListener('click', pickMonth);
+      b.addEventListener('click', function() {
+        viewMonth = parseInt(this.dataset.m);
+        pickerEl.style.display = 'none';
+        renderCalendar();
+      });
     });
 
     // Close picker when clicking outside
-    document.addEventListener('click', function closeOnOutside(e) {
-      if (!pickerOpen) return;
-      if (!picker.contains(e.target) && e.target !== titleBtn && !titleBtn.contains(e.target)) {
-        closePicker();
-      }
-    });
+    document.removeEventListener('click', onPickClick);
+    document.addEventListener('click', onPickClick);
 
     // Wire cell clicks
     body.querySelectorAll('.rc-cell:not(.rc-other)').forEach(function(cell) {
@@ -455,6 +476,7 @@
 
   function closeModal() {
     hidePopup();
+    pickerEl.style.display = 'none'; _pickOpen = false;
     document.getElementById(OVERLAY_ID).classList.remove('s');
     document.getElementById(MODAL_ID).classList.remove('s');
   }
