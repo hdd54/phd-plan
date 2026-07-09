@@ -515,6 +515,9 @@ body{padding-left:var(--sb-w);transition:padding-left .3s cubic-bezier(.2,.9,.3,
 .map-note-item{border:1px solid var(--line);border-radius:8px;background:color-mix(in srgb,var(--bg3) 50%,transparent);padding:.5rem;font-size:clamp(.55rem,.84vw,.64rem);line-height:1.55}
 .map-note-item strong{display:block;color:var(--accent);font-weight:400;margin-bottom:.12rem}
 .map-note-empty{font-size:clamp(.55rem,.84vw,.64rem);color:var(--muted);line-height:1.65;border:1px dashed var(--line);border-radius:8px;padding:.6rem}
+.map-note-pager{display:flex;align-items:center;justify-content:space-between;gap:.45rem}
+.map-note-pager .map-note-btn{padding:.2rem .52rem}
+.map-note-count{font-size:clamp(.5rem,.78vw,.58rem);color:var(--muted);white-space:nowrap}
 .map-tooltip{position:absolute;z-index:5;pointer-events:none;max-width:240px;border:1px solid var(--line-2);border-radius:9px;background:color-mix(in srgb,var(--bg2) 92%,transparent);box-shadow:0 14px 40px rgba(0,0,0,.42);padding:.55rem .7rem;color:var(--fg);font-size:clamp(.54rem,.78vw,.62rem);line-height:1.55;opacity:0;transform:translate(12px,12px);transition:opacity .1s}
 .map-tooltip.s{opacity:1}
 .map-tooltip strong{display:block;color:var(--accent);font-weight:400;font-size:clamp(.64rem,.9vw,.74rem);margin-bottom:.12rem}
@@ -4784,14 +4787,14 @@ function initMapApp(){
   var titleEl=modal.querySelector('.map-header h3'), closeEl=document.getElementById('mapClose');
   if(titleEl)titleEl.textContent='世界地图 / 中国地图';
   if(closeEl)closeEl.textContent='×';
-  body.innerHTML='<div class="map-app copied-map"><header class="copied-map-topbar" id="topbar"><div class="copied-map-logo">🌍</div><div class="copied-map-title">Map<span>Notes</span></div><div class="page-tabs"><button class="page-tab active" data-page="world">世界地图</button><button class="page-tab" data-page="china">中国地图</button></div><div class="copied-map-zoom"><button id="mapZoomIn" title="放大">+</button><button id="mapZoomOut" title="缩小">−</button><button id="mapZoomReset" title="重置">⌂</button></div></header><div class="copied-map-main"><div class="copied-map-pages"><div class="map-page active" id="page-world"><div id="globe-wrap"><svg id="globe-svg" viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid meet"></svg></div></div><div class="map-page" id="page-china"><div id="china-map-wrap"><svg id="china-svg" viewBox="70 70 900 620" preserveAspectRatio="xMidYMid meet"></svg></div></div><div id="tooltip"><div class="tt-name" id="tt-name"></div><div class="tt-sub" id="tt-sub"></div></div><div class="map-status"><span>悬停查看时间和基本信息，点击国家/省份编辑备注；滚轮或按钮可缩放地图</span><span>备注自动保存在本地</span></div></div><aside class="copied-map-note"><div class="map-note-kicker" id="mapScope">World</div><div class="map-note-title" id="mapSelected">请选择一个国家或省份</div><div class="map-note-meta" id="mapMeta">鼠标放在地图区域上会显示当地时间和基本信息；点击后可在这里记录时间、事件、景点、计划等。</div><div class="map-note-form"><label>时间<input id="mapNoteTime" type="text" placeholder="例如：2026-10-01 / 上午 / 第3周"></label><label>事件<textarea id="mapNoteEvent" placeholder="发生了什么，或打算做什么"></textarea></label><label>景点<textarea id="mapNotePlace" placeholder="想去的城市、景点、路线"></textarea></label><label>计划<textarea id="mapNotePlan" placeholder="交通、预算、待办、资料链接"></textarea></label><div class="map-note-actions"><button class="map-note-btn primary" id="mapNoteSave">保存备注</button><button class="map-note-btn" id="mapNoteClear">清空当前</button></div></div><div class="map-note-list" id="mapNoteList"></div></aside></div></div>';
+  body.innerHTML='<div class="map-app copied-map"><header class="copied-map-topbar" id="topbar"><div class="copied-map-logo">🌍</div><div class="copied-map-title">Map<span>Notes</span></div><div class="page-tabs"><button class="page-tab active" data-page="world">世界地图</button><button class="page-tab" data-page="china">中国地图</button></div><div class="copied-map-zoom"><button id="mapZoomIn" title="放大">+</button><button id="mapZoomOut" title="缩小">−</button><button id="mapZoomReset" title="重置">⌂</button></div></header><div class="copied-map-main"><div class="copied-map-pages"><div class="map-page active" id="page-world"><div id="globe-wrap"><svg id="globe-svg" viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid meet"></svg></div></div><div class="map-page" id="page-china"><div id="china-map-wrap"><svg id="china-svg" viewBox="70 70 900 620" preserveAspectRatio="xMidYMid meet"></svg></div></div><div id="tooltip"><div class="tt-name" id="tt-name"></div><div class="tt-sub" id="tt-sub"></div></div><div class="map-status"><span>悬停查看时间和基本信息，点击国家/省份编辑备注；滚轮或按钮可缩放地图</span><span>备注自动保存在本地</span></div></div><aside class="copied-map-note"><div class="map-note-kicker" id="mapScope">World</div><div class="map-note-title" id="mapSelected">请选择一个国家或省份</div><div class="map-note-meta" id="mapMeta">鼠标放在地图区域上会显示当地时间和基本信息；点击后可在这里记录时间、事件、景点、计划等。</div><div class="map-note-form"><label>时间<input id="mapNoteTime" type="text" placeholder="例如：2026-10-01 / 上午 / 第3周"></label><label>事件<textarea id="mapNoteEvent" placeholder="发生了什么，或打算做什么"></textarea></label><label>景点<textarea id="mapNotePlace" placeholder="想去的城市、景点、路线"></textarea></label><label>计划<textarea id="mapNotePlan" placeholder="交通、预算、待办、资料链接"></textarea></label><div class="map-note-actions"><button class="map-note-btn primary" id="mapNoteSave">保存当前页</button><button class="map-note-btn" id="mapNoteNew">新增一页</button><button class="map-note-btn" id="mapNoteClear">删除当前页</button></div></div><div class="map-note-list" id="mapNoteList"></div></aside></div></div>';
 
   var tabs=[].slice.call(document.querySelectorAll('.map-tab'));
   var pageTabs=[].slice.call(body.querySelectorAll('.page-tab'));
   var worldSvg=document.getElementById('globe-svg'), chinaSvg=document.getElementById('china-svg'), svg=worldSvg, tip=document.getElementById('tooltip'), ttName=document.getElementById('tt-name'), ttSub=document.getElementById('tt-sub');
   var selectedTitle=document.getElementById('mapSelected'), scopeEl=document.getElementById('mapScope'), metaEl=document.getElementById('mapMeta');
   var inputTime=document.getElementById('mapNoteTime'), inputEvent=document.getElementById('mapNoteEvent'), inputPlace=document.getElementById('mapNotePlace'), inputPlan=document.getElementById('mapNotePlan'), listEl=document.getElementById('mapNoteList');
-  var current='world', selected=null, notes=loadNotes();
+  var current='world', selected=null, notes=loadNotes(), notePage=0;
   var baseViews={world:{x:0,y:40,w:1000,h:540},worldFull:{x:0,y:0,w:1000,h:560},china:{x:70,y:70,w:900,h:620}};
   var views={world:{x:0,y:40,w:1000,h:540},china:{x:70,y:70,w:900,h:620}};
   var worldRegions=[
@@ -4900,21 +4903,39 @@ function initMapApp(){
     if(!selected)selectRegion(data.filter(function(r){return r.id==='world:156'})[0]||data[0],true); else renderPanel();
   }
   function findRegion(id){return (worldFullRegions||worldRegions).concat(chinaRegions).filter(function(r){return r.id===id})[0]}
-  function noteFor(r){if(!r)return {};return notes[r.id]||{}}
-  function onHover(e){var r=findRegion(e.currentTarget.dataset.id), n=noteFor(r);ttName.textContent=r.name;ttSub.innerHTML='当地时间：'+esc(getTime(r))+'<br>'+esc(r.info)+'<br>人口：'+esc(r.pop||'--')+(n.time?'<br>备注时间：'+esc(n.time):'');tip.classList.add('visible');moveTip(e)}
+  function noteListFor(r){
+    if(!r)return [];
+    var raw=notes[r.id];
+    if(!raw)return [];
+    if(Array.isArray(raw))return raw;
+    return [raw];
+  }
+  function setNoteList(r,list){if(!r)return;if(list&&list.length)notes[r.id]=list;else delete notes[r.id]}
+  function currentNoteFor(r){var list=noteListFor(r);if(notePage>=list.length)notePage=Math.max(0,list.length-1);return list[notePage]||{}}
+  function onHover(e){var r=findRegion(e.currentTarget.dataset.id), list=noteListFor(r), n=list[0]||{};ttName.textContent=r.name;ttSub.innerHTML='当地时间：'+esc(getTime(r))+'<br>'+esc(r.info)+'<br>人口：'+esc(r.pop||'--')+(n.time?'<br>备注时间：'+esc(n.time):'')+(list.length?'<br>备注：'+list.length+' 条':'');tip.classList.add('visible');moveTip(e)}
   function moveTip(e){var box=body.getBoundingClientRect();tip.style.left=(e.clientX-box.left+12)+'px';tip.style.top=(e.clientY-box.top+12)+'px'}
   function hideTip(){tip.classList.remove('visible')}
-  function selectRegion(r,silent){if(!r)return;selected=r;renderPanel();if(!silent)render()}
+  function selectRegion(r,silent){if(!r)return;selected=r;notePage=0;renderPanel();if(!silent)render()}
   function renderPanel(){
-    var n=noteFor(selected);
+    var list=noteListFor(selected);
+    var n=currentNoteFor(selected);
     selectedTitle.textContent=selected?selected.name:'请选择一个国家或省份';
     metaEl.innerHTML=selected?('当地时间：'+esc(getTime(selected))+'<br>基本信息：'+esc(selected.info)+'<br>人口：'+esc(selected.pop||'--')):'点击地图后编辑备注。';
     inputTime.value=n.time||'';inputEvent.value=n.event||'';inputPlace.value=n.place||'';inputPlan.value=n.plan||'';
     var has=n.time||n.event||n.place||n.plan;
-    listEl.innerHTML=has?('<div class="map-note-item"><strong>已保存</strong>'+(n.time?'时间：'+esc(n.time)+'<br>':'')+(n.event?'事件：'+esc(n.event)+'<br>':'')+(n.place?'景点：'+esc(n.place)+'<br>':'')+(n.plan?'计划：'+esc(n.plan):'')+'</div>'):'<div class="map-note-empty">这里还没有备注。可以写时间、事件、景点、计划、路线或其它想法。</div>';
+    if(list.length){
+      listEl.innerHTML='<div class="map-note-pager"><button class="map-note-btn" id="mapNotePrev">上一页</button><span class="map-note-count">'+(notePage+1)+' / '+list.length+'</span><button class="map-note-btn" id="mapNoteNext">下一页</button></div>'+
+        (has?('<div class="map-note-item"><strong>备注 '+(notePage+1)+'</strong>'+(n.time?'时间：'+esc(n.time)+'<br>':'')+(n.event?'事件：'+esc(n.event)+'<br>':'')+(n.place?'景点：'+esc(n.place)+'<br>':'')+(n.plan?'计划：'+esc(n.plan):'')+'</div>'):'<div class="map-note-empty">这一页还是空白，可以在上方编辑后保存。</div>');
+      document.getElementById('mapNotePrev').onclick=function(){notePage=(notePage-1+list.length)%list.length;renderPanel()};
+      document.getElementById('mapNoteNext').onclick=function(){notePage=(notePage+1)%list.length;renderPanel()};
+    }else{
+      listEl.innerHTML='<div class="map-note-empty">这里还没有备注。可以写时间、事件、景点、计划、路线或其它想法；需要多条时点击“新增一页”。</div>';
+    }
   }
-  document.getElementById('mapNoteSave').onclick=function(){if(!selected)return;notes[selected.id]={time:inputTime.value.trim(),event:inputEvent.value.trim(),place:inputPlace.value.trim(),plan:inputPlan.value.trim(),updatedAt:new Date().toISOString()};saveNotes();renderPanel();toast('地图备注已保存')};
-  document.getElementById('mapNoteClear').onclick=function(){if(!selected)return;delete notes[selected.id];saveNotes();renderPanel();toast('当前地图备注已清空')};
+  function readNoteForm(){return {time:inputTime.value.trim(),event:inputEvent.value.trim(),place:inputPlace.value.trim(),plan:inputPlan.value.trim(),updatedAt:new Date().toISOString()}}
+  document.getElementById('mapNoteSave').onclick=function(){if(!selected)return;var list=noteListFor(selected).slice();if(!list.length)list.push({});list[notePage]=readNoteForm();setNoteList(selected,list);saveNotes();renderPanel();toast('地图备注已保存')};
+  document.getElementById('mapNoteNew').onclick=function(){if(!selected)return;var list=noteListFor(selected).slice();list.push({time:'',event:'',place:'',plan:'',updatedAt:new Date().toISOString()});notePage=list.length-1;setNoteList(selected,list);saveNotes();renderPanel();toast('已新增一页地图备注')};
+  document.getElementById('mapNoteClear').onclick=function(){if(!selected)return;var list=noteListFor(selected).slice();if(list.length){list.splice(notePage,1);notePage=Math.max(0,Math.min(notePage,list.length-1));setNoteList(selected,list)}else{delete notes[selected.id]}saveNotes();renderPanel();toast('当前地图备注页已删除')};
   function switchMap(target){
     current=target||'world';selected=null;hideTip();
     tabs.forEach(function(t){t.classList.toggle('a',(t.dataset.map||'world')===current)});

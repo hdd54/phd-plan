@@ -39,11 +39,13 @@
     .tag-dot2.k{background:#e91e63}.tag-dot2.t{background:#00bcd4}.tag-dot2.s{background:#64b5f6}
     .tag-dot2.l{background:#8bc34a}.tag-dot2.w{background:#795548}.tag-dot2.v{background:#9e9e9e}
     /* Compact inline picker */
-    .tg-picker{display:none;position:absolute;top:100%;left:calc(100% + 3px);transform:none;z-index:600;background:var(--bg3);border:1px solid var(--line);border-radius:8px;padding:3px;box-shadow:0 8px 32px rgba(0,0,0,.5);white-space:nowrap;margin-top:3px}
-    .tg-picker.s{display:flex;gap:2px;flex-wrap:wrap;width:max-content}
-    .tg-picker .tgp-btn{width:clamp(18px,2vw,20px);height:clamp(18px,2vw,20px);border-radius:50%;border:1.5px solid transparent;cursor:pointer;padding:0;background:transparent;transition:all .15s;font-size:clamp(8px,.85vw,9px);line-height:clamp(18px,2vw,20px);text-align:center;color:rgba(255,255,255,.9);font-weight:600;font-family:var(--font-sans);overflow:hidden}
-    .tg-picker .tgp-btn:hover{transform:scale(1.3)}
-    .tg-picker .tgp-btn.a{border-color:var(--accent);box-shadow:0 0 6px rgba(212,165,116,.4);transform:scale(1.2)}
+    .tg-picker{display:none;position:absolute;top:100%;left:calc(100% + 3px);transform:none;z-index:600;background:var(--bg3);border:1px solid var(--line);border-radius:10px;padding:5px;box-shadow:0 8px 32px rgba(0,0,0,.5);white-space:nowrap;margin-top:3px;max-width:calc(100vw - 12px);overflow-x:auto}
+    .tg-picker.s{display:flex;gap:4px;flex-wrap:nowrap;width:max-content}
+    .tg-picker .tgp-btn{min-width:max-content;height:clamp(22px,2.4vw,26px);border-radius:999px;border:1px solid transparent;cursor:pointer;padding:0 .45rem;background:transparent;transition:all .15s;font-size:clamp(9px,.85vw,11px);line-height:1;text-align:center;color:rgba(255,255,255,.92);font-weight:500;font-family:var(--font-sans);display:inline-flex;align-items:center;gap:.25rem}
+    .tg-picker .tgp-btn:hover{transform:translateY(-1px);border-color:rgba(255,255,255,.28)}
+    .tg-picker .tgp-btn.a{border-color:var(--accent);box-shadow:0 0 6px rgba(212,165,116,.4);transform:translateY(-1px)}
+    .tgp-num{font-weight:700;font-size:.9em;opacity:.95}
+    .tgp-text{font-size:.95em}
     .tgp-n{background:var(--line-2);opacity:.4}
     .tgp-r{background:#e74c3c}.tgp-g{background:#2ecc71}.tgp-y{background:#c9a040}
     .tgp-b{background:var(--accent-3)}.tgp-p{background:#8b5cf6}.tgp-o{background:#d4a574}
@@ -52,9 +54,8 @@
     /* Compact filter bar */
     .tag-filter-bar2{display:flex;gap:.15rem;align-items:center;padding:clamp(.1rem,.2vw,.15rem) 0;flex-wrap:wrap}
     .tag-filter-bar2 .tfb-lbl{font-size:clamp(.45rem,.65vw,.5rem);color:var(--muted);margin-right:.05rem}
-    .tag-filter-bar2 .tfb-b2{width:clamp(16px,1.8vw,18px);height:clamp(16px,1.8vw,18px);border-radius:50%;border:1px solid var(--line-2);cursor:pointer;padding:0;background:transparent;transition:all .15s;font-size:clamp(7px,.75vw,8px);line-height:clamp(16px,1.8vw,18px);text-align:center;color:rgba(255,255,255,.9);font-weight:600;font-family:var(--font-sans);overflow:hidden}
-    .tag-filter-bar2 .tfb-b2.a{border-color:var(--accent);box-shadow:0 0 4px rgba(212,165,116,.3)}
-    .tag-filter-bar2 .tfb-b2.a::after{content:'';position:absolute;inset:1px;border-radius:50%;background:rgba(212,165,116,.5)}
+    .tag-filter-bar2 .tfb-b2{min-width:max-content;height:clamp(18px,2vw,22px);border-radius:999px;border:1px solid var(--line-2);cursor:pointer;padding:0 .35rem;background:transparent;transition:all .15s;font-size:clamp(8px,.75vw,10px);line-height:1;text-align:center;color:rgba(255,255,255,.9);font-weight:500;font-family:var(--font-sans);display:inline-flex;align-items:center;gap:.18rem}
+    .tag-filter-bar2 .tfb-b2.a{border-color:var(--accent);box-shadow:0 0 4px rgba(212,165,116,.3);background:rgba(212,165,116,.14)!important;color:var(--accent)}
     .tag-filter-bar2 .tfb-clr{font-size:clamp(.4rem,.6vw,.45rem);color:var(--muted);cursor:pointer;border:none;background:none;font-family:var(--font-sans);padding:.02rem .08rem}
     .tag-filter-bar2 .tfb-clr:hover{color:var(--accent)}
     /* Hide old tag elements */
@@ -113,17 +114,13 @@
     // Create inline picker
     var picker = document.createElement('span');
     picker.className = 'tg-picker';
-    // Add tag buttons in 2 rows
-    var row1 = document.createElement('span');
-    row1.style.cssText = 'display:flex;gap:2px';
-    var row2 = document.createElement('span');
-    row2.style.cssText = 'display:flex;gap:2px;margin-top:2px';
+    // Add tag buttons as a horizontal bar at the click point
     TAG_KEYS.forEach(function(t, i){
       var btn = document.createElement('button');
       btn.type = 'button';
       btn.dataset.tag = t;
       btn.className = 'tgp-btn tgp-' + (t || 'n');
-      btn.textContent = TAG_NUM[t] || '';
+      btn.innerHTML = '<span class="tgp-num">' + (TAG_NUM[t] || '0') + '</span><span class="tgp-text">' + TAG_COLORS[t].label + '</span>';
       btn.title = TAG_COLORS[t].label;
       if(t === currentTag) btn.classList.add('a');
       btn.addEventListener('click', function(e){
@@ -147,11 +144,8 @@
         // Update filter (per-week)
         var pw = row.closest('.week'); if(pw) applyTagFilterForWeek(pw);
       });
-      if(i < 7) row1.appendChild(btn);
-      else row2.appendChild(btn);
+      picker.appendChild(btn);
     });
-    picker.appendChild(row1);
-    if(TAG_KEYS.length > 7) picker.appendChild(row2);
     wrap.appendChild(picker);
 
     // Toggle picker on dot click — use position:fixed to bypass ancestor overflow clipping
@@ -177,20 +171,20 @@
         // Opening — position at viewport coordinates to avoid overflow clipping
         var rect = dot.getBoundingClientRect();
         picker.style.position = 'fixed';
-        picker.style.top = (rect.bottom + 3) + 'px';
-        picker.style.left = (rect.left + rect.width + 3) + 'px';
+        picker.style.top = ((e.clientY || rect.bottom) + 8) + 'px';
+        picker.style.left = ((e.clientX || rect.left) + 8) + 'px';
         picker.classList.add('s');
         // Check viewport boundaries and flip if overflowing
         var pRect = picker.getBoundingClientRect();
         var vw = window.innerWidth, vh = window.innerHeight;
         if (pRect.right > vw) {
           // Overflowing right edge → flip to left of dot
-          var newLeft = rect.left - pRect.width - 3;
+          var newLeft = (e.clientX || rect.left) - pRect.width - 8;
           picker.style.left = Math.max(6, newLeft) + 'px';
         }
         if (pRect.bottom > vh) {
           // Overflowing bottom edge → flip above dot
-          var newTop = rect.top - pRect.height - 3;
+          var newTop = (e.clientY || rect.top) - pRect.height - 8;
           picker.style.top = Math.max(6, newTop) + 'px';
         }
       }
@@ -252,8 +246,8 @@
       var bg = TAG_COLORS[t].bg;
       btn.style.background = (t ? bg : 'var(--line-2)');
       btn.style.position = 'relative';
-      btn.style.opacity = (t ? '0.5' : '0.3');
-      btn.textContent = TAG_NUM[t] || '';
+      btn.style.opacity = (t ? '0.82' : '0.45');
+      btn.innerHTML = '<span class="tgp-num">' + (TAG_NUM[t] || '0') + '</span><span class="tgp-text">' + TAG_COLORS[t].label + '</span>';
       btn.title = TAG_COLORS[t].label;
 
       btn.addEventListener('click', function(){
@@ -266,7 +260,7 @@
         var active = weekEl.dataset.tagFilter || '';
         bar.querySelectorAll('.tfb-b2').forEach(function(b){
           b.classList.remove('a');
-          b.style.opacity = (active && b.dataset.tag === active) ? '1' : (b.dataset.tag ? '0.5' : '0.3');
+          b.style.opacity = (active && b.dataset.tag === active) ? '1' : (b.dataset.tag ? '0.82' : '0.45');
         });
         if(active) {
           btn.classList.add('a');
@@ -284,7 +278,7 @@
       delete weekEl.dataset.tagFilter;
       bar.querySelectorAll('.tfb-b2').forEach(function(b){
         b.classList.remove('a');
-        b.style.opacity = b.title ? '0.5' : '0.3';
+        b.style.opacity = b.dataset.tag ? '0.82' : '0.45';
       });
       applyTagFilterForWeek(weekEl);
     });
