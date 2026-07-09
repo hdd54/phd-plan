@@ -1,4 +1,4 @@
-// ===== FEATURE: Real Calendar + Milestone Calendar =====
+// ===== FEATURE: Real Calendar (with day-click tag/event editor) =====
 (function(){
   if(window.__features['realcalendar']) return;
   window.__features['realcalendar'] = true;
@@ -24,32 +24,44 @@
     .rc-grid .rc-cell.rc-other{opacity:.25;pointer-events:none}
     .rc-grid .rc-cell.rc-today{border-color:var(--accent)!important;box-shadow:0 0 8px rgba(212,165,116,.3)}
     .rc-grid .rc-cell .rc-day{font-size:clamp(.5rem,.75vw,.58rem);line-height:1.2}
-    .rc-grid .rc-cell .rc-dots{display:flex;gap:2px;margin-top:2px;flex-wrap:wrap;justify-content:center}
-    .rc-grid .rc-cell .rc-dot{width:5px;height:5px;border-radius:50%;display:inline-block}
-    .rc-dot-done{background:#5aa85a}
-    .rc-dot-active{background:var(--accent)}
-    .rc-dot-pending{background:var(--muted)}
+    .rc-grid .rc-cell .rc-cnt{position:absolute;top:1px;right:3px;font-size:clamp(.35rem,.45vw,.4rem);color:var(--muted);background:rgba(255,255,255,.04);border-radius:8px;padding:0 3px;line-height:1.2}
     .rc-nav{display:flex;align-items:center;justify-content:space-between;gap:clamp(.15rem,.3vw,.25rem);padding:0 0 clamp(.3rem,.5vw,.4rem) 0;margin-bottom:clamp(.2rem,.4vw,.3rem);border-bottom:1px solid var(--line)}
-    .rc-nav .rc-title{font-family:var(--font-serif);font-size:clamp(.75rem,1.3vw,.95rem);color:var(--fg);font-weight:400;letter-spacing:.05em}
+    .rc-nav .rc-title{font-family:var(--font-serif);font-size:clamp(.75rem,1.3vw,.95rem);color:var(--fg);font-weight:400;letter-spacing:.05em;cursor:pointer;padding:.05rem .25rem;border-radius:6px;transition:all .15s;user-select:none}
+    .rc-nav .rc-title:hover{background:rgba(255,255,255,.06)}
     .rc-nav .rc-btn{background:rgba(255,255,255,.04);border:1px solid var(--line-2);border-radius:100px;color:var(--fg-dim);font-size:clamp(.5rem,.8vw,.55rem);cursor:pointer;padding:.1rem .4rem;transition:all .2s;font-family:var(--font-sans);line-height:1.2;white-space:nowrap}
     .rc-nav .rc-btn:hover{border-color:var(--accent);color:var(--accent)}
     .rc-nav .rc-today{background:rgba(212,165,116,.1);border-color:var(--accent);color:var(--accent)}
     .rc-nav .rc-today:hover{background:rgba(212,165,116,.2)}
-    .rc-summary{margin-top:clamp(.3rem,.5vw,.5rem);padding-top:clamp(.3rem,.5vw,.5rem);border-top:1px solid var(--line);font-size:clamp(.45rem,.7vw,.52rem)}
-    .rc-summary .rc-sum-title{font-weight:600;color:var(--fg-dim);margin-bottom:clamp(.15rem,.25vw,.2rem);letter-spacing:.05em}
-    .rc-summary .rc-sum-item{padding:clamp(.08rem,.12vw,.1rem) 0;display:flex;align-items:center;gap:.35rem;color:var(--fg-dim);border-bottom:1px solid var(--line-2);line-height:1.4}
-    .rc-summary .rc-sum-item:last-child{border-bottom:none}
-    .rc-summary .rc-sum-date{font-family:var(--font-mono);font-size:clamp(.4rem,.6vw,.45rem);color:var(--muted);min-width:3em}
-    .rc-summary .rc-sum-label{flex:1}
-    .rc-summary .rc-sum-card{font-size:clamp(.38rem,.55vw,.42rem);color:var(--muted);min-width:2.5em;text-align:right}
-    .rc-summary .rc-sum-status{min-width:1.5em;text-align:center}
-    .rc-popup{position:fixed;z-index:1001;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:clamp(.3rem,.5vw,.5rem);box-shadow:0 8px 32px rgba(0,0,0,.3);min-width:200px;max-width:320px;font-size:clamp(.45rem,.7vw,.52rem)}
-    .rc-popup .rc-pop-item{padding:clamp(.1rem,.15vw,.15rem) 0;display:flex;align-items:center;gap:.35rem;border-bottom:1px solid var(--line-2)}
+    .rc-picker{position:absolute;z-index:1000;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:clamp(.5rem,.8vw,.7rem);box-shadow:0 8px 32px rgba(0,0,0,.35);top:100%;left:50%;transform:translateX(-50%);min-width:clamp(240px,30vw,320px);margin-top:4px}
+    .rc-picker .rc-pick-year{display:flex;align-items:center;justify-content:center;gap:clamp(.5rem,1vw,.8rem);margin-bottom:clamp(.4rem,.6vw,.5rem)}
+    .rc-picker .rc-pick-year .rc-py-btn{background:none;border:1px solid var(--line-2);border-radius:6px;color:var(--fg-dim);cursor:pointer;padding:clamp(.1rem,.15vw,.15rem) clamp(.25rem,.4vw,.35rem);font-size:clamp(.55rem,.85vw,.6rem);transition:all .15s;line-height:1}
+    .rc-picker .rc-pick-year .rc-py-btn:hover{border-color:var(--accent);color:var(--accent)}
+    .rc-picker .rc-pick-year .rc-py-val{font-family:var(--font-serif);font-size:clamp(.7rem,1.1vw,.8rem);color:var(--fg);min-width:4em;text-align:center;font-weight:400}
+    .rc-picker .rc-pick-months{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(.2rem,.3vw,.25rem)}
+    .rc-picker .rc-pick-months .rc-pm-btn{background:rgba(255,255,255,.03);border:1px solid var(--line-2);border-radius:6px;color:var(--fg-dim);cursor:pointer;padding:clamp(.2rem,.3vw,.3rem) 0;font-size:clamp(.5rem,.8vw,.55rem);transition:all .15s;text-align:center}
+    .rc-picker .rc-pick-months .rc-pm-btn:hover{border-color:var(--accent);color:var(--accent)}
+    .rc-picker .rc-pick-months .rc-pm-btn.rc-pm-cur{background:rgba(212,165,116,.12);border-color:var(--accent);color:var(--accent);font-weight:600}
+    .rc-picker .rc-pick-months .rc-pm-btn.rc-pm-today{border-color:var(--muted);color:var(--fg)}
+    .rc-nav{position:relative}
+    .rc-popup{position:fixed;z-index:1001;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:clamp(.4rem,.6vw,.6rem);box-shadow:0 8px 32px rgba(0,0,0,.35);min-width:clamp(220px,30vw,300px);max-width:340px;font-size:clamp(.45rem,.7vw,.52rem)}
+    .rc-popup .rc-pop-date{font-family:var(--font-serif);font-size:clamp(.55rem,.85vw,.6rem);color:var(--fg);padding-bottom:clamp(.2rem,.3vw,.3rem);margin-bottom:clamp(.2rem,.3vw,.3rem);border-bottom:1px solid var(--line);text-align:center;letter-spacing:.05em}
+    .rc-popup .rc-pop-item{display:flex;align-items:center;gap:.3rem;padding:clamp(.12rem,.15vw,.15rem) 0;border-bottom:1px solid var(--line-2)}
     .rc-popup .rc-pop-item:last-child{border-bottom:none}
-    .rc-popup .rc-pop-label{flex:1}
-    .rc-popup .rc-pop-card{font-size:clamp(.4rem,.6vw,.45rem);color:var(--muted)}
+    .rc-popup .rc-pop-label{flex:1;color:var(--fg-dim)}
+    .rc-popup .rc-pop-label.done{text-decoration:line-through;color:var(--muted)}
+    .rc-popup .rc-pop-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:clamp(.45rem,.6vw,.5rem);padding:2px 4px;border-radius:4px;line-height:1;transition:all .15s}
+    .rc-popup .rc-pop-del:hover{color:#e06c6c;background:rgba(224,108,108,.1)}
+    .rc-popup .rc-pop-tog{background:none;border:1px solid var(--line-2);border-radius:4px;color:var(--muted);cursor:pointer;font-size:clamp(.4rem,.55vw,.45rem);padding:1px 4px;transition:all .15s;line-height:1.2}
+    .rc-popup .rc-pop-tog:hover{border-color:var(--accent);color:var(--accent)}
+    .rc-popup .rc-pop-tog.done{background:rgba(90,168,90,.15);border-color:#5aa85a;color:#5aa85a}
+    .rc-popup .rc-pop-add{display:flex;gap:.25rem;margin-top:clamp(.25rem,.35vw,.35rem)}
+    .rc-popup .rc-pop-add input{flex:1;background:rgba(255,255,255,.03);border:1px solid var(--line-2);border-radius:6px;color:var(--fg);padding:clamp(.15rem,.2vw,.2rem) clamp(.25rem,.35vw,.35rem);font-size:clamp(.45rem,.65vw,.5rem);font-family:var(--font-sans);outline:none}
+    .rc-popup .rc-pop-add input:focus{border-color:var(--accent)}
+    .rc-popup .rc-pop-add button{background:rgba(212,165,116,.1);border:1px solid var(--accent);border-radius:6px;color:var(--accent);cursor:pointer;padding:clamp(.12rem,.18vw,.18rem) clamp(.3rem,.45vw,.4rem);font-size:clamp(.45rem,.65vw,.5rem);transition:all .15s;white-space:nowrap;font-family:var(--font-sans)}
+    .rc-popup .rc-pop-add button:hover{background:rgba(212,165,116,.2)}
     .rc-popup .rc-pop-close{position:absolute;top:4px;right:6px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:clamp(.5rem,.7vw,.55rem);padding:2px 4px;line-height:1}
     .rc-popup .rc-pop-close:hover{color:var(--fg)}
+    .rc-popup .rc-pop-empty{padding:clamp(.3rem,.5vw,.5rem);text-align:center;color:var(--muted);font-size:clamp(.42rem,.6vw,.48rem)}
     .rc-empty{padding:clamp(1rem,2vw,2rem);text-align:center;color:var(--muted);font-size:clamp(.5rem,.8vw,.6rem)}
   `;
   document.head.appendChild(style);
@@ -71,19 +83,20 @@
     viewMonth = now.getMonth();
   }
 
-  // ===== Get milestones for a specific date =====
-  function getMilestonesForDate(dateStr) {
-    var ms = (window.data && window.data._milestones) || {};
-    var result = [];
-    for (var cid in ms) {
-      if (cid.startsWith('_')) continue;
-      (ms[cid] || []).forEach(function(m) {
-        if (m.date === dateStr) {
-          result.push({ card: cid, label: m.label, done: m.done });
-        }
-      });
+  // ===== Get entries for a specific date =====
+  function getEntriesForDate(dateStr) {
+    var all = (window.data && window.data._calEntries) || {};
+    return (all[dateStr] || []).slice();
+  }
+
+  function saveEntries(dateStr, entries) {
+    if (!window.data) return;
+    if (!window.data._calEntries) window.data._calEntries = {};
+    if (entries.length === 0) {
+      delete window.data._calEntries[dateStr];
+    } else {
+      window.data._calEntries[dateStr] = entries;
     }
-    return result;
   }
 
   // ===== Format date to YYYY-MM-DD =====
@@ -98,37 +111,122 @@
     });
   }
 
-  // ===== Show popup =====
+  // ===== Popup for adding/editing daily tags/events =====
   function showPopup(dateStr, cellEl) {
-    var msList = getMilestonesForDate(dateStr);
-    if (msList.length === 0) return;
     hidePopup();
+    var entries = getEntriesForDate(dateStr);
 
     var rect = cellEl.getBoundingClientRect();
     var popup = document.createElement('div');
     popup.className = 'rc-popup';
     popup.id = 'rcPopup';
 
+    var dateDisplay = dateStr.slice(0,4) + '年' + parseInt(dateStr.slice(5,7)) + '月' + parseInt(dateStr.slice(8,10)) + '日';
     var html = '<button class="rc-pop-close" id="rcPopClose">✕</button>';
-    for (var i = 0; i < msList.length; i++) {
-      var m = msList[i];
-      var statusIcon = m.done ? '✅' : '🔄';
-      html += '<div class="rc-pop-item">';
-      html += '<span class="rc-pop-icon">' + statusIcon + '</span>';
-      html += '<span class="rc-pop-label">' + esc(m.label) + '</span>';
-      html += '<span class="rc-pop-card">' + esc(m.card) + '</span>';
-      html += '</div>';
+    html += '<div class="rc-pop-date">' + dateDisplay + '</div>';
+    html += '<div id="rcPopItems">';
+    if (entries.length === 0) {
+      html += '<div class="rc-pop-empty">暂无标记，添加一个</div>';
+    } else {
+      for (var i = 0; i < entries.length; i++) {
+        html += renderPopItem(i, entries[i]);
+      }
     }
+    html += '</div>';
+    html += '<div class="rc-pop-add">';
+    html += '<input id="rcPopInput" placeholder="添加标签/事件…" maxlength="100">';
+    html += '<button id="rcPopAddBtn">添加</button>';
+    html += '</div>';
     popup.innerHTML = html;
 
-    var left = Math.min(rect.left, window.innerWidth - 330);
+    var left = rect.left;
     var top = rect.bottom + 4;
+    if (left + 320 > window.innerWidth) left = window.innerWidth - 330;
     popup.style.left = Math.max(4, left) + 'px';
     popup.style.top = top + 'px';
     document.body.appendChild(popup);
 
+    // Wire close
     document.getElementById('rcPopClose').addEventListener('click', hidePopup);
+
+    // Wire add
+    var input = document.getElementById('rcPopInput');
+    document.getElementById('rcPopAddBtn').addEventListener('click', function() {
+      addEntry(dateStr);
+    });
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') addEntry(dateStr);
+    });
+    setTimeout(function(){ input.focus(); }, 50);
+
+    // Wire existing item actions (delegated)
+    wirePopActions(dateStr);
+
+    // Click outside
     setTimeout(function(){ document.addEventListener('click', hidePopupOnOutside); }, 10);
+  }
+
+  function renderPopItem(idx, entry) {
+    var labelCls = entry.done ? 'rc-pop-label done' : 'rc-pop-label';
+    var togCls = entry.done ? 'rc-pop-tog done' : 'rc-pop-tog';
+    var togText = entry.done ? '✓' : '○';
+    return '<div class="rc-pop-item">' +
+      '<button class="' + togCls + '" data-idx="' + idx + '" data-action="tog">' + togText + '</button>' +
+      '<span class="' + labelCls + '">' + esc(entry.label) + '</span>' +
+      '<button class="rc-pop-del" data-idx="' + idx + '" data-action="del">✕</button>' +
+    '</div>';
+  }
+
+  function wirePopActions(dateStr) {
+    var items = document.getElementById('rcPopItems');
+    if (!items) return;
+    items.querySelectorAll('[data-action]').forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var idx = parseInt(this.dataset.idx);
+        var entries = getEntriesForDate(dateStr);
+        if (this.dataset.action === 'tog') {
+          entries[idx].done = !entries[idx].done;
+          saveEntries(dateStr, entries);
+        } else if (this.dataset.action === 'del') {
+          entries.splice(idx, 1);
+          saveEntries(dateStr, entries);
+        }
+        // Refresh popup items
+        var container = document.getElementById('rcPopItems');
+        if (entries.length === 0) {
+          container.innerHTML = '<div class="rc-pop-empty">暂无标记，添加一个</div>';
+        } else {
+          container.innerHTML = '';
+          for (var i = 0; i < entries.length; i++) {
+            container.insertAdjacentHTML('beforeend', renderPopItem(i, entries[i]));
+          }
+          wirePopActions(dateStr);
+        }
+        // Re-render calendar to update count badges
+        renderCalendar();
+      });
+    });
+  }
+
+  function addEntry(dateStr) {
+    var input = document.getElementById('rcPopInput');
+    var val = input.value.trim();
+    if (!val) return;
+    var entries = getEntriesForDate(dateStr);
+    entries.push({ label: val, done: false });
+    saveEntries(dateStr, entries);
+    input.value = '';
+    // Refresh popup items
+    var container = document.getElementById('rcPopItems');
+    container.innerHTML = '';
+    for (var i = 0; i < entries.length; i++) {
+      container.insertAdjacentHTML('beforeend', renderPopItem(i, entries[i]));
+    }
+    wirePopActions(dateStr);
+    input.focus();
+    // Re-render calendar to update count badges
+    renderCalendar();
   }
 
   function hidePopupOnOutside(e) {
@@ -144,62 +242,17 @@
     document.removeEventListener('click', hidePopupOnOutside);
   }
 
-  // ===== Render milestone summary =====
-  function renderSummary() {
-    var body = document.getElementById(BODY_ID);
-    if (!body) return;
-
-    var ms = (window.data && window.data._milestones) || {};
-    var items = [];
-    var prefix = fmtDate(viewYear, viewMonth, 1).slice(0, 7);
-
-    for (var cid in ms) {
-      if (cid.startsWith('_')) continue;
-      (ms[cid] || []).forEach(function(m) {
-        if (m.date && m.date.indexOf(prefix) === 0) {
-          items.push({ card: cid, label: m.label, date: m.date, done: m.done });
-        }
-      });
-    }
-
-    if (items.length === 0) {
-      var summary = body.querySelector('.rc-summary');
-      if (summary) summary.remove();
-      return;
-    }
-
-    items.sort(function(a, b) { return a.date.localeCompare(b.date); });
-
-    var html = '<div class="rc-summary">';
-    html += '<div class="rc-sum-title">📅 本月里程碑 (' + items.length + ')</div>';
-    for (var i = 0; i < items.length; i++) {
-      var m = items[i];
-      var dayStr = m.date.slice(5);
-      var statusIcon = m.done ? '✅' : '🔄';
-      html += '<div class="rc-sum-item">';
-      html += '<span class="rc-sum-date">' + dayStr + '</span>';
-      html += '<span class="rc-sum-label">' + esc(m.label) + '</span>';
-      html += '<span class="rc-sum-status">' + statusIcon + '</span>';
-      html += '<span class="rc-sum-card">' + esc(m.card) + '</span>';
-      html += '</div>';
-    }
-    html += '</div>';
-
-    // Remove old summary if exists, then append
-    var old = body.querySelector('.rc-summary');
-    if (old) old.remove();
-    body.insertAdjacentHTML('beforeend', html);
-  }
-
   // ===== Render calendar =====
   function renderCalendar() {
     var body = document.getElementById(BODY_ID);
     if (!body) return;
 
-    if (!window.data || !window.data._milestones) {
-      body.innerHTML = '<div class="rc-empty">暂无里程碑数据，请先在卡片中添加里程碑</div>';
+    if (!window.data) {
+      body.innerHTML = '<div class="rc-empty">暂无数据</div>';
       return;
     }
+    // Initialize _calEntries if needed
+    if (!window.data._calEntries) window.data._calEntries = {};
 
     var firstDay = new Date(viewYear, viewMonth, 1);
     var lastDay = new Date(viewYear, viewMonth + 1, 0);
@@ -223,9 +276,28 @@
 
     html += '<div class="rc-nav">';
     html += '<button class="rc-btn" id="rcPrevBtn">◀ ' + prevY + '年' + MONTH_NAMES[prevM] + '</button>';
-    html += '<span class="rc-title">' + viewYear + '年' + MONTH_NAMES[viewMonth] + '</span>';
+    html += '<span class="rc-title" id="rcTitleBtn">' + viewYear + '年' + MONTH_NAMES[viewMonth] + ' ▾</span>';
     html += '<button class="rc-btn" id="rcNextBtn">' + nextY + '年' + MONTH_NAMES[nextM] + ' ▶</button>';
     html += '<button class="rc-btn rc-today" id="rcTodayBtn">今天</button>';
+    html += '</div>';
+
+    // Year/Month picker (hidden by default)
+    html += '<div class="rc-picker" id="rcPicker" style="display:none">';
+    html += '<div class="rc-pick-year">';
+    html += '<button class="rc-py-btn" id="rcPyPrev">◀</button>';
+    html += '<span class="rc-py-val" id="rcPyVal">' + viewYear + '</span>';
+    html += '<button class="rc-py-btn" id="rcPyNext">▶</button>';
+    html += '</div>';
+    html += '<div class="rc-pick-months" id="rcPickMonths">';
+    var todayM = new Date().getMonth();
+    var todayY = new Date().getFullYear();
+    for (var mi = 0; mi < 12; mi++) {
+      var mCls = 'rc-pm-btn';
+      if (mi === viewMonth) mCls += ' rc-pm-cur';
+      if (mi === todayM && viewYear === todayY) mCls += ' rc-pm-today';
+      html += '<button class="' + mCls + '" data-m="' + mi + '">' + MONTH_NAMES[mi] + '</button>';
+    }
+    html += '</div>';
     html += '</div>';
 
     // Grid header
@@ -254,24 +326,15 @@
       }
 
       var dateStr = fmtDate(cellYear, cellMonth, displayDay);
-      var msList = isOther ? [] : getMilestonesForDate(dateStr);
+      var entryCount = isOther ? 0 : getEntriesForDate(dateStr).length;
       var cls = 'rc-cell';
       if (isOther) cls += ' rc-other';
       if (dateStr === todayStr) cls += ' rc-today';
 
       html += '<div class="' + cls + '" data-date="' + dateStr + '">';
       html += '<span class="rc-day">' + displayDay + '</span>';
-
-      if (msList.length > 0) {
-        html += '<div class="rc-dots">';
-        for (var mi = 0; mi < Math.min(msList.length, 5); mi++) {
-          var dotCls = msList[mi].done ? 'rc-dot-done' : 'rc-dot-active';
-          html += '<span class="rc-dot ' + dotCls + '"></span>';
-        }
-        if (msList.length > 5) {
-          html += '<span style="font-size:clamp(.35rem,.45vw,.4rem);color:var(--fg-dim);line-height:5px">+' + (msList.length - 5) + '</span>';
-        }
-        html += '</div>';
+      if (entryCount > 0) {
+        html += '<span class="rc-cnt">' + entryCount + '</span>';
       }
 
       html += '</div>';
@@ -299,6 +362,68 @@
       renderCalendar();
     });
 
+    // Wire year/month picker
+    var titleBtn = document.getElementById('rcTitleBtn');
+    var picker = document.getElementById('rcPicker');
+    var pickerOpen = false;
+
+    function closePicker() {
+      picker.style.display = 'none';
+      pickerOpen = false;
+    }
+
+    titleBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      pickerOpen = !pickerOpen;
+      picker.style.display = pickerOpen ? 'block' : 'none';
+    });
+
+    document.getElementById('rcPyPrev').addEventListener('click', function() {
+      viewYear--;
+      updatePickerYear();
+    });
+    document.getElementById('rcPyNext').addEventListener('click', function() {
+      viewYear++;
+      updatePickerYear();
+    });
+
+    function updatePickerYear() {
+      document.getElementById('rcPyVal').textContent = viewYear;
+      // Rebuild month buttons to update rc-pm-cur class
+      var mContainer = document.getElementById('rcPickMonths');
+      var todayM = new Date().getMonth();
+      var todayY = new Date().getFullYear();
+      mContainer.innerHTML = '';
+      for (var mi = 0; mi < 12; mi++) {
+        var mBtn = document.createElement('button');
+        mBtn.className = 'rc-pm-btn';
+        if (mi === viewMonth) mBtn.classList.add('rc-pm-cur');
+        if (mi === todayM && viewYear === todayY) mBtn.classList.add('rc-pm-today');
+        mBtn.dataset.m = mi;
+        mBtn.textContent = MONTH_NAMES[mi];
+        mBtn.addEventListener('click', pickMonth);
+        mContainer.appendChild(mBtn);
+      }
+    }
+
+    function pickMonth() {
+      viewMonth = parseInt(this.dataset.m);
+      closePicker();
+      renderCalendar();
+    }
+
+    document.querySelectorAll('#rcPickMonths .rc-pm-btn').forEach(function(b) {
+      b.addEventListener('click', pickMonth);
+    });
+
+    // Close picker when clicking outside
+    document.addEventListener('click', function closeOnOutside(e) {
+      if (!pickerOpen) return;
+      if (!picker.contains(e.target) && e.target !== titleBtn && !titleBtn.contains(e.target)) {
+        closePicker();
+      }
+    });
+
     // Wire cell clicks
     body.querySelectorAll('.rc-cell:not(.rc-other)').forEach(function(cell) {
       cell.addEventListener('click', function() {
@@ -307,8 +432,6 @@
       });
     });
 
-    // Render summary
-    renderSummary();
   }
 
   // ===== Open/Close =====
