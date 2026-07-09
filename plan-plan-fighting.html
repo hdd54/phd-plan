@@ -464,6 +464,35 @@ body{padding-left:var(--sb-w);transition:padding-left .3s cubic-bezier(.2,.9,.3,
 .map-tip strong{display:block;color:var(--accent);font-weight:400;font-size:.66rem;margin-bottom:.12rem}
 .map-source{position:absolute;right:clamp(.55rem,1.4vw,.9rem);bottom:clamp(.55rem,1.4vw,.9rem);max-width:min(46vw,360px);z-index:2;color:rgba(255,255,255,.34);font-size:clamp(.46rem,.72vw,.54rem);line-height:1.55;text-align:right;letter-spacing:.04em;pointer-events:none}
 .map-fallback{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:.66rem;letter-spacing:.04em}
+.map-app{position:absolute;inset:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,32%);background:linear-gradient(180deg,var(--bg2),var(--bg));color:var(--fg);min-height:0}
+.map-pane{position:relative;min-width:0;overflow:hidden;background:radial-gradient(circle at 45% 28%,color-mix(in srgb,var(--accent) 14%,transparent),transparent 34%),linear-gradient(180deg,color-mix(in srgb,var(--bg3) 82%,#000),var(--bg))}
+.map-svg{width:100%;height:100%;display:block}
+.map-region{stroke:color-mix(in srgb,var(--fg) 16%,transparent);stroke-width:.45;cursor:pointer;transition:fill .18s,stroke .18s,stroke-width .18s,opacity .18s}
+.map-region:hover{stroke:var(--fg);stroke-width:.85;opacity:1}
+.map-region.selected{stroke:var(--accent);stroke-width:1.4;filter:drop-shadow(0 0 8px color-mix(in srgb,var(--accent) 55%,transparent))}
+.map-graticule{fill:none;stroke:color-mix(in srgb,var(--fg) 8%,transparent);stroke-width:.45}
+.map-note-panel{border-left:1px solid var(--line);background:color-mix(in srgb,var(--bg2) 88%,transparent);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);padding:clamp(.7rem,1.4vw,1rem);overflow:auto;display:flex;flex-direction:column;gap:.65rem}
+.map-note-kicker{font-size:clamp(.48rem,.72vw,.55rem);color:var(--muted);letter-spacing:.16em;text-transform:uppercase}
+.map-note-title{font-size:clamp(1rem,2vw,1.4rem);font-family:var(--font-serif);font-weight:400;color:var(--accent);line-height:1.15}
+.map-note-meta{font-size:clamp(.55rem,.86vw,.66rem);line-height:1.7;color:var(--fg-dim);border:1px solid var(--line);background:color-mix(in srgb,var(--bg3) 62%,transparent);border-radius:8px;padding:.55rem}
+.map-note-form{display:grid;gap:.45rem}
+.map-note-form label{display:grid;gap:.25rem;font-size:clamp(.5rem,.78vw,.58rem);color:var(--muted);letter-spacing:.08em}
+.map-note-form input,.map-note-form textarea{width:100%;border:1px solid var(--line);border-radius:8px;background:color-mix(in srgb,var(--bg) 78%,transparent);color:var(--fg);font-family:var(--font-sans);font-size:clamp(.58rem,.9vw,.68rem);padding:.42rem .5rem;outline:none;resize:vertical}
+.map-note-form textarea{min-height:5.4rem;line-height:1.65}
+.map-note-form input:focus,.map-note-form textarea:focus{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 16%,transparent)}
+.map-note-actions{display:flex;gap:.45rem;flex-wrap:wrap}
+.map-note-btn{border:1px solid var(--line);border-radius:999px;background:color-mix(in srgb,var(--bg3) 66%,transparent);color:var(--fg-dim);font-family:var(--font-sans);font-size:clamp(.52rem,.78vw,.6rem);padding:.28rem .65rem;cursor:pointer;transition:all .18s}
+.map-note-btn:hover{border-color:var(--accent);color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,transparent)}
+.map-note-btn.primary{border-color:var(--accent);color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent)}
+.map-note-list{display:grid;gap:.45rem;margin-top:.2rem}
+.map-note-item{border:1px solid var(--line);border-radius:8px;background:color-mix(in srgb,var(--bg3) 50%,transparent);padding:.5rem;font-size:clamp(.55rem,.84vw,.64rem);line-height:1.55}
+.map-note-item strong{display:block;color:var(--accent);font-weight:400;margin-bottom:.12rem}
+.map-note-empty{font-size:clamp(.55rem,.84vw,.64rem);color:var(--muted);line-height:1.65;border:1px dashed var(--line);border-radius:8px;padding:.6rem}
+.map-tooltip{position:absolute;z-index:5;pointer-events:none;max-width:240px;border:1px solid var(--line-2);border-radius:9px;background:color-mix(in srgb,var(--bg2) 92%,transparent);box-shadow:0 14px 40px rgba(0,0,0,.42);padding:.55rem .7rem;color:var(--fg);font-size:clamp(.54rem,.78vw,.62rem);line-height:1.55;opacity:0;transform:translate(12px,12px);transition:opacity .1s}
+.map-tooltip.s{opacity:1}
+.map-tooltip strong{display:block;color:var(--accent);font-weight:400;font-size:clamp(.64rem,.9vw,.74rem);margin-bottom:.12rem}
+.map-status{position:absolute;left:clamp(.6rem,1.3vw,.9rem);bottom:clamp(.6rem,1.3vw,.9rem);right:clamp(.6rem,1.3vw,.9rem);display:flex;justify-content:space-between;gap:.6rem;color:var(--muted);font-size:clamp(.48rem,.7vw,.55rem);letter-spacing:.05em;pointer-events:none}
+@media(max-width:760px){.map-modal{height:86vh}.map-app{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) minmax(210px,34%)}.map-note-panel{border-left:none;border-top:1px solid var(--line)}}
 
 /* ---- Drag & Drop ---- */
 .di.dragging{opacity:.4;cursor:grabbing}
@@ -1218,6 +1247,7 @@ body{padding-left:var(--sb-w);transition:padding-left .3s cubic-bezier(.2,.9,.3,
   <button class="bb" id="bkpBtn" title="数据备份"><span class="bb-icon">💾</span><span class="lb-lbl">备份</span></button>
   <button class="bb" id="rcBtn" title="月历"><span class="bb-icon">🗓️</span><span class="lb-lbl">月历</span></button>
   <button class="bb" id="statBtn" title="统计分析"><span class="bb-icon">📊</span><span class="lb-lbl">统计</span></button>
+  <button class="bb" id="mapBtn" title="世界地图 / 中国地图"><span class="bb-icon">🌍</span><span class="lb-lbl">地图</span></button>
   <button class="bb" id="housingBtn" title="购房综合（贷款+成本+清单）"><span class="bb-icon">🏠</span><span class="lb-lbl">购房</span></button>
   <button class="bb" id="pdfBtn" title="打印报告"><span class="bb-icon">📄</span><span class="lb-lbl">打印</span></button>
 </div>
@@ -4708,119 +4738,144 @@ document.getElementById('helpBtn').onclick=helpOpen
 document.getElementById('helpOverlay').onclick=helpClose_
 document.getElementById('helpClose').onclick=helpClose_
 // Map modal
-var map3d=null;
+var mapApp=null;
 function mapOpen(){
   document.getElementById('mapOverlay').classList.add('s');
   document.getElementById('mapModal').classList.add('s');
-  initMap3D();
-  setTimeout(function(){ if(map3d) map3d.resize(); },60);
+  initMapApp();
+  setTimeout(function(){ if(mapApp) mapApp.render(); },60);
 }
 function mapClose_(){document.getElementById('mapOverlay').classList.remove('s');document.getElementById('mapModal').classList.remove('s')}
 var mapBtnEl=document.getElementById('mapBtn'), mapOverlayEl=document.getElementById('mapOverlay'), mapCloseEl=document.getElementById('mapClose');
 if(mapBtnEl)mapBtnEl.onclick=mapOpen
 if(mapOverlayEl)mapOverlayEl.onclick=mapClose_
 if(mapCloseEl)mapCloseEl.onclick=mapClose_
-function initMap3D(){
-  if(map3d){map3d.resize();return}
+function initMapApp(){
+  if(mapApp){mapApp.render();return}
   var modal=document.getElementById('mapModal'), body=document.getElementById('mapBody');
   if(!modal||!body)return;
-  var h=modal.querySelector('.map-header h3'), c=document.getElementById('mapClose');
-  if(h)h.textContent='三维交互地图';
-  if(c)c.textContent='×';
-  body.innerHTML='<div class="map-stage" id="mapStage"></div><div class="map-hud"><div class="map-title" id="mapTitle">世界三维地图</div><div class="map-sub" id="mapSub">拖拽旋转视角，滚轮缩放；悬停查看地区信息。</div></div><div class="map-controls"><button class="map-ctl" id="mapZoomIn" title="放大">+</button><button class="map-ctl" id="mapZoomOut" title="缩小">−</button><button class="map-ctl" id="mapReset" title="重置视角">⌂</button></div><div class="map-legend"><span><i class="map-swatch"></i>陆地/省区</span><span><i class="map-swatch cn"></i>中国重点区域</span><span><i class="map-swatch city"></i>主要城市</span></div><div class="map-source">参考自然资源部标准地图服务与天地图公开底图样式绘制；用于学习计划可视化，不作为测绘审图成果。</div><div class="map-tip" id="mapTip"></div>';
-  if(typeof THREE==='undefined'){body.insertAdjacentHTML('beforeend','<div class="map-fallback">Three.js 未加载，无法渲染三维地图。</div>');return}
+  var titleEl=modal.querySelector('.map-header h3'), closeEl=document.getElementById('mapClose');
+  if(titleEl)titleEl.textContent='世界地图 / 中国地图';
+  if(closeEl)closeEl.textContent='×';
+  body.innerHTML='<div class="map-app"><div class="map-pane"><svg class="map-svg" id="mapSvg" viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid meet"></svg><div class="map-tooltip" id="mapTooltip"></div><div class="map-status"><span id="mapHint">悬停查看时间和基本信息，点击国家/省份编辑备注</span><span>备注自动保存在本地</span></div></div><aside class="map-note-panel"><div class="map-note-kicker" id="mapScope">World</div><div class="map-note-title" id="mapSelected">请选择一个国家或省份</div><div class="map-note-meta" id="mapMeta">鼠标放在地图区域上会显示当地时间和基本信息；点击后可在这里记录时间、事件、景点、计划等。</div><div class="map-note-form"><label>时间<input id="mapNoteTime" type="text" placeholder="例如：2026-10-01 / 上午 / 第3周"></label><label>事件<textarea id="mapNoteEvent" placeholder="发生了什么，或打算做什么"></textarea></label><label>景点<textarea id="mapNotePlace" placeholder="想去的城市、景点、路线"></textarea></label><label>计划<textarea id="mapNotePlan" placeholder="交通、预算、待办、资料链接"></textarea></label><div class="map-note-actions"><button class="map-note-btn primary" id="mapNoteSave">保存备注</button><button class="map-note-btn" id="mapNoteClear">清空当前</button></div></div><div class="map-note-list" id="mapNoteList"></div></aside></div>';
 
-  var datasets={
-    world:{
-      title:'世界三维地图',
-      sub:'以官方标准地图/天地图视觉为参考，按经纬度投影为低浮雕世界地图；中国区域用朱砂色凸显。',
-      camera:8.2,
-      regions:[
-        {n:'北美洲',type:'land',d:'加拿大、美国、墨西哥及格陵兰周边轮廓',p:[[-168,70],[-145,72],[-125,67],[-110,58],[-95,52],[-82,45],[-76,35],[-94,22],[-110,18],[-125,25],[-139,38],[-155,50]]},
-        {n:'南美洲',type:'land',d:'安第斯山脉与亚马孙流域所在大陆',p:[[-82,12],[-70,8],[-58,-4],[-48,-16],[-43,-28],[-55,-42],[-65,-55],[-73,-40],[-79,-18]]},
-        {n:'欧洲',type:'land',d:'欧洲大陆与地中海北岸',p:[[-11,60],[5,66],[28,62],[42,52],[36,42],[18,36],[0,40],[-10,50]]},
-        {n:'非洲',type:'land',d:'非洲大陆轮廓',p:[[-18,36],[8,34],[32,24],[43,5],[36,-18],[24,-34],[8,-35],[-5,-20],[-16,4]]},
-        {n:'亚洲',type:'land',d:'欧亚大陆东部与西亚、中亚、东亚',p:[[30,68],[65,72],[110,68],[145,58],[160,45],[145,30],[118,22],[96,25],[75,35],[52,30],[35,45]]},
-        {n:'中国',type:'china',d:'中国区域高亮，切换“中国地图”可查看省区与城市',p:[[73,48],[90,50],[111,47],[124,42],[132,32],[122,23],[107,18],[92,22],[80,30],[73,39]]},
-        {n:'印度次大陆',type:'land',d:'南亚次大陆',p:[[68,28],[82,27],[91,20],[86,8],[78,7],[70,18]]},
-        {n:'东南亚',type:'land',d:'中南半岛与马来群岛概略',p:[[96,22],[108,18],[117,8],[110,-4],[100,5]]},
-        {n:'澳大利亚',type:'land',d:'澳大利亚大陆',p:[[113,-12],[132,-10],[153,-24],[146,-38],[122,-38],[112,-28]]},
-        {n:'南极洲',type:'land',d:'南极大陆概略轮廓',p:[[-170,-72],[-120,-68],[-40,-70],[25,-66],[105,-69],[170,-72],[160,-82],[-160,-82]]}
-      ],
-      cities:[{n:'北京',lon:116.4,lat:39.9,d:'中国首都'},{n:'上海',lon:121.5,lat:31.2,d:'长三角核心城市'},{n:'纽约',lon:-74,lat:40.7,d:'北美重要城市'},{n:'伦敦',lon:-.1,lat:51.5,d:'欧洲重要城市'},{n:'东京',lon:139.7,lat:35.7,d:'东亚重要城市'},{n:'悉尼',lon:151.2,lat:-33.9,d:'澳大利亚重要城市'}]
-    },
-    china:{
-      title:'中国三维地图',
-      sub:'按中国行政区轮廓概略绘制低浮雕省区，并标注重点城市；南海诸岛以提示点列示。',
-      camera:7.5,
-      regions:[
-        {n:'新疆',type:'land',d:'西北边疆省级行政区',p:[[73,49],[82,49],[91,46],[96,42],[94,37],[86,35],[78,36],[73,40]]},
-        {n:'西藏',type:'land',d:'青藏高原主体区域',p:[[78,36],[88,35],[97,32],[99,28],[92,26],[82,28],[76,31]]},
-        {n:'青海',type:'land',d:'三江源所在省份',p:[[90,39],[99,39],[104,35],[101,32],[96,32],[90,35]]},
-        {n:'内蒙古',type:'land',d:'北方草原与边境带',p:[[97,45],[110,48],[123,50],[126,45],[118,41],[106,41],[98,43]]},
-        {n:'东北',type:'land',d:'辽宁、吉林、黑龙江概略区域',p:[[120,53],[130,51],[135,47],[132,42],[124,40],[118,44]]},
-        {n:'华北',type:'land',d:'北京、天津、河北、山西周边',p:[[108,41],[119,41],[121,36],[115,34],[108,36]]},
-        {n:'西北中部',type:'land',d:'甘肃、宁夏、陕西概略区域',p:[[98,41],[108,40],[110,35],[105,33],[99,35]]},
-        {n:'四川重庆',type:'land',d:'成渝地区双城经济圈',p:[[98,33],[108,33],[111,29],[105,27],[98,29]]},
-        {n:'云贵',type:'land',d:'云南、贵州概略区域',p:[[97,28],[106,27],[109,24],[103,22],[97,24]]},
-        {n:'华中',type:'land',d:'河南、湖北、湖南概略区域',p:[[108,35],[116,34],[117,28],[111,26],[106,30]]},
-        {n:'华东',type:'land',d:'山东、江苏、安徽、浙江、福建与上海概略区域',p:[[116,38],[124,37],[123,30],[119,25],[114,27],[116,33]]},
-        {n:'华南',type:'land',d:'广东、广西、海南、港澳概略区域',p:[[106,25],[116,25],[119,21],[112,19],[106,21]]},
-        {n:'台湾',type:'china',d:'台湾岛',p:[[120.3,25.5],[122.1,24],[121.6,21.8],[120,22.5]]},
-        {n:'南海诸岛',type:'china',d:'南海诸岛示意',p:[[112,16],[117,15],[118,10],[112,9],[110,13]]}
-      ],
-      cities:[{n:'北京',lon:116.4,lat:39.9,d:'首都'},{n:'上海',lon:121.5,lat:31.2,d:'长三角核心'},{n:'广州',lon:113.3,lat:23.1,d:'粤港澳大湾区'},{n:'深圳',lon:114.1,lat:22.5,d:'创新与口岸城市'},{n:'杭州',lon:120.2,lat:30.3,d:'数字经济城市'},{n:'成都',lon:104.1,lat:30.7,d:'成渝核心'},{n:'武汉',lon:114.3,lat:30.6,d:'中部枢纽'},{n:'西安',lon:108.9,lat:34.3,d:'西北门户'},{n:'乌鲁木齐',lon:87.6,lat:43.8,d:'新疆首府'},{n:'拉萨',lon:91.1,lat:29.7,d:'西藏首府'}]
-    }
-  };
-
-  var stage=document.getElementById('mapStage'), tip=document.getElementById('mapTip'), title=document.getElementById('mapTitle'), sub=document.getElementById('mapSub');
-  var scene=new THREE.Scene(), camera=new THREE.PerspectiveCamera(38,1,.1,100), renderer=new THREE.WebGLRenderer({alpha:true,antialias:true});
-  renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1)); stage.appendChild(renderer.domElement);
-  scene.add(new THREE.AmbientLight(0xffffff,.72));
-  var key=new THREE.DirectionalLight(0xffe2b0,.8); key.position.set(-3,-4,6); scene.add(key);
-  var group=new THREE.Group(); scene.add(group);
-  var raycaster=new THREE.Raycaster(), pointer=new THREE.Vector2(), interactive=[], active=null, current='world', dragging=false, last={x:0,y:0};
-  var baseRot={x:-.78,z:0}, zoom=8.2;
-
-  function bounds(ds){var xs=[],ys=[]; ds.regions.forEach(function(r){r.p.forEach(function(pt){xs.push(pt[0]);ys.push(pt[1])})}); return {minX:Math.min.apply(null,xs),maxX:Math.max.apply(null,xs),minY:Math.min.apply(null,ys),maxY:Math.max.apply(null,ys)}}
-  function makeProject(ds){var b=bounds(ds), cx=(b.minX+b.maxX)/2, cy=(b.minY+b.maxY)/2, s=6.5/Math.max(b.maxX-b.minX,b.maxY-b.minY); return function(lon,lat){return new THREE.Vector2((lon-cx)*s,(lat-cy)*s)}}
-  function mat(color,opacity){return new THREE.MeshStandardMaterial({color:color,roughness:.72,metalness:.08,transparent:true,opacity:opacity||.92})}
-  function clearGroup(){while(group.children.length){var o=group.children.pop(); if(o.geometry)o.geometry.dispose(); if(o.material){if(o.material.map)o.material.map.dispose(); o.material.dispose&&o.material.dispose()}} interactive=[]; active=null}
-  function labelSprite(text,color,size){var cv=document.createElement('canvas'), cx=cv.getContext('2d'); cv.width=256; cv.height=64; cx.font='28px sans-serif'; cx.textAlign='center'; cx.textBaseline='middle'; cx.fillStyle=color; cx.shadowColor='rgba(0,0,0,.8)'; cx.shadowBlur=8; cx.fillText(text,128,32); var tex=new THREE.CanvasTexture(cv), sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthWrite:false})); sp.scale.set(size*4,size,1); return sp}
-  function setActive(obj){if(active&&active.material&&active.userData.baseColor)active.material.color.set(active.userData.baseColor); active=obj; if(active&&active.material)active.material.color.set(active.userData.hotColor||0xd4a574)}
-  function renderDataset(name){
-    current=name; clearGroup();
-    var ds=datasets[name], project=makeProject(ds); zoom=ds.camera; title.textContent=ds.title; sub.textContent=ds.sub;
-    group.rotation.x=baseRot.x; group.rotation.z=baseRot.z; camera.position.set(0,-1.2,zoom);
-    ds.regions.forEach(function(r,i){
-      var shp=new THREE.Shape(); r.p.forEach(function(pt,j){var v=project(pt[0],pt[1]); if(j===0)shp.moveTo(v.x,v.y); else shp.lineTo(v.x,v.y)}); shp.closePath();
-      var color=r.type==='china'?0xa64935:0x3f7450;
-      var mesh=new THREE.Mesh(new THREE.ExtrudeGeometry(shp,{depth:r.type==='china' ? .22 : .14,bevelEnabled:true,bevelSize:.025,bevelThickness:.025,bevelSegments:1}),mat(color,.9));
-      mesh.position.z=(i%4)*.01; mesh.userData={name:r.n,desc:r.d,baseColor:color,hotColor:r.type==='china'?0xd55e42:0xd4a574}; group.add(mesh); interactive.push(mesh);
-      var cen=r.p.reduce(function(a,p){a.lon+=p[0];a.lat+=p[1];return a},{lon:0,lat:0}); cen.lon/=r.p.length; cen.lat/=r.p.length; var cp=project(cen.lon,cen.lat);
-      if((name==='china'||r.type==='china'||['亚洲','欧洲','非洲','澳大利亚'].indexOf(r.n)>=0)){var lb=labelSprite(r.n,r.type==='china'?'#f08a70':'#d4a574',.22); lb.position.set(cp.x,cp.y,.42); group.add(lb)}
+  var tabs=[].slice.call(document.querySelectorAll('.map-tab'));
+  var svg=document.getElementById('mapSvg'), tip=document.getElementById('mapTooltip');
+  var selectedTitle=document.getElementById('mapSelected'), scopeEl=document.getElementById('mapScope'), metaEl=document.getElementById('mapMeta');
+  var inputTime=document.getElementById('mapNoteTime'), inputEvent=document.getElementById('mapNoteEvent'), inputPlace=document.getElementById('mapNotePlace'), inputPlan=document.getElementById('mapNotePlan'), listEl=document.getElementById('mapNoteList');
+  var current='world', selected=null, notes=loadNotes();
+  var worldRegions=[
+    {id:'world:CN',name:'中国',tz:'Asia/Shanghai',info:'东亚国家，首都北京。',pop:'约14亿',points:[[690,210],[735,200],[790,220],[805,260],[780,305],[720,315],[670,285],[660,240]]},
+    {id:'world:US',name:'美国',tz:'America/New_York',info:'北美国家，首都华盛顿。',pop:'约3.3亿',points:[[160,205],[250,175],[320,205],[305,260],[245,295],[170,270]]},
+    {id:'world:CA',name:'加拿大',tz:'America/Toronto',info:'北美北部国家，首都渥太华。',pop:'约4000万',points:[[130,105],[285,80],[350,125],[310,175],[165,190],[90,145]]},
+    {id:'world:BR',name:'巴西',tz:'America/Sao_Paulo',info:'南美最大国家，首都巴西利亚。',pop:'约2.1亿',points:[[315,330],[375,335],[430,390],[405,485],[345,505],[300,435]]},
+    {id:'world:GB',name:'英国',tz:'Europe/London',info:'欧洲岛国，首都伦敦。',pop:'约6700万',points:[[485,165],[505,150],[525,170],[515,200],[490,195]]},
+    {id:'world:FR',name:'法国',tz:'Europe/Paris',info:'西欧国家，首都巴黎。',pop:'约6800万',points:[[510,205],[545,205],[560,235],[535,260],[505,245]]},
+    {id:'world:DE',name:'德国',tz:'Europe/Berlin',info:'中欧国家，首都柏林。',pop:'约8400万',points:[[548,185],[585,185],[595,220],[565,240],[540,220]]},
+    {id:'world:RU',name:'俄罗斯',tz:'Europe/Moscow',info:'横跨欧亚大陆，首都莫斯科。',pop:'约1.4亿',points:[[585,105],[860,80],[950,135],[900,205],[720,190],[600,165]]},
+    {id:'world:IN',name:'印度',tz:'Asia/Kolkata',info:'南亚国家，首都新德里。',pop:'约14亿',points:[[650,300],[700,290],[725,345],[690,405],[655,360]]},
+    {id:'world:JP',name:'日本',tz:'Asia/Tokyo',info:'东亚岛国，首都东京。',pop:'约1.2亿',points:[[845,230],[870,245],[858,285],[835,270]]},
+    {id:'world:AU',name:'澳大利亚',tz:'Australia/Sydney',info:'大洋洲国家，首都堪培拉。',pop:'约2600万',points:[[760,425],[850,415],[905,465],[875,520],[785,510],[735,470]]},
+    {id:'world:ZA',name:'南非',tz:'Africa/Johannesburg',info:'非洲南端国家，行政首都比勒陀利亚。',pop:'约6000万',points:[[530,455],[595,455],[620,500],[570,525],[520,500]]},
+    {id:'world:EG',name:'埃及',tz:'Africa/Cairo',info:'东北非国家，首都开罗。',pop:'约1.1亿',points:[[560,275],[615,270],[630,315],[590,340],[555,315]]}
+  ];
+  var worldFullRegions=null, worldLoading=false;
+  var countryNames={'004':'阿富汗','008':'阿尔巴尼亚','012':'阿尔及利亚','024':'安哥拉','032':'阿根廷','036':'澳大利亚','040':'奥地利','050':'孟加拉国','056':'比利时','076':'巴西','124':'加拿大','156':'中国','250':'法国','276':'德国','356':'印度','360':'印度尼西亚','392':'日本','410':'韩国','484':'墨西哥','643':'俄罗斯','710':'南非','826':'英国','840':'美国'};
+  var chinaRegions=[
+    {id:'china:XJ',name:'新疆',tz:'Asia/Urumqi',info:'中国西北边疆省级行政区，首府乌鲁木齐。',pop:'约2600万',points:[[145,110],[320,100],[385,160],[365,255],[250,285],[135,230]]},
+    {id:'china:XZ',name:'西藏',tz:'Asia/Shanghai',info:'青藏高原主体区域，首府拉萨。',pop:'约360万',points:[[185,290],[360,270],[455,335],[420,420],[250,430],[150,365]]},
+    {id:'china:QH',name:'青海',tz:'Asia/Shanghai',info:'三江源所在省份，省会西宁。',pop:'约590万',points:[[365,255],[485,250],[535,320],[455,365],[360,310]]},
+    {id:'china:NM',name:'内蒙古',tz:'Asia/Shanghai',info:'北方草原与边境带，首府呼和浩特。',pop:'约2400万',points:[[405,120],[650,110],[820,150],[760,220],[585,225],[455,190]]},
+    {id:'china:HLJ',name:'黑龙江',tz:'Asia/Shanghai',info:'东北北部省份，省会哈尔滨。',pop:'约3100万',points:[[760,120],[900,110],[945,175],[870,235],[770,205]]},
+    {id:'china:LNJL',name:'吉林/辽宁',tz:'Asia/Shanghai',info:'东北中南部区域，包含吉林、辽宁概略。',pop:'约6600万',points:[[770,215],[875,235],[850,305],[755,300],[710,250]]},
+    {id:'china:BJHB',name:'京津冀',tz:'Asia/Shanghai',info:'北京、天津、河北核心区域。',pop:'约1.1亿',points:[[610,245],[710,235],[735,300],[675,335],[595,305]]},
+    {id:'china:SD',name:'山东',tz:'Asia/Shanghai',info:'华东沿海省份，省会济南。',pop:'约1亿',points:[[700,320],[805,315],[835,365],[760,395],[690,365]]},
+    {id:'china:GSNX',name:'甘肃/宁夏',tz:'Asia/Shanghai',info:'西北走廊区域，连接西部与中原。',pop:'约3300万',points:[[470,225],[595,225],[610,300],[530,315],[480,275]]},
+    {id:'china:SX',name:'陕西',tz:'Asia/Shanghai',info:'西北门户，省会西安。',pop:'约3900万',points:[[565,315],[635,320],[650,395],[595,425],[540,380]]},
+    {id:'china:SCCQ',name:'四川/重庆',tz:'Asia/Shanghai',info:'成渝地区双城经济圈。',pop:'约1.1亿',points:[[430,365],[555,360],[600,430],[535,490],[420,455]]},
+    {id:'china:YN',name:'云南',tz:'Asia/Shanghai',info:'西南边疆省份，省会昆明。',pop:'约4700万',points:[[410,455],[525,490],[500,555],[390,545],[345,500]]},
+    {id:'china:GZGX',name:'贵州/广西',tz:'Asia/Shanghai',info:'西南至华南连接区域。',pop:'约8600万',points:[[525,460],[640,455],[675,520],[590,555],[500,520]]},
+    {id:'china:HNHUB',name:'河南/湖北/湖南',tz:'Asia/Shanghai',info:'中部核心区域，交通枢纽密集。',pop:'约2.1亿',points:[[635,385],[735,380],[755,465],[680,520],[610,455]]},
+    {id:'china:JZ',name:'江浙沪皖',tz:'Asia/Shanghai',info:'长三角与安徽区域，经济活跃。',pop:'约2.3亿',points:[[735,385],[840,380],[865,455],[795,510],[725,470]]},
+    {id:'china:FJTW',name:'福建/台湾',tz:'Asia/Shanghai',info:'东南沿海与台湾岛概略。',pop:'约6500万',points:[[815,475],[885,480],[870,540],[805,535]]},
+    {id:'china:GDHK',name:'广东/港澳',tz:'Asia/Shanghai',info:'粤港澳大湾区所在区域。',pop:'约1.3亿',points:[[670,520],[800,515],[830,565],[725,590],[645,560]]},
+    {id:'china:HAINAN',name:'海南',tz:'Asia/Shanghai',info:'中国南端热带岛屿省份。',pop:'约1000万',points:[[720,615],[765,620],[760,655],[715,650]]}
+  ];
+  function loadNotes(){try{return JSON.parse(localStorage.getItem('_mapNotesV2')||'{}')}catch(e){return {}}}
+  function saveNotes(){localStorage.setItem('_mapNotesV2',JSON.stringify(notes))}
+  function esc(s){return String(s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+  function pathFrom(points){return points.map(function(p,i){return (i?'L':'M')+p[0]+' '+p[1]}).join(' ')+' Z'}
+  function getTime(r){try{return new Date().toLocaleString('zh-CN',{timeZone:r.tz||'Asia/Shanghai',hour12:false,month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})}catch(e){return new Date().toLocaleString('zh-CN',{hour12:false})}}
+  function colorFor(i,total){var hue=(i/Math.max(1,total))*120+150;return 'hsl('+hue+' 36% 34%)'}
+  function render(){
+    var data=current==='china'?chinaRegions:(worldFullRegions||worldRegions);
+    scopeEl.textContent=current==='china'?'China':'World';
+    if(current==='world'&&worldFullRegions&&window.d3){renderWorldFull(data);return}
+    if(current==='world'&&!worldFullRegions&&!worldLoading)ensureWorldData();
+    svg.setAttribute('viewBox',current==='china'?'70 70 900 620':'0 40 1000 540');
+    var grid='';
+    for(var x=100;x<1000;x+=100)grid+='<path class="map-graticule" d="M'+x+' 40 L'+x+' 580"/>';
+    for(var y=100;y<600;y+=80)grid+='<path class="map-graticule" d="M0 '+y+' L1000 '+y+'"/>';
+    svg.innerHTML='<rect x="-20" y="20" width="1040" height="620" fill="var(--bg3)"/>'+grid+data.map(function(r,i){var sel=selected&&selected.id===r.id?' selected':'';return '<path class="map-region'+sel+'" data-id="'+r.id+'" d="'+pathFrom(r.points)+'" fill="'+colorFor(i,data.length)+'" opacity=".9"></path>'}).join('');
+    svg.querySelectorAll('.map-region').forEach(function(el){
+      el.addEventListener('mouseenter',onHover);
+      el.addEventListener('mousemove',moveTip);
+      el.addEventListener('mouseleave',hideTip);
+      el.addEventListener('click',function(){selectRegion(findRegion(el.dataset.id))});
     });
-    ds.cities.forEach(function(c){
-      var p=project(c.lon,c.lat), dot=new THREE.Mesh(new THREE.SphereGeometry(.055,16,12),new THREE.MeshBasicMaterial({color:0x8fd0d3}));
-      dot.position.set(p.x,p.y,.5); dot.userData={name:c.n,desc:c.d||'主要城市',hotColor:0xffffff}; group.add(dot); interactive.push(dot);
-      var lb=labelSprite(c.n,'#d7eceb',.16); lb.position.set(p.x+.18,p.y+.13,.56); group.add(lb);
-    });
-    var grid=new THREE.GridHelper(7.2,12,0x31515a,0x26363b); grid.rotation.x=Math.PI/2; grid.position.z=-.04; grid.material.transparent=true; grid.material.opacity=.18; group.add(grid);
+    if(!selected)selectRegion(data[0],true); else renderPanel();
   }
-  function resize(){var r=stage.getBoundingClientRect(); if(!r.width||!r.height)return; camera.aspect=r.width/r.height; camera.updateProjectionMatrix(); renderer.setSize(r.width,r.height,false)}
-  function animate(){requestAnimationFrame(animate); group.rotation.z+=dragging?0:.0008; renderer.render(scene,camera)}
-  function pick(e){var rect=stage.getBoundingClientRect(); pointer.x=((e.clientX-rect.left)/rect.width)*2-1; pointer.y=-((e.clientY-rect.top)/rect.height)*2+1; raycaster.setFromCamera(pointer,camera); var hit=raycaster.intersectObjects(interactive,false)[0]; if(hit){setActive(hit.object); tip.innerHTML='<strong>'+hit.object.userData.name+'</strong>'+(hit.object.userData.desc||''); tip.style.left=(e.clientX-rect.left)+'px'; tip.style.top=(e.clientY-rect.top)+'px'; tip.style.opacity=1}else{setActive(null); tip.style.opacity=0}}
-  stage.addEventListener('pointerdown',function(e){dragging=true;last.x=e.clientX;last.y=e.clientY;stage.setPointerCapture(e.pointerId)});
-  stage.addEventListener('pointermove',function(e){if(dragging){group.rotation.z+=(e.clientX-last.x)*.006; group.rotation.x+=(e.clientY-last.y)*.004; group.rotation.x=Math.max(-1.2,Math.min(-.3,group.rotation.x)); last.x=e.clientX; last.y=e.clientY}else pick(e)});
-  stage.addEventListener('pointerup',function(e){dragging=false;try{stage.releasePointerCapture(e.pointerId)}catch(_){}}); stage.addEventListener('pointerleave',function(){dragging=false;setActive(null);tip.style.opacity=0});
-  stage.addEventListener('wheel',function(e){e.preventDefault(); zoom=Math.max(4.6,Math.min(12.5,zoom+e.deltaY*.006)); camera.position.z=zoom},{passive:false});
-  document.getElementById('mapZoomIn').onclick=function(){zoom=Math.max(4.6,zoom-.7);camera.position.z=zoom};
-  document.getElementById('mapZoomOut').onclick=function(){zoom=Math.min(12.5,zoom+.7);camera.position.z=zoom};
-  document.getElementById('mapReset').onclick=function(){group.rotation.x=baseRot.x;group.rotation.z=baseRot.z;zoom=datasets[current].camera;camera.position.z=zoom};
-  document.querySelectorAll('.map-tab').forEach(function(tab){tab.addEventListener('click',function(){document.querySelectorAll('.map-tab').forEach(function(t){t.classList.remove('a')});tab.classList.add('a');renderDataset(tab.dataset.map||'world');resize()})});
-  window.addEventListener('resize',resize);
-  map3d={resize:resize,render:renderDataset};
-  renderDataset('world'); resize(); animate();
+  function loadScript(src){return new Promise(function(resolve,reject){var old=document.querySelector('script[src="'+src+'"]');if(old){resolve();return}var s=document.createElement('script');s.src=src;s.onload=resolve;s.onerror=reject;document.head.appendChild(s)})}
+  function ensureWorldData(){
+    worldLoading=true;
+    Promise.resolve()
+      .then(function(){return window.d3?null:loadScript('https://cdn.jsdelivr.net/npm/d3@7')})
+      .then(function(){return window.topojson?null:loadScript('https://cdn.jsdelivr.net/npm/topojson-client@3')})
+      .then(function(){return fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')})
+      .then(function(r){return r.json()})
+      .then(function(topology){
+        var features=topojson.feature(topology,topology.objects.countries).features;
+        worldFullRegions=features.map(function(f){
+          var raw=String(f.id||'');
+          while(raw.length<3)raw='0'+raw;
+          var nm=(f.properties&&f.properties.name)||countryNames[raw]||('国家 '+raw);
+          return {id:'world:'+raw,name:nm,tz:tzForCountry(raw),info:'世界地图国家/地区边界。数据来自 world-atlas 公开 TopoJSON。',pop:'--',feature:f};
+        });
+        worldLoading=false;
+        if(current==='world'){selected=null;render()}
+      })
+      .catch(function(){worldLoading=false});
+  }
+  function tzForCountry(id){return {'156':'Asia/Shanghai','840':'America/New_York','124':'America/Toronto','076':'America/Sao_Paulo','826':'Europe/London','250':'Europe/Paris','276':'Europe/Berlin','643':'Europe/Moscow','356':'Asia/Kolkata','392':'Asia/Tokyo','036':'Australia/Sydney','710':'Africa/Johannesburg','818':'Africa/Cairo'}[id]||'UTC'}
+  function renderWorldFull(data){
+    svg.setAttribute('viewBox','0 0 1000 560');
+    var fc={type:'FeatureCollection',features:data.map(function(r){return r.feature})};
+    var projection=d3.geoNaturalEarth1().fitSize([980,520],fc).translate([500,285]);
+    var path=d3.geoPath(projection);
+    var graticule=d3.geoGraticule10();
+    svg.innerHTML='<rect x="0" y="0" width="1000" height="560" fill="var(--bg3)"/><path class="map-graticule" d="'+path(graticule)+'"/>'+data.map(function(r,i){var sel=selected&&selected.id===r.id?' selected':'';return '<path class="map-region'+sel+'" data-id="'+r.id+'" d="'+path(r.feature)+'" fill="'+colorFor(i,data.length)+'" opacity=".88"></path>'}).join('');
+    svg.querySelectorAll('.map-region').forEach(function(el){el.addEventListener('mouseenter',onHover);el.addEventListener('mousemove',moveTip);el.addEventListener('mouseleave',hideTip);el.addEventListener('click',function(){selectRegion(findRegion(el.dataset.id))})});
+    if(!selected)selectRegion(data.filter(function(r){return r.id==='world:156'})[0]||data[0],true); else renderPanel();
+  }
+  function findRegion(id){return (worldFullRegions||worldRegions).concat(chinaRegions).filter(function(r){return r.id===id})[0]}
+  function noteFor(r){if(!r)return {};return notes[r.id]||{}}
+  function onHover(e){var r=findRegion(e.currentTarget.dataset.id), n=noteFor(r);tip.innerHTML='<strong>'+esc(r.name)+'</strong><div>当地时间：'+esc(getTime(r))+'</div><div>'+esc(r.info)+'</div><div>人口：'+esc(r.pop||'--')+'</div>'+(n.time?'<div>备注时间：'+esc(n.time)+'</div>':'');tip.classList.add('s');moveTip(e)}
+  function moveTip(e){var box=body.getBoundingClientRect();tip.style.left=(e.clientX-box.left)+'px';tip.style.top=(e.clientY-box.top)+'px'}
+  function hideTip(){tip.classList.remove('s')}
+  function selectRegion(r,silent){if(!r)return;selected=r;renderPanel();if(!silent)render()}
+  function renderPanel(){
+    var n=noteFor(selected);
+    selectedTitle.textContent=selected?selected.name:'请选择一个国家或省份';
+    metaEl.innerHTML=selected?('当地时间：'+esc(getTime(selected))+'<br>基本信息：'+esc(selected.info)+'<br>人口：'+esc(selected.pop||'--')):'点击地图后编辑备注。';
+    inputTime.value=n.time||'';inputEvent.value=n.event||'';inputPlace.value=n.place||'';inputPlan.value=n.plan||'';
+    var has=n.time||n.event||n.place||n.plan;
+    listEl.innerHTML=has?('<div class="map-note-item"><strong>已保存</strong>'+(n.time?'时间：'+esc(n.time)+'<br>':'')+(n.event?'事件：'+esc(n.event)+'<br>':'')+(n.place?'景点：'+esc(n.place)+'<br>':'')+(n.plan?'计划：'+esc(n.plan):'')+'</div>'):'<div class="map-note-empty">这里还没有备注。可以写时间、事件、景点、计划、路线或其它想法。</div>';
+  }
+  document.getElementById('mapNoteSave').onclick=function(){if(!selected)return;notes[selected.id]={time:inputTime.value.trim(),event:inputEvent.value.trim(),place:inputPlace.value.trim(),plan:inputPlan.value.trim(),updatedAt:new Date().toISOString()};saveNotes();renderPanel();toast('地图备注已保存')};
+  document.getElementById('mapNoteClear').onclick=function(){if(!selected)return;delete notes[selected.id];saveNotes();renderPanel();toast('当前地图备注已清空')};
+  tabs.forEach(function(tab){tab.addEventListener('click',function(){tabs.forEach(function(t){t.classList.remove('a')});tab.classList.add('a');current=tab.dataset.map||'world';selected=null;hideTip();render()})});
+  mapApp={render:render};
+  render();
 }
 document.addEventListener('keydown',function(e){
   if(e.key==='?'&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!e.target.closest('input,textarea,[contentEditable]')){

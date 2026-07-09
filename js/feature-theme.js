@@ -1,4 +1,4 @@
-// ===== FEATURE: Theme System (6 color schemes) =====
+// ===== FEATURE: Theme System =====
 (function(){
   if(window.__features['theme']) return;
   window.__features['theme'] = true;
@@ -147,6 +147,96 @@
         '--card':'#151a24','--card-h':'#1e2430'
       },
       el: {}
+    },
+    'midnight-cyan': {
+      name: '午夜青', icon: '🌌',
+      vars: {
+        '--bg':'#061014','--bg2':'#0b1b20','--bg3':'#112b32',
+        '--fg':'#e7f7f8','--fg-dim':'#9bc6ca','--muted':'#5a8288',
+        '--accent':'#38c8d6','--accent-2':'#ff7a59','--accent-3':'#9fe870',
+        '--line':'#163039','--line-2':'#21434d',
+        '--cinnabar':'#ef5f54','--cinnabar-dim':'rgba(239,95,84,.12)',
+        '--jade':'#3fcf8e','--jade-dim':'rgba(63,207,142,.1)',
+        '--gold-leaf':'#e0c46c','--gold-dim':'rgba(56,200,214,.12)',
+        '--card':'#0b1b20','--card-h':'#112b32'
+      },
+      el: {}
+    },
+    'lotus-ink': {
+      name: '莲墨', icon: '🪷',
+      vars: {
+        '--bg':'#0c0b12','--bg2':'#151321','--bg3':'#211d32',
+        '--fg':'#f1edf7','--fg-dim':'#b9adc8','--muted':'#7d728d',
+        '--accent':'#e0a8c8','--accent-2':'#86d0c4','--accent-3':'#c7b6ff',
+        '--line':'#27223a','--line-2':'#3a3350',
+        '--cinnabar':'#d65a78','--cinnabar-dim':'rgba(214,90,120,.12)',
+        '--jade':'#66bfae','--jade-dim':'rgba(102,191,174,.1)',
+        '--gold-leaf':'#d8bd7a','--gold-dim':'rgba(224,168,200,.12)',
+        '--card':'#151321','--card-h':'#211d32'
+      },
+      el: {}
+    },
+    'paper-bamboo': {
+      name: '纸竹', icon: '🎋',
+      vars: {
+        '--bg':'#f7f3e8','--bg2':'#ece4d2','--bg3':'#ded2b9',
+        '--fg':'#2b261b','--fg-dim':'#665f4d','--muted':'#9b927c',
+        '--accent':'#4f8a5f','--accent-2':'#c46a3a','--accent-3':'#447c93',
+        '--line':'rgba(58,47,31,.12)','--line-2':'rgba(58,47,31,.2)',
+        '--cinnabar':'#b94632','--cinnabar-dim':'rgba(185,70,50,.12)',
+        '--jade':'#4f8a5f','--jade-dim':'rgba(79,138,95,.12)',
+        '--gold-leaf':'#b68d42','--gold-dim':'rgba(79,138,95,.14)',
+        '--card':'#f0e9d8','--card-h':'#e4dac4'
+      },
+      el: {
+        '.btm-bar':'background:rgba(247,243,232,.92)',
+        '.fm-exit':'background:rgba(247,243,232,.85)'
+      }
+    },
+    'sunrise-peach': {
+      name: '晨桃', icon: '🌅',
+      vars: {
+        '--bg':'#140d0f','--bg2':'#211418','--bg3':'#341d21',
+        '--fg':'#fff0e8','--fg-dim':'#d5aa9d','--muted':'#8c655d',
+        '--accent':'#ffb36b','--accent-2':'#ff6f91','--accent-3':'#67d5c8',
+        '--line':'#3a2428','--line-2':'#513238',
+        '--cinnabar':'#ef5b62','--cinnabar-dim':'rgba(239,91,98,.12)',
+        '--jade':'#55bda7','--jade-dim':'rgba(85,189,167,.1)',
+        '--gold-leaf':'#f2c879','--gold-dim':'rgba(255,179,107,.13)',
+        '--card':'#211418','--card-h':'#341d21'
+      },
+      el: {}
+    },
+    'glacier-white': {
+      name: '冰川白', icon: '🏔️',
+      vars: {
+        '--bg':'#f4f8fb','--bg2':'#e8f0f5','--bg3':'#dce8ef',
+        '--fg':'#1b2a32','--fg-dim':'#5d707b','--muted':'#92a2aa',
+        '--accent':'#2f8fb4','--accent-2':'#d4686f','--accent-3':'#4b9f7d',
+        '--line':'rgba(31,63,77,.1)','--line-2':'rgba(31,63,77,.18)',
+        '--cinnabar':'#c8525d','--cinnabar-dim':'rgba(200,82,93,.12)',
+        '--jade':'#4b9f7d','--jade-dim':'rgba(75,159,125,.1)',
+        '--gold-leaf':'#ad8f42','--gold-dim':'rgba(47,143,180,.12)',
+        '--card':'#edf4f8','--card-h':'#e0edf4'
+      },
+      el: {
+        '.btm-bar':'background:rgba(244,248,251,.92)',
+        '.fm-exit':'background:rgba(244,248,251,.85)'
+      }
+    },
+    'neon-night': {
+      name: '霓虹夜', icon: '🟣',
+      vars: {
+        '--bg':'#05070f','--bg2':'#0b1020','--bg3':'#131a30',
+        '--fg':'#eef2ff','--fg-dim':'#a9b5d8','--muted':'#677194',
+        '--accent':'#7dd3fc','--accent-2':'#fb7185','--accent-3':'#a78bfa',
+        '--line':'#1b2540','--line-2':'#2b3658',
+        '--cinnabar':'#fb7185','--cinnabar-dim':'rgba(251,113,133,.12)',
+        '--jade':'#34d399','--jade-dim':'rgba(52,211,153,.1)',
+        '--gold-leaf':'#fde68a','--gold-dim':'rgba(125,211,252,.12)',
+        '--card':'#0b1020','--card-h':'#131a30'
+      },
+      el: {}
     }
   };
 
@@ -166,7 +256,7 @@
     currentTheme = id;
 
     // Remove any previous theme class, then add current
-    document.documentElement.classList.remove('t-warm-dark', 't-warm-light', 't-deep-blue', 't-forest-green', 't-twilight-purple', 't-minimal-gray', 't-scarlet-red', 't-aurora', 't-autumn-leaves', 't-misty-blue');
+    Object.keys(THEMES).forEach(function(themeId){document.documentElement.classList.remove('t-' + themeId)});
     document.documentElement.classList.add('t-' + id);
 
     // Build CSS variable overrides
@@ -267,7 +357,7 @@
     '.theme-picker{position:fixed;bottom:clamp(2.5rem,4vw,3.2rem);left:50%;transform:translateX(-50%);z-index:200;' +
     'background:var(--bg3);border:1px solid var(--line-2);border-radius:12px;padding:clamp(.35rem,.5vw,.45rem);' +
     'box-shadow:0 8px 40px rgba(0,0,0,.6);display:flex;gap:clamp(.2rem,.3vw,.3rem);flex-wrap:wrap;' +
-    'justify-content:center;max-width:clamp(340px,80vw,480px)}' +
+    'justify-content:center;max-width:clamp(340px,88vw,760px);max-height:min(58vh,420px);overflow:auto}' +
     '.tp-item{display:flex;align-items:center;gap:clamp(.2rem,.3vw,.25rem);padding:clamp(.25rem,.35vw,.3rem) clamp(.35rem,.5vw,.45rem);' +
     'border-radius:8px;cursor:pointer;transition:background .15s;border:1px solid transparent}' +
     '.tp-item:hover{background:rgba(255,255,255,.06);border-color:var(--line)}' +
