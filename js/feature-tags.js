@@ -39,11 +39,11 @@
     .tag-dot2.k{background:#e91e63}.tag-dot2.t{background:#00bcd4}.tag-dot2.s{background:#64b5f6}
     .tag-dot2.l{background:#8bc34a}.tag-dot2.w{background:#795548}.tag-dot2.v{background:#9e9e9e}
     /* Compact inline picker */
-    .tg-picker{display:none;position:absolute;top:100%;left:calc(100% + 3px);transform:none;z-index:600;background:var(--bg3);border:1px solid var(--line);border-radius:10px;padding:5px;box-shadow:0 8px 32px rgba(0,0,0,.5);white-space:nowrap;margin-top:3px;max-width:calc(100vw - 12px);overflow-x:auto}
+    .tg-picker{display:none;position:absolute;top:100%;left:calc(100% + 3px);transform:none;z-index:5000;background:var(--bg3);border:1px solid var(--line);border-radius:10px;padding:5px;box-shadow:0 10px 36px rgba(0,0,0,.55);white-space:nowrap;margin-top:3px;max-width:calc(100vw - 12px);overflow-x:auto}
     .tg-picker.s{display:flex;gap:4px;flex-wrap:nowrap;width:max-content}
-    .tg-picker .tgp-btn{min-width:max-content;height:clamp(22px,2.4vw,26px);border-radius:999px;border:1px solid transparent;cursor:pointer;padding:0 .45rem;background:transparent;transition:all .15s;font-size:clamp(9px,.85vw,11px);line-height:1;text-align:center;color:rgba(255,255,255,.92);font-weight:500;font-family:var(--font-sans);display:inline-flex;align-items:center;gap:.25rem}
-    .tg-picker .tgp-btn:hover{transform:translateY(-1px);border-color:rgba(255,255,255,.28)}
-    .tg-picker .tgp-btn.a{border-color:var(--accent);box-shadow:0 0 6px rgba(212,165,116,.4);transform:translateY(-1px)}
+    .tg-picker .tgp-btn{width:clamp(24px,2.6vw,28px);height:clamp(24px,2.6vw,28px);border-radius:50%;border:1.5px solid rgba(255,255,255,.18);cursor:pointer;padding:0;background:transparent;transition:all .15s;font-size:clamp(9px,.85vw,11px);line-height:1;text-align:center;color:rgba(255,255,255,.95);font-weight:700;font-family:var(--font-sans);display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto}
+    .tg-picker .tgp-btn:hover{transform:translateY(-1px) scale(1.08);border-color:rgba(255,255,255,.42)}
+    .tg-picker .tgp-btn.a{border-color:var(--accent);box-shadow:0 0 0 2px rgba(212,165,116,.25),0 0 8px rgba(212,165,116,.45);transform:translateY(-1px) scale(1.08)}
     .tgp-num{font-weight:700;font-size:.9em;opacity:.95}
     .tgp-text{font-size:.95em}
     .tgp-n{background:var(--line-2);opacity:.4}
@@ -120,7 +120,7 @@
       btn.type = 'button';
       btn.dataset.tag = t;
       btn.className = 'tgp-btn tgp-' + (t || 'n');
-      btn.innerHTML = '<span class="tgp-num">' + (TAG_NUM[t] || '0') + '</span><span class="tgp-text">' + TAG_COLORS[t].label + '</span>';
+      btn.innerHTML = '<span class="tgp-num">' + (TAG_NUM[t] || '0') + '</span>';
       btn.title = TAG_COLORS[t].label;
       if(t === currentTag) btn.classList.add('a');
       btn.addEventListener('click', function(e){
