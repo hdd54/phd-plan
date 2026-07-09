@@ -1853,7 +1853,7 @@ function cloneDeep(arr){return arr.map(w=>({w:w.w,s:w.s||'',d:[...w.d]}))}
 function save(){localStorage.setItem(SK,JSON.stringify(data));saveOpenState();try{computeStats()}catch(e){}}
 
 // ======================== RENDER ========================
-function renderWeeks(cardId) {
+function renderWeeks(cardId, preserveState) {
   const container = document.querySelector(`.wp[data-c="${cardId}"]`);
   if (!container) return;
   if (!data[cardId]) data[cardId] = [];
@@ -1873,13 +1873,16 @@ function renderWeeks(cardId) {
   });
 
   // Save current open states before re-render
-  container.querySelectorAll('.week').forEach(el => {
-    const wi = el.dataset.wi;
-    if (wi !== undefined) {
-      const body = el.querySelector('.wk-body');
-      openState[cardId][wi] = body ? body.classList.contains('o') : false;
-    }
-  });
+  // skipState: true when caller has already set correct openState (e.g. add-week handler)
+  if (preserveState !== 'skip') {
+    container.querySelectorAll('.week').forEach(el => {
+      const wi = el.dataset.wi;
+      if (wi !== undefined) {
+        const body = el.querySelector('.wk-body');
+        openState[cardId][wi] = body ? body.classList.contains('o') : false;
+      }
+    });
+  }
   // Save card-level open state
   const existingToggle = container.querySelector('.wt');
   const cardWasOpen = existingToggle ? existingToggle.classList.contains('o') : false;
@@ -2639,26 +2642,16 @@ document.addEventListener('click', e => {
     if (!openState[cid]) openState[cid] = {};
     var newWi = insertAt >= 0 ? insertAt : data[cid].length - 1;
     openState[cid][newWi] = true;
-    save(); renderWeeks(cid);
-    // renderWeeks's DOM state-save loop overwrites openState entries at old wi indices,
-    // which can corrupt the new week's state (when inserted mid-list). Re-assert it here.
-    openState[cid][newWi] = true;
-    saveOpenState();
-    // Force-open the new week in DOM (guaranteed even if openState was corrupted)
-    var _cont = document.querySelector(`.wp[data-c="${cid}"]`);
-    if (_cont) {
-      var _nw = _cont.querySelector(`.week[data-wi="${newWi}"]`);
-      if (_nw) {
-        var _nb = _nw.querySelector('.wk-body');
-        var _nt = _nw.querySelector('.wk-toggle');
-        if (_nb) _nb.classList.add('o');
-        if (_nt) _nt.classList.add('o');
-      }
-    }
-    // Auto-open the card body so the new week is visible in real-time
+    save(); renderWeeks(cid, 'skip');
+    // renderWeeks with 'skip' avoids the DOM-save phase, so openState[cid] stays correct.
+    // New week is rendered open. Now ensure card body is visible.
     var _ab = document.getElementById('plan-body-'+cid);
-    var _at = _ab && _ab.parentElement ? _ab.parentElement.querySelector('.wt') : null;
-    if (_ab && _at) { _ab.classList.add('o'); _at.classList.add('o'); }
+    if (_ab && !_ab.classList.contains('o')) {
+      _ab.classList.add('o');
+      var _at = _ab.parentElement ? _ab.parentElement.querySelector('.wt') : null;
+      if (_at) _at.classList.add('o');
+    }
+    saveOpenState();
     showToast('✓ 已添加');
     return;
   }
@@ -5641,9 +5634,11 @@ console.log('DBG: sn try block entered');
 window.data = data;
 window.showToast = showToast;
 window.save = save;
+var _origRenderWeeks = renderWeeks;
 window.renderWeeks = renderWeeks;
-// Route local calls through window.renderWeeks so feature patches (feature-tags.js) apply
-renderWeeks = function(cid){ window.renderWeeks(cid); };
+// Route local calls through _origRenderWeeks (direct reference, not window.renderWeeks)
+// so that _exportFeatVars (line 1699) can't overwrite window.renderWeeks with the wrapper and cause infinite recursion.
+renderWeeks = function(cid, preserveState){ _origRenderWeeks(cid, preserveState); };
 })();
 </script>
 <script src="js/core.js"></script>

@@ -31,6 +31,9 @@
     .tag-dot2{width:clamp(14px,1.6vw,16px);height:clamp(14px,1.6vw,16px);border-radius:50%;flex-shrink:0;transition:transform .15s;font-size:clamp(7px,.75vw,8px);line-height:clamp(14px,1.6vw,16px);text-align:center;color:rgba(255,255,255,.9);font-weight:600;font-family:var(--font-sans);overflow:hidden}
     .tag-dot2:hover{transform:scale(1.4)}
     .tag-dot2.n{background:var(--line-2);opacity:.4}
+    /* Tag label text */
+    .tg-lbl{font-size:clamp(.45rem,.65vw,.5rem);color:var(--muted);margin-left:1px;white-space:nowrap;font-family:var(--font-sans);font-weight:300;letter-spacing:.03em}
+    .tg-lbl.n{display:none}
     .tag-dot2.r{background:#e74c3c}.tag-dot2.g{background:#2ecc71}.tag-dot2.y{background:#c9a040}
     .tag-dot2.b{background:var(--accent-3)}.tag-dot2.p{background:#8b5cf6}.tag-dot2.o{background:#d4a574}
     .tag-dot2.k{background:#e91e63}.tag-dot2.t{background:#00bcd4}.tag-dot2.s{background:#64b5f6}
@@ -99,6 +102,11 @@
     dot.className = 'tag-dot2 ' + (tag ? tag : 'n');
     dot.textContent = TAG_NUM[tag] || '';
     wrap.appendChild(dot);
+    // Label text next to dot (show tag name when assigned)
+    var tagLabel = document.createElement('span');
+    tagLabel.className = 'tg-lbl' + (tag ? '' : ' n');
+    tagLabel.textContent = tag ? TAG_COLORS[tag].label : '';
+    wrap.appendChild(tagLabel);
 
     // Create inline picker
     var picker = document.createElement('span');
@@ -121,6 +129,8 @@
         dot.className = 'tag-dot2 ' + (t || 'n');
         dot.textContent = TAG_NUM[t] || '';
         dot.title = TAG_COLORS[t].label;
+        tagLabel.textContent = t ? TAG_COLORS[t].label : '';
+        tagLabel.className = 'tg-lbl' + (t ? '' : ' n');
         picker.querySelectorAll('.tgp-btn').forEach(function(b){ b.classList.remove('a'); });
         if(t) btn.classList.add('a');
         // Update filter (per-week)
@@ -133,17 +143,55 @@
     if(TAG_KEYS.length > 7) picker.appendChild(row2);
     wrap.appendChild(picker);
 
-    // Toggle picker on dot click
+    // Toggle picker on dot click — use position:fixed to bypass ancestor overflow clipping
     dot.addEventListener('click', function(e){
       e.stopPropagation();
       var all = document.querySelectorAll('.tg-picker.s');
-      all.forEach(function(p){ if(p !== picker) p.classList.remove('s'); });
-      picker.classList.toggle('s');
+      all.forEach(function(p){
+        if(p !== picker) {
+          p.classList.remove('s');
+          p.style.position = '';
+          p.style.top = '';
+          p.style.left = '';
+        }
+      });
+      if(picker.classList.contains('s')) {
+        // Closing
+        picker.classList.remove('s');
+        picker.style.position = '';
+        picker.style.top = '';
+        picker.style.left = '';
+      } else {
+        // Opening — position at viewport coordinates to avoid overflow clipping
+        var rect = dot.getBoundingClientRect();
+        picker.style.position = 'fixed';
+        picker.style.top = (rect.bottom + 3) + 'px';
+        picker.style.left = (rect.left + rect.width + 3) + 'px';
+        picker.classList.add('s');
+        // Check viewport boundaries and flip if overflowing
+        var pRect = picker.getBoundingClientRect();
+        var vw = window.innerWidth, vh = window.innerHeight;
+        if (pRect.right > vw) {
+          // Overflowing right edge → flip to left of dot
+          var newLeft = rect.left - pRect.width - 3;
+          picker.style.left = Math.max(6, newLeft) + 'px';
+        }
+        if (pRect.bottom > vh) {
+          // Overflowing bottom edge → flip above dot
+          var newTop = rect.top - pRect.height - 3;
+          picker.style.top = Math.max(6, newTop) + 'px';
+        }
+      }
     });
 
-    // Close picker on outside click
+    // Close picker on outside click (also reset fixed position on other pickers)
     document.addEventListener('click', function(e){
-      if(!wrap.contains(e.target)) picker.classList.remove('s');
+      if(!wrap.contains(e.target)) {
+        picker.classList.remove('s');
+        picker.style.position = '';
+        picker.style.top = '';
+        picker.style.left = '';
+      }
     });
 
     // Insert before day label (left side, avoid md-btn overlap on right)
@@ -244,8 +292,8 @@
 
   // ===== Patch renderWeeks =====
   var origRender = window.renderWeeks;
-  window.renderWeeks = function(cid){
-    origRender.call(this, cid);
+  window.renderWeeks = function(cid, preserveState){
+    origRender.call(this, cid, preserveState);
     setTimeout(enhanceAll, 30);
   };
 
