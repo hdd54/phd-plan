@@ -151,22 +151,20 @@
   }
 
   function reminderItems() {
-    var all = (window.data && window.data._calEntries) || {};
-    var items = [];
-    Object.keys(all).forEach(function(dateStr) {
-      var entries = Array.isArray(all[dateStr]) ? all[dateStr] : [];
-      if (!entries.length) return;
-      var left = daysUntil(dateStr);
-      if (left < 0 || left > 7) return;
-      entries.forEach(function(entry) {
-        if (!entry || entry.done) return;
+    if (!window.CalendarReminders || typeof window.CalendarReminders.collect !== 'function') return [];
+    return window.CalendarReminders.collect(window.data, new Date(), 7);
+  }
+
+  function legacyReminderItems() {
+    return [];
+  }
+/*
         items.push({ date: dateStr, days: left, label: entry.label || '未命名事件' });
       });
     });
     items.sort(function(a,b){ return a.days - b.days || a.date.localeCompare(b.date); });
     return items;
-  }
-
+*/
   // ===== esc helper =====
   function esc(s) {
     return String(s).replace(/[&<>"]/g, function(m) {
