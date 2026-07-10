@@ -1293,6 +1293,8 @@ body{padding-left:var(--sb-w);transition:padding-left .3s cubic-bezier(.2,.9,.3,
   <button class="bb" id="careerBtn" title="选调/求职时间线"><span class="bb-icon">📋</span><span class="lb-lbl">求职</span></button>
   <button class="bb" id="mortBtn" title="房贷多方案对比"><span class="bb-icon">🏦</span><span class="lb-lbl">房贷</span></button>
   <button class="bb" id="cityBtn" title="城市数据卡"><span class="bb-icon">🏙️</span><span class="lb-lbl">城市</span></button>
+  <button class="bb" id="reviewBtn" title="周期回顾（周/月/年）"><span class="bb-icon">📊</span><span class="lb-lbl">回顾</span></button>
+  <button class="bb" id="litBtn" title="文献笔记"><span class="bb-icon">📚</span><span class="lb-lbl">文献</span></button>
 </div>
 
 <!-- ===== MAP MODAL ===== -->
@@ -1614,6 +1616,45 @@ body{padding-left:var(--sb-w);transition:padding-left .3s cubic-bezier(.2,.9,.3,
 
 <!-- ===== DAILY OVERVIEW ===== -->
 <div class="do-overlay" id="doOverlay"></div>
+
+<!-- ===== REVIEW (周/月/年回顾) MODAL ===== -->
+<div class="rw-overlay" id="rwOverlay"></div>
+<div class="rw-modal" id="rwModal">
+  <div class="rw-header">
+    <h3>📊 周期回顾</h3>
+    <div class="rw-tabs" id="rwTabs">
+      <button class="rw-tab s" data-period="week">周回顾</button>
+      <button class="rw-tab" data-period="month">月回顾</button>
+      <button class="rw-tab" data-period="year">年回顾</button>
+    </div>
+    <button class="rw-close" id="rwClose">✕</button>
+  </div>
+  <div class="rw-body" id="rwBody">
+    <div class="rw-toolbar">
+      <span class="rw-nav" id="rwPrev">◀</span>
+      <span class="rw-label" id="rwLabel"></span>
+      <span class="rw-nav" id="rwNext">▶</span>
+      <button class="rw-copy-btn" id="rwCopyBtn">📋 复制报告</button>
+    </div>
+    <div class="rw-content" id="rwContent"></div>
+  </div>
+</div>
+
+<!-- ===== LITERATURE NOTES MODAL ===== -->
+<div class="lit-overlay" id="litOverlay"></div>
+<div class="lit-modal" id="litModal">
+  <div class="lit-header">
+    <h3>📚 文献笔记</h3>
+    <button class="lit-close" id="litClose">✕</button>
+  </div>
+  <div class="lit-body" id="litBody">
+    <div class="lit-toolbar">
+      <button class="lit-add-btn" id="litAddBtn">＋ 添加文献</button>
+    </div>
+    <div id="litList"></div>
+  </div>
+</div>
+
 
 <!-- ===== PAPER MILESTONES MODAL ===== -->
 <div class="pm-overlay" id="pmOverlay"></div>
@@ -4845,23 +4886,22 @@ function initMapApp(){
   function zoomMap(target, factor){syncBase(target);var v=views[target], minW=220, maxW=baseViewFor(target).w;var nw=Math.max(minW,Math.min(maxW,v.w*factor));var nh=nw*(v.h/v.w);if(nh>baseViewFor(target).h){nh=baseViewFor(target).h;nw=nh*(v.w/v.h)}var cx=v.x+v.w/2,cy=v.y+v.h/2;v.x=cx-nw/2;v.y=cy-nh/2;v.w=nw;v.h=nh;setView(target,v)}
   function resetMapZoom(target){var b=baseViewFor(target);views[target]={x:b.x,y:b.y,w:b.w,h:b.h,baseW:b.w,baseH:b.h};setView(target,views[target])}
   function render(){
-    var data=current==='china'?(chinaFullRegions||chinaRegions):(worldFullRegions||worldRegions);
-    scopeEl.textContent=current==='china'?'China':'World';
-    svg=current==='china'?chinaSvg:worldSvg;
+    var data=worldFullRegions||worldRegions;
+    current='world';
+    scopeEl.textContent='World';
+    svg=worldSvg;
     body.querySelectorAll('.map-page').forEach(function(p){p.classList.remove('active')});
-    var page=document.getElementById(current==='china'?'page-china':'page-world');
+    var page=document.getElementById('page-world');
     if(page)page.classList.add('active');
-    if(current==='china'&&chinaFullRegions&&window.d3){renderChinaFull(data);return}
-    if(current==='china'&&!chinaFullRegions&&!chinaLoading)ensureChinaData();
-    if(current==='world'&&worldFullRegions&&window.d3){renderWorldFull(data);return}
-    if(current==='world'&&!worldFullRegions&&!worldLoading)ensureWorldData();
+    if(worldFullRegions&&window.d3){renderWorldFull(data);return}
+    if(!worldFullRegions&&!worldLoading)ensureWorldData();
     syncBase(current);
     setView(current,views[current]);
     var grid='';
     for(var x=100;x<1000;x+=100)grid+='<path class="map-graticule" d="M'+x+' 40 L'+x+' 580"/>';
     for(var y=100;y<600;y+=80)grid+='<path class="map-graticule" d="M0 '+y+' L1000 '+y+'"/>';
-    svg.innerHTML='<rect x="-20" y="20" width="1040" height="620" fill="var(--bg3)"/>'+grid+data.map(function(r,i){var cls=current==='china'?'china-province':'country-path';var sel=selected&&selected.id===r.id?' selected':'';return '<path class="'+cls+sel+'" data-id="'+r.id+'" d="'+pathFrom(r.points)+'" fill="'+colorFor(i,data.length)+'" opacity=".9"></path>'}).join('');
-    svg.querySelectorAll('.country-path,.china-province').forEach(function(el){
+    svg.innerHTML='<rect x="-20" y="20" width="1040" height="620" fill="var(--bg3)"/>'+grid+data.map(function(r,i){var sel=selected&&selected.id===r.id?' selected':'';return '<path class="country-path'+sel+'" data-id="'+r.id+'" d="'+pathFrom(r.points)+'" fill="'+colorFor(i,data.length)+'" opacity=".9"></path>'}).join('');
+    svg.querySelectorAll('.country-path').forEach(function(el){
       el.addEventListener('mouseenter',onHover);
       el.addEventListener('mousemove',moveTip);
       el.addEventListener('mouseleave',hideTip);
@@ -4891,23 +4931,6 @@ function initMapApp(){
       .catch(function(){worldLoading=false});
   }
   function tzForCountry(id){return {'156':'Asia/Shanghai','840':'America/New_York','124':'America/Toronto','076':'America/Sao_Paulo','826':'Europe/London','250':'Europe/Paris','276':'Europe/Berlin','643':'Europe/Moscow','356':'Asia/Kolkata','392':'Asia/Tokyo','036':'Australia/Sydney','710':'Africa/Johannesburg','818':'Africa/Cairo'}[id]||'UTC'}
-  function ensureChinaData(){
-    chinaLoading=true;
-    Promise.resolve()
-      .then(function(){return window.d3?null:loadScript('https://cdn.jsdelivr.net/npm/d3@7')})
-      .then(function(){return fetch('https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json')})
-      .then(function(r){return r.json()})
-      .then(function(geojson){
-        chinaFullRegions=(geojson.features||[]).map(function(f){
-          var name=f.properties&&(f.properties.name||'');
-          var code=String(f.properties&&f.properties.adcode||'');
-          return {id:'china:'+code,name:name,tz:'Asia/Shanghai',info:'中国省级行政区划边界。数据来自 DataV 公开 GeoJSON。',pop:'--',feature:f};
-        });
-        chinaLoading=false;
-        if(current==='china'){selected=null;render()}
-      })
-      .catch(function(){chinaLoading=false});
-  }
   function ensureGlobe(){
     if(globeUnavailable)return false;
     if(globeRenderer){globeRenderer.resize();globeRenderer.renderTheme();return true}
@@ -4946,43 +4969,7 @@ function initMapApp(){
     svg.querySelectorAll('.country-path').forEach(function(el){el.addEventListener('mouseenter',onHover);el.addEventListener('mousemove',moveTip);el.addEventListener('mouseleave',hideTip);el.addEventListener('click',function(){selectRegion(findRegion(el.dataset.id))})});
     if(!selected)selectRegion(data.filter(function(r){return r.id==='world:156'})[0]||data[0],true); else renderPanel();
   }
-  function renderChinaFull(data){
-    try {
-      var valid=data.filter(function(r){return r.name&&r.feature&&r.feature.geometry});
-      if(!valid.length){console.warn('no valid china features');return}
-      svg=chinaSvg;
-      baseViews.china={x:0,y:0,w:860,h:580};
-      views.china={x:0,y:0,w:860,h:580,baseW:860,baseH:580};
-      setView('china',views.china);
-      var fc={type:'FeatureCollection',features:valid.map(function(r){return r.feature})};
-      var projection=d3.geoMercator().fitExtent([[20,20],[840,560]],fc);
-      var path=d3.geoPath(projection);
-      var paths='';
-      for(var i=0;i<valid.length;i++){
-        var r=valid[i], sel=selected&&selected.id===r.id?' selected':'';
-        var d=path(r.feature);
-        if(d)paths+='<path class="china-province'+sel+'" data-id="'+r.id+'" d="'+d+'" fill="'+colorFor(i,valid.length)+'" opacity=".88"></path>';
-      }
-      svg.innerHTML='<rect x="-10" y="-10" width="880" height="600" fill="var(--bg3)"/>'+paths;
-      if(paths){
-        svg.querySelectorAll('.china-province').forEach(function(el){
-          el.addEventListener('mouseenter',onHover);
-          el.addEventListener('mousemove',moveTip);
-          el.addEventListener('mouseleave',hideTip);
-          el.addEventListener('click',function(){selectRegion(findRegion(el.dataset.id))});
-        });
-        if(!selected)selectRegion(valid[0],true); else renderPanel();
-      } else {
-        console.warn('china d3 produced no paths, falling back');
-        syncBase(current);setView(current,views[current]);
-        var grid='';for(var x=100;x<1000;x+=100)grid+='<path class="map-graticule" d="M'+x+' 40 L'+x+' 580"/>';for(var y=100;y<600;y+=80)grid+='<path class="map-graticule" d="M0 '+y+' L1000 '+y+'"/>';
-        svg.innerHTML='<rect x="-20" y="20" width="1040" height="620" fill="var(--bg3)"/>'+grid+data.map(function(r,i){var cls='china-province', sel=selected&&selected.id===r.id?' selected':'';return '<path class="'+cls+sel+'" data-id="'+r.id+'" d="'+pathFrom(r.points)+'" fill="'+colorFor(i,data.length)+'" opacity=".9"></path>'}).join('');
-        svg.querySelectorAll('.country-path,.china-province').forEach(function(el){el.addEventListener('mouseenter',onHover);el.addEventListener('mousemove',moveTip);el.addEventListener('mouseleave',hideTip);el.addEventListener('click',function(){selectRegion(findRegion(el.dataset.id))})});
-        if(!selected)selectRegion(data[0],true); else renderPanel();
-      }
-    } catch(e){console.error('renderChinaFull error:',e);}
-  }
-  function findRegion(id){return (worldFullRegions||worldRegions).concat(chinaFullRegions||chinaRegions).filter(function(r){return r.id===id})[0]}
+  function findRegion(id){return (worldFullRegions||worldRegions).filter(function(r){return r.id===id})[0]}
   function noteListFor(r){
     if(!r)return [];
     var raw=notes[r.id];
@@ -5000,7 +4987,7 @@ function initMapApp(){
   function renderPanel(){
     var list=noteListFor(selected);
     var n=currentNoteFor(selected);
-    selectedTitle.textContent=selected?selected.name:'请选择一个国家或省份';
+    selectedTitle.textContent=selected?selected.name:'请选择一个国家';
     metaEl.innerHTML=selected?('当地时间：'+esc(getTime(selected))+'<br>基本信息：'+esc(selected.info)+'<br>人口：'+esc(selected.pop||'--')):'点击地图后编辑备注。';
     inputTime.value=n.time||'';inputEvent.value=n.event||'';inputPlace.value=n.place||'';inputPlan.value=n.plan||'';
     var has=n.time||n.event||n.place||n.plan;
@@ -5017,26 +5004,26 @@ function initMapApp(){
   document.getElementById('mapNoteSave').onclick=function(){if(!selected)return;var list=noteListFor(selected).slice();if(!list.length)list.push({});list[notePage]=readNoteForm();setNoteList(selected,list);saveNotes();renderPanel();toast('地图备注已保存')};
   document.getElementById('mapNoteNew').onclick=function(){if(!selected)return;var list=noteListFor(selected).slice();list.push({time:'',event:'',place:'',plan:'',updatedAt:new Date().toISOString()});notePage=list.length-1;setNoteList(selected,list);saveNotes();renderPanel();toast('已新增一页地图备注')};
   document.getElementById('mapNoteClear').onclick=function(){if(!selected)return;var list=noteListFor(selected).slice();if(list.length){list.splice(notePage,1);notePage=Math.max(0,Math.min(notePage,list.length-1));setNoteList(selected,list)}else{delete notes[selected.id]}saveNotes();renderPanel();toast('当前地图备注页已删除')};
-  function switchMap(target){
-    current=target||'world';selected=null;hideTip();
-    tabs.forEach(function(t){t.classList.toggle('a',(t.dataset.map||'world')===current)});
-    pageTabs.forEach(function(t){t.classList.toggle('active',(t.dataset.page||'world')===current)});
+  function switchMap(){
+    current='world';selected=null;hideTip();
+    tabs.forEach(function(t){t.classList.toggle('a',(t.dataset.map||'world')==='world')});
+    pageTabs.forEach(function(t){t.classList.toggle('active',(t.dataset.page||'world')==='world')});
     render();
   }
-  tabs.forEach(function(tab){tab.addEventListener('click',function(){switchMap(tab.dataset.map||'world')})});
-  pageTabs.forEach(function(tab){tab.addEventListener('click',function(){switchMap(tab.dataset.page||'world')})});
-  document.getElementById('mapZoomIn').onclick=function(){if(current==='world'&&globeRenderer)globeRenderer.zoomBy(.78);else zoomMap(current,.78)};
-  document.getElementById('mapZoomOut').onclick=function(){if(current==='world'&&globeRenderer)globeRenderer.zoomBy(1.28);else zoomMap(current,1.28)};
-  document.getElementById('mapZoomReset').onclick=function(){if(current==='world'&&globeRenderer)globeRenderer.resetView();else resetMapZoom(current)};
-  [document.getElementById('globe-wrap'),document.getElementById('china-map-wrap')].forEach(function(wrap){
-    if(!wrap)return;
-    wrap.addEventListener('wheel',function(e){
-      if(current==='world'&&globeRenderer)return;
+  tabs.forEach(function(tab){tab.addEventListener('click',switchMap)});
+  pageTabs.forEach(function(tab){tab.addEventListener('click',switchMap)});
+  document.getElementById('mapZoomIn').onclick=function(){if(globeRenderer)globeRenderer.zoomBy(.78);else zoomMap(current,.78)};
+  document.getElementById('mapZoomOut').onclick=function(){if(globeRenderer)globeRenderer.zoomBy(1.28);else zoomMap(current,1.28)};
+  document.getElementById('mapZoomReset').onclick=function(){if(globeRenderer)globeRenderer.resetView();else resetMapZoom(current)};
+  var globeWrap=document.getElementById('globe-wrap');
+  if(globeWrap){
+    globeWrap.addEventListener('wheel',function(e){
+      if(globeRenderer)return;
       e.preventDefault();
       zoomMap(current,e.deltaY < 0 ? 0.86 : 1.16);
     },{passive:false});
-  });
-  mapApp={render:function(){render();if(current==='world'&&globeRenderer)globeRenderer.resize()}};
+  }
+  mapApp={render:function(){render();if(globeRenderer)globeRenderer.resize()}};
   render();
 }
 document.addEventListener('keydown',function(e){
@@ -6185,5 +6172,7 @@ renderWeeks = function(cid, preserveState){ _origRenderWeeks(cid, preserveState)
 <script src="js/feature-career-timeline.js"></script>
 <script src="js/feature-mortgage-compare.js"></script>
 <script src="js/feature-city-cards.js"></script>
+<script src="js/feature-weekly-review.js"></script>
+<script src="js/feature-literature.js"></script>
 </body>
 </html>
