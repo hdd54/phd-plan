@@ -483,6 +483,9 @@ body{padding-left:var(--sb-w);transition:padding-left .3s cubic-bezier(.2,.9,.3,
 .copied-map #page-world,.copied-map #page-china{flex-direction:column}
 .copied-map #globe-wrap,.copied-map #china-map-wrap{position:relative;flex:1;min-height:0;cursor:grab}
 .copied-map #globe-wrap:active,.copied-map #china-map-wrap:active{cursor:grabbing}
+.copied-map #globe-3d{position:absolute;inset:0;overflow:hidden;touch-action:none}
+.copied-map #globe-3d .map-globe-canvas{display:block;width:100%;height:100%;cursor:grab}
+.copied-map #globe-svg.globe-fallback{position:absolute;inset:0}
 .copied-map #globe-svg,.copied-map #china-svg{width:100%;height:100%;display:block}
 .copied-map .country-path,.copied-map .china-province{stroke:color-mix(in srgb,var(--fg) 18%,transparent);stroke-width:.5;cursor:pointer;transition:fill-opacity .15s,stroke .15s,stroke-width .15s}
 .copied-map .country-path:hover,.copied-map .china-province:hover{stroke:var(--fg);stroke-width:1;fill-opacity:1!important}
@@ -522,7 +525,7 @@ body{padding-left:var(--sb-w);transition:padding-left .3s cubic-bezier(.2,.9,.3,
 .map-tooltip.s{opacity:1}
 .map-tooltip strong{display:block;color:var(--accent);font-weight:400;font-size:clamp(.64rem,.9vw,.74rem);margin-bottom:.12rem}
 .map-status{position:absolute;left:clamp(.6rem,1.3vw,.9rem);bottom:clamp(.6rem,1.3vw,.9rem);right:clamp(.6rem,1.3vw,.9rem);display:flex;justify-content:space-between;gap:.6rem;color:var(--muted);font-size:clamp(.48rem,.7vw,.55rem);letter-spacing:.05em;pointer-events:none}
-@media(max-width:760px){.map-modal{height:86vh}.map-app{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) minmax(210px,34%)}.map-note-panel{border-left:none;border-top:1px solid var(--line)}}
+@media(max-width:760px){.map-modal{height:86vh}.map-app{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) minmax(210px,34%)}.map-note-panel{border-left:none;border-top:1px solid var(--line)}.copied-map-main{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) minmax(210px,34%)}.copied-map-note{border-left:none;border-top:1px solid var(--line)}.copied-map-topbar{height:auto;min-height:46px;flex-wrap:wrap;padding:.4rem .55rem}.copied-map-zoom{margin-left:auto}}
 
 /* ---- Drag & Drop ---- */
 .di.dragging{opacity:.4;cursor:grabbing}
@@ -1018,6 +1021,11 @@ body{padding-left:var(--sb-w);transition:padding-left .3s cubic-bezier(.2,.9,.3,
 .do-stat.s2{grid-column:span 2}
 .do-tips{padding:clamp(.35rem,.5vw,.45rem);background:rgba(212,165,116,.05);border:1px solid rgba(212,165,116,.12);border-radius:var(--rs);font-size:clamp(.55rem,.85vw,.6rem);color:var(--fg-dim);margin:clamp(.2rem,.3vw,.3rem) 0;text-align:left;line-height:1.5}
 .do-tips strong{color:var(--accent);font-weight:400}
+.do-reminders{margin:clamp(.3rem,.5vw,.45rem) 0;padding:clamp(.32rem,.5vw,.45rem);border:1px solid var(--line);border-radius:var(--rs);background:color-mix(in srgb,var(--bg3) 58%,transparent);text-align:left;max-height:clamp(5rem,16vh,8rem);overflow:auto}
+.do-reminders::-webkit-scrollbar{width:4px}.do-reminders::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:4px}
+.do-reminders-title{display:block;color:var(--accent);font-size:clamp(.48rem,.72vw,.54rem);letter-spacing:.07em;margin-bottom:.2rem}
+.do-reminder-row{display:grid;grid-template-columns:2.5rem 2.8rem minmax(0,1fr);gap:.28rem;align-items:baseline;padding:.16rem 0;border-top:1px solid var(--line);font-size:clamp(.5rem,.78vw,.58rem);line-height:1.45}
+.do-reminder-row:first-of-type{border-top:none}.do-reminder-row time{color:var(--fg-dim);font-variant-numeric:tabular-nums}.do-reminder-row span{color:var(--accent-3)}.do-reminder-row strong{min-width:0;color:var(--fg);font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.do-reminder-empty{color:var(--muted);font-size:clamp(.5rem,.78vw,.58rem);line-height:1.5}
 .do-actions{display:flex;gap:.3rem;margin-top:clamp(.35rem,.5vw,.45rem)}
 .do-actions button{flex:1;padding:clamp(.3rem,.45vw,.38rem);border:1px solid var(--line);border-radius:100px;background:rgba(255,255,255,.02);color:var(--fg-dim);font-family:var(--font-sans);font-size:clamp(.55rem,.85vw,.6rem);cursor:pointer;transition:all .2s;text-align:center}
 .do-actions button:hover{background:rgba(212,165,116,.1);border-color:var(--accent);color:var(--accent)}
@@ -1693,6 +1701,7 @@ body{padding-left:var(--sb-w);transition:padding-left .3s cubic-bezier(.2,.9,.3,
       <div class="do-stat"><div class="do-n" id="doTodoTotal">0</div><div class="do-l">本周总任务</div></div>
       <div class="do-stat"><div class="do-n" id="doTodoWeek">0%</div><div class="do-l">本周进度</div></div>
     </div>
+    <section class="do-reminders" id="doReminders" aria-label="未来7天事项"></section>
     <div class="do-tips" id="doTip"></div>
     <div class="do-actions">
       <button id="doCloseBtn">开始今天</button>
@@ -1928,6 +1937,8 @@ body{padding-left:var(--sb-w);transition:padding-left .3s cubic-bezier(.2,.9,.3,
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="js/calendar-reminders.js"></script>
+<script src="js/feature-map-globe.js"></script>
 
 <!-- Cover particle animation (removed) -->
 
@@ -4787,11 +4798,11 @@ function initMapApp(){
   var titleEl=modal.querySelector('.map-header h3'), closeEl=document.getElementById('mapClose');
   if(titleEl)titleEl.textContent='世界地图 / 中国地图';
   if(closeEl)closeEl.textContent='×';
-  body.innerHTML='<div class="map-app copied-map"><header class="copied-map-topbar" id="topbar"><div class="copied-map-logo">🌍</div><div class="copied-map-title">Map<span>Notes</span></div><div class="page-tabs"><button class="page-tab active" data-page="world">世界地图</button><button class="page-tab" data-page="china">中国地图</button></div><div class="copied-map-zoom"><button id="mapZoomIn" title="放大">+</button><button id="mapZoomOut" title="缩小">−</button><button id="mapZoomReset" title="重置">⌂</button></div></header><div class="copied-map-main"><div class="copied-map-pages"><div class="map-page active" id="page-world"><div id="globe-wrap"><svg id="globe-svg" viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid meet"></svg></div></div><div class="map-page" id="page-china"><div id="china-map-wrap"><svg id="china-svg" viewBox="70 70 900 620" preserveAspectRatio="xMidYMid meet"></svg></div></div><div id="tooltip"><div class="tt-name" id="tt-name"></div><div class="tt-sub" id="tt-sub"></div></div><div class="map-status"><span>悬停查看时间和基本信息，点击国家/省份编辑备注；滚轮或按钮可缩放地图</span><span>备注自动保存在本地</span></div></div><aside class="copied-map-note"><div class="map-note-kicker" id="mapScope">World</div><div class="map-note-title" id="mapSelected">请选择一个国家或省份</div><div class="map-note-meta" id="mapMeta">鼠标放在地图区域上会显示当地时间和基本信息；点击后可在这里记录时间、事件、景点、计划等。</div><div class="map-note-form"><label>时间<input id="mapNoteTime" type="text" placeholder="例如：2026-10-01 / 上午 / 第3周"></label><label>事件<textarea id="mapNoteEvent" placeholder="发生了什么，或打算做什么"></textarea></label><label>景点<textarea id="mapNotePlace" placeholder="想去的城市、景点、路线"></textarea></label><label>计划<textarea id="mapNotePlan" placeholder="交通、预算、待办、资料链接"></textarea></label><div class="map-note-actions"><button class="map-note-btn primary" id="mapNoteSave">保存当前页</button><button class="map-note-btn" id="mapNoteNew">新增一页</button><button class="map-note-btn" id="mapNoteClear">删除当前页</button></div></div><div class="map-note-list" id="mapNoteList"></div></aside></div></div>';
+  body.innerHTML='<div class="map-app copied-map"><header class="copied-map-topbar" id="topbar"><div class="copied-map-logo">🌍</div><div class="copied-map-title">Map<span>Notes</span></div><div class="page-tabs"><button class="page-tab active" data-page="world">世界地图</button><button class="page-tab" data-page="china">中国地图</button></div><div class="copied-map-zoom"><button id="mapZoomIn" title="放大">+</button><button id="mapZoomOut" title="缩小">−</button><button id="mapZoomReset" title="重置">⌂</button></div></header><div class="copied-map-main"><div class="copied-map-pages"><div class="map-page active" id="page-world"><div id="globe-wrap"><div id="globe-3d" aria-label="可旋转的三维世界地图"></div><svg id="globe-svg" class="globe-fallback" viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid meet"></svg></div></div><div class="map-page" id="page-china"><div id="china-map-wrap"><svg id="china-svg" viewBox="70 70 900 620" preserveAspectRatio="xMidYMid meet"></svg></div></div><div id="tooltip"><div class="tt-name" id="tt-name"></div><div class="tt-sub" id="tt-sub"></div></div><div class="map-status"><span>世界地图可拖拽旋转、滚轮缩放；悬停查看时间和基本信息，点击国家/省份编辑备注</span><span>备注自动保存在本地</span></div></div><aside class="copied-map-note"><div class="map-note-kicker" id="mapScope">World</div><div class="map-note-title" id="mapSelected">请选择一个国家或省份</div><div class="map-note-meta" id="mapMeta">鼠标放在地图区域上会显示当地时间和基本信息；点击后可在这里记录时间、事件、景点、计划等。</div><div class="map-note-form"><label>时间<input id="mapNoteTime" type="text" placeholder="例如：2026-10-01 / 上午 / 第3周"></label><label>事件<textarea id="mapNoteEvent" placeholder="发生了什么，或打算做什么"></textarea></label><label>景点<textarea id="mapNotePlace" placeholder="想去的城市、景点、路线"></textarea></label><label>计划<textarea id="mapNotePlan" placeholder="交通、预算、待办、资料链接"></textarea></label><div class="map-note-actions"><button class="map-note-btn primary" id="mapNoteSave">保存当前页</button><button class="map-note-btn" id="mapNoteNew">新增一页</button><button class="map-note-btn" id="mapNoteClear">删除当前页</button></div></div><div class="map-note-list" id="mapNoteList"></div></aside></div></div>';
 
   var tabs=[].slice.call(document.querySelectorAll('.map-tab'));
   var pageTabs=[].slice.call(body.querySelectorAll('.page-tab'));
-  var worldSvg=document.getElementById('globe-svg'), chinaSvg=document.getElementById('china-svg'), svg=worldSvg, tip=document.getElementById('tooltip'), ttName=document.getElementById('tt-name'), ttSub=document.getElementById('tt-sub');
+  var worldSvg=document.getElementById('globe-svg'), chinaSvg=document.getElementById('china-svg'), globeHost=document.getElementById('globe-3d'), globeRenderer=null, globeUnavailable=false, svg=worldSvg, tip=document.getElementById('tooltip'), ttName=document.getElementById('tt-name'), ttSub=document.getElementById('tt-sub');
   var selectedTitle=document.getElementById('mapSelected'), scopeEl=document.getElementById('mapScope'), metaEl=document.getElementById('mapMeta');
   var inputTime=document.getElementById('mapNoteTime'), inputEvent=document.getElementById('mapNoteEvent'), inputPlace=document.getElementById('mapNotePlace'), inputPlan=document.getElementById('mapNotePlan'), listEl=document.getElementById('mapNoteList');
   var current='world', selected=null, notes=loadNotes(), notePage=0;
@@ -4840,7 +4851,7 @@ function initMapApp(){
   function esc(s){return String(s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
   function pathFrom(points){return points.map(function(p,i){return (i?'L':'M')+p[0]+' '+p[1]}).join(' ')+' Z'}
   function getTime(r){try{return new Date().toLocaleString('zh-CN',{timeZone:r.tz||'Asia/Shanghai',hour12:false,month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})}catch(e){return new Date().toLocaleString('zh-CN',{hour12:false})}}
-  function colorFor(i,total){var hue=(i/Math.max(1,total))*120+150;return 'hsl('+hue+' 36% 34%)'}
+  function colorFor(i,total){return i%3===0?'var(--bg2)':(i%3===1?'var(--bg3)':'color-mix(in srgb,var(--bg2) 72%,var(--accent))')}
   function setView(target, view){(target==='china'?chinaSvg:worldSvg).setAttribute('viewBox',view.x+' '+view.y+' '+view.w+' '+view.h)}
   function baseViewFor(target){return target==='china'?baseViews.china:(worldFullRegions?baseViews.worldFull:baseViews.world)}
   function syncBase(target){var b=baseViewFor(target);var v=views[target];if(!v||Math.abs((v.baseW||0)-b.w)>1||Math.abs((v.baseH||0)-b.h)>1){views[target]={x:b.x,y:b.y,w:b.w,h:b.h,baseW:b.w,baseH:b.h}}}
@@ -4910,7 +4921,33 @@ function initMapApp(){
       })
       .catch(function(){chinaLoading=false});
   }
+  function ensureGlobe(){
+    if(globeUnavailable)return false;
+    if(globeRenderer){globeRenderer.resize();globeRenderer.renderTheme();return true}
+    if(!window.MapGlobeRenderer||!globeHost)return false;
+    try{
+      globeRenderer=window.MapGlobeRenderer.create({
+        container:globeHost,
+        onHover:function(region,x,y){showRegionTip(region,x,y)},
+        onLeave:hideTip,
+        onSelect:function(region){selectRegion(region)}
+      });
+      if(!globeRenderer){globeUnavailable=true;return false}
+      return true;
+    }catch(e){console.warn('3D globe unavailable',e);globeUnavailable=true;return false}
+  }
   function renderWorldFull(data){
+    if(ensureGlobe()){
+      worldSvg.style.display='none';
+      globeHost.style.display='block';
+      globeRenderer.setRegions(data);
+      if(!selected){selected=data.filter(function(r){return r.id==='world:156'})[0]||data[0];notePage=0}
+      globeRenderer.setSelected(selected);
+      renderPanel();
+      return;
+    }
+    globeHost.style.display='none';
+    worldSvg.style.display='block';
     svg=worldSvg;
     syncBase('world');
     setView('world',views.world);
@@ -4968,10 +5005,11 @@ function initMapApp(){
   }
   function setNoteList(r,list){if(!r)return;if(list&&list.length)notes[r.id]=list;else delete notes[r.id]}
   function currentNoteFor(r){var list=noteListFor(r);if(notePage>=list.length)notePage=Math.max(0,list.length-1);return list[notePage]||{}}
-  function onHover(e){var r=findRegion(e.currentTarget.dataset.id), list=noteListFor(r), n=list[0]||{};ttName.textContent=r.name;ttSub.innerHTML='当地时间：'+esc(getTime(r))+'<br>'+esc(r.info)+'<br>人口：'+esc(r.pop||'--')+(n.time?'<br>备注时间：'+esc(n.time):'')+(list.length?'<br>备注：'+list.length+' 条':'');tip.classList.add('visible');moveTip(e)}
+  function showRegionTip(r,x,y){if(!r)return;var list=noteListFor(r), n=list[0]||{};ttName.textContent=r.name;ttSub.innerHTML='当地时间：'+esc(getTime(r))+'<br>'+esc(r.info)+'<br>人口：'+esc(r.pop||'--')+(n.time?'<br>备注时间：'+esc(n.time):'')+(list.length?'<br>备注：'+list.length+' 条':'');tip.classList.add('visible');moveTip({clientX:x,clientY:y})}
+  function onHover(e){showRegionTip(findRegion(e.currentTarget.dataset.id),e.clientX,e.clientY)}
   function moveTip(e){var box=body.getBoundingClientRect();tip.style.left=(e.clientX-box.left+12)+'px';tip.style.top=(e.clientY-box.top+12)+'px'}
   function hideTip(){tip.classList.remove('visible')}
-  function selectRegion(r,silent){if(!r)return;selected=r;notePage=0;renderPanel();if(!silent)render()}
+  function selectRegion(r,silent){if(!r)return;selected=r;notePage=0;if(current==='world'&&globeRenderer){globeRenderer.setSelected(r);renderPanel();return}renderPanel();if(!silent)render()}
   function renderPanel(){
     var list=noteListFor(selected);
     var n=currentNoteFor(selected);
@@ -5000,17 +5038,18 @@ function initMapApp(){
   }
   tabs.forEach(function(tab){tab.addEventListener('click',function(){switchMap(tab.dataset.map||'world')})});
   pageTabs.forEach(function(tab){tab.addEventListener('click',function(){switchMap(tab.dataset.page||'world')})});
-  document.getElementById('mapZoomIn').onclick=function(){zoomMap(current,.78)};
-  document.getElementById('mapZoomOut').onclick=function(){zoomMap(current,1.28)};
-  document.getElementById('mapZoomReset').onclick=function(){resetMapZoom(current)};
+  document.getElementById('mapZoomIn').onclick=function(){if(current==='world'&&globeRenderer)globeRenderer.zoomBy(.78);else zoomMap(current,.78)};
+  document.getElementById('mapZoomOut').onclick=function(){if(current==='world'&&globeRenderer)globeRenderer.zoomBy(1.28);else zoomMap(current,1.28)};
+  document.getElementById('mapZoomReset').onclick=function(){if(current==='world'&&globeRenderer)globeRenderer.resetView();else resetMapZoom(current)};
   [document.getElementById('globe-wrap'),document.getElementById('china-map-wrap')].forEach(function(wrap){
     if(!wrap)return;
     wrap.addEventListener('wheel',function(e){
+      if(current==='world'&&globeRenderer)return;
       e.preventDefault();
       zoomMap(current,e.deltaY < 0 ? 0.86 : 1.16);
     },{passive:false});
   });
-  mapApp={render:render};
+  mapApp={render:function(){render();if(current==='world'&&globeRenderer)globeRenderer.resize()}};
   render();
 }
 document.addEventListener('keydown',function(e){
@@ -5754,10 +5793,6 @@ if ('serviceWorker' in navigator) {
 // ======================== FEATURE: Daily Overview ========================
 function showDailyOverview(){
   try{
-    var last = localStorage.getItem('doLast') || '';
-    var today = new Date().toDateString();
-    if(last === today) return;
-    localStorage.setItem('doLast', today);
     var _d = window.data || {};
     var total = 0, done = 0;
     for(var cid in _d){
@@ -5783,6 +5818,17 @@ function showDailyOverview(){
     var now = new Date();
     var dateEl=document.getElementById('doDate');
     if(dateEl) dateEl.textContent = now.getFullYear()+'年'+(now.getMonth()+1)+'月'+now.getDate()+'日 周'+(['日','一','二','三','四','五','六'][now.getDay()]);
+    var reminderEl=document.getElementById('doReminders');
+    if(reminderEl){
+      var reminders=window.CalendarReminders&&typeof window.CalendarReminders.collect==='function'?window.CalendarReminders.collect(_d,now,7):[];
+      if(reminders.length){
+        reminderEl.innerHTML='<strong class="do-reminders-title">未来7天事项 · '+reminders.length+' 条</strong>'+reminders.map(function(item){
+          return '<div class="do-reminder-row"><time>'+esc(item.date.slice(5))+'</time><span>'+(item.days===0?'今天':item.days+'天后')+'</span><strong>'+esc(item.label)+'</strong></div>';
+        }).join('');
+      }else{
+        reminderEl.innerHTML='<strong class="do-reminders-title">未来7天事项</strong><div class="do-reminder-empty">未来7天暂无未完成事项</div>';
+      }
+    }
     var tips = [
       weekPct === 0 ? '💡 今天还没有完成的任务，先从一件小事开始吧' :
       weekPct < 30 ? '💪 本周进度 '+weekPct+'%，继续加油！' :
