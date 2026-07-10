@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -480,16 +480,16 @@ body{padding-left:var(--sb-w);transition:padding-left .3s cubic-bezier(.2,.9,.3,
 .copied-map-pages{position:relative;min-width:0;min-height:0;background:radial-gradient(circle at 50% 20%,color-mix(in srgb,var(--accent) 14%,transparent),transparent 34%),linear-gradient(180deg,var(--bg3),var(--bg))}
 .copied-map .map-page{position:absolute;inset:0;display:none;min-height:0}
 .copied-map .map-page.active{display:flex}
-.copied-map #page-world,.copied-map #page-china{flex-direction:column}
-.copied-map #globe-wrap,.copied-map #china-map-wrap{position:relative;flex:1;min-height:0;cursor:grab}
-.copied-map #globe-wrap:active,.copied-map #china-map-wrap:active{cursor:grabbing}
+.copied-map #page-world{flex-direction:column}
+.copied-map #globe-wrap{position:relative;flex:1;min-height:0;cursor:grab}
+.copied-map #globe-wrap:active{cursor:grabbing}
 .copied-map #globe-3d{position:absolute;inset:0;overflow:hidden;touch-action:none}
 .copied-map #globe-3d .map-globe-canvas{display:block;width:100%;height:100%;cursor:grab}
 .copied-map #globe-svg.globe-fallback{position:absolute;inset:0}
-.copied-map #globe-svg,.copied-map #china-svg{width:100%;height:100%;display:block}
-.copied-map .country-path,.copied-map .china-province{stroke:color-mix(in srgb,var(--fg) 18%,transparent);stroke-width:.5;cursor:pointer;transition:fill-opacity .15s,stroke .15s,stroke-width .15s}
-.copied-map .country-path:hover,.copied-map .china-province:hover{stroke:var(--fg);stroke-width:1;fill-opacity:1!important}
-.copied-map .country-path.selected,.copied-map .china-province.selected{stroke:var(--accent);stroke-width:1.6;filter:drop-shadow(0 0 8px color-mix(in srgb,var(--accent) 55%,transparent))}
+.copied-map #globe-svg{width:100%;height:100%;display:block}
+.copied-map .country-path{stroke:color-mix(in srgb,var(--fg) 18%,transparent);stroke-width:.5;cursor:pointer;transition:fill-opacity .15s,stroke .15s,stroke-width .15s}
+.copied-map .country-path:hover{stroke:var(--fg);stroke-width:1;fill-opacity:1!important}
+.copied-map .country-path.selected{stroke:var(--accent);stroke-width:1.6;filter:drop-shadow(0 0 8px color-mix(in srgb,var(--accent) 55%,transparent))}
 .copied-map #tooltip{position:absolute;z-index:20;pointer-events:none;background:color-mix(in srgb,var(--bg2) 94%,transparent);backdrop-filter:blur(16px);border:1px solid var(--line-2);border-radius:9px;padding:.55rem .7rem;opacity:0;transition:opacity .1s;box-shadow:0 8px 28px rgba(0,0,0,.5);max-width:240px;color:var(--fg);font-size:clamp(.54rem,.78vw,.62rem);line-height:1.55}
 .copied-map #tooltip.visible{opacity:1}
 .copied-map .tt-name{font-weight:600;font-size:clamp(.64rem,.92vw,.74rem);margin-bottom:.12rem;color:var(--accent)}
@@ -1285,21 +1285,25 @@ body{padding-left:var(--sb-w);transition:padding-left .3s cubic-bezier(.2,.9,.3,
   <button class="bb" id="bkpBtn" title="数据备份"><span class="bb-icon">💾</span><span class="lb-lbl">备份</span></button>
   <button class="bb" id="rcBtn" title="月历"><span class="bb-icon">🗓️</span><span class="lb-lbl">月历</span></button>
   <button class="bb" id="statBtn" title="统计分析"><span class="bb-icon">📊</span><span class="lb-lbl">统计</span></button>
-  <button class="bb" id="mapBtn" title="世界地图 / 中国地图"><span class="bb-icon">🌍</span><span class="lb-lbl">地图</span></button>
+  <button class="bb" id="mapBtn" title="世界地图"><span class="bb-icon">🌍</span><span class="lb-lbl">地图</span></button>
   <button class="bb" id="housingBtn" title="购房综合（贷款+成本+清单）"><span class="bb-icon">🏠</span><span class="lb-lbl">购房</span></button>
   <button class="bb" id="pdfBtn" title="打印报告"><span class="bb-icon">📄</span><span class="lb-lbl">打印</span></button>
+  <button class="bb" id="paperBtn" title="论文里程碑"><span class="bb-icon">📄</span><span class="lb-lbl">论文</span></button>
+  <button class="bb" id="expLogBtn" title="实验日志"><span class="bb-icon">🔬</span><span class="lb-lbl">实验</span></button>
+  <button class="bb" id="careerBtn" title="选调/求职时间线"><span class="bb-icon">📋</span><span class="lb-lbl">求职</span></button>
+  <button class="bb" id="mortBtn" title="房贷多方案对比"><span class="bb-icon">🏦</span><span class="lb-lbl">房贷</span></button>
+  <button class="bb" id="cityBtn" title="城市数据卡"><span class="bb-icon">🏙️</span><span class="lb-lbl">城市</span></button>
 </div>
 
 <!-- ===== MAP MODAL ===== -->
 <div class="map-overlay" id="mapOverlay"></div>
 <div class="map-modal" id="mapModal">
   <div class="map-header">
-    <h3>🌍 世界地图 / 中国地图</h3>
+    <h3>🌍 世界地图</h3>
     <button class="map-close" id="mapClose">✕</button>
   </div>
   <div class="map-tabs">
     <button class="map-tab a" data-map="world">世界地图</button>
-    <button class="map-tab" data-map="china">中国地图</button>
   </div>
   <div class="map-body" id="mapBody">
     <!-- World Map SVG -->
@@ -1363,85 +1367,6 @@ body{padding-left:var(--sb-w);transition:padding-left .3s cubic-bezier(.2,.9,.3,
         <line x1="50" y1="0" x2="50" y2="100" stroke="rgba(255,255,255,.03)" stroke-width=".3"/>
         <line x1="100" y1="0" x2="100" y2="100" stroke="rgba(255,255,255,.03)" stroke-width=".3"/>
         <line x1="150" y1="0" x2="150" y2="100" stroke="rgba(255,255,255,.03)" stroke-width=".3"/>
-      </svg>
-    </div>
-    <!-- China Map SVG -->
-    <div class="map-placeholder" data-map="china">
-      <svg viewBox="0 0 200 170" xmlns="http://www.w3.org/2000/svg">
-        <rect x="0" y="0" width="200" height="170" class="map-water"/>
-        <text x="100" y="85" text-anchor="middle" dominant-baseline="middle" class="map-ocean-label" font-size="0" fill="none">东中国海</text>
-        <!-- Simplified province outlines -->
-        <g stroke="#3a6a4a" stroke-width=".4">
-          <!-- Xinjiang -->
-          <path class="map-land" d="M28,10 L52,8 L60,12 L62,18 L60,24 L55,28 L48,30 L40,30 L34,28 L30,24 L28,18 Z" fill="#2a4a3a"/>
-          <!-- Tibet -->
-          <path class="map-land" d="M30,30 L40,28 L48,30 L54,33 L56,38 L54,42 L50,44 L44,44 L38,42 L34,38 L30,34 Z" fill="#2a4a3a"/>
-          <!-- Qinghai -->
-          <path class="map-land" d="M46,30 L54,28 L60,30 L64,34 L62,38 L58,40 L52,40 L48,38 L44,34 Z" fill="#2a4a3a"/>
-          <!-- Gansu / Ningxia -->
-          <path class="map-land" d="M56,22 L64,20 L68,24 L68,28 L64,32 L60,30 L56,28 L54,24 Z" fill="#2a4a3a"/>
-          <!-- Inner Mongolia -->
-          <path class="map-land" d="M52,12 L62,10 L72,10 L82,12 L88,16 L86,20 L80,22 L72,22 L64,20 L58,18 L54,14 Z" fill="#2a4a3a"/>
-          <!-- Shaanxi -->
-          <path class="map-land" d="M60,28 L66,26 L70,28 L70,32 L66,36 L62,34 L60,30 Z" fill="#2a4a3a"/>
-          <!-- Sichuan / Chongqing -->
-          <path class="map-land" d="M52,34 L62,32 L68,34 L70,40 L68,44 L62,46 L56,44 L52,40 Z" fill="#2a4a3a"/>
-          <!-- Guizhou / Yunnan -->
-          <path class="map-land" d="M50,44 L58,42 L64,44 L66,48 L64,52 L58,54 L52,52 L48,48 Z" fill="#2a4a3a"/>
-          <!-- Guangxi / Hainan -->
-          <path class="map-land" d="M56,52 L64,50 L70,52 L72,56 L70,60 L64,62 L58,60 L54,56 Z" fill="#2a4a3a"/>
-          <path class="map-land" d="M64,62 L68,60 L70,64 L68,66 L64,65 Z" fill="#2a4a3a"/>
-          <!-- Hunan / Hubei -->
-          <path class="map-land" d="M64,40 L70,38 L76,40 L78,44 L76,48 L72,50 L66,48 L64,44 Z" fill="#2a4a3a"/>
-          <!-- Henan -->
-          <path class="map-land" d="M66,30 L74,28 L78,30 L78,34 L74,36 L70,36 L66,34 Z" fill="#2a4a3a"/>
-          <!-- Shandong -->
-          <path class="map-land" d="M80,26 L88,24 L92,26 L94,30 L90,34 L86,34 L82,32 L80,30 Z" fill="#2a4a3a"/>
-          <!-- Jiangxi / Fujian -->
-          <path class="map-land" d="M74,44 L82,42 L88,44 L90,48 L88,54 L84,56 L78,54 L74,50 Z" fill="#2a4a3a"/>
-          <!-- Jiangsu / Shanghai / Zhejiang -->
-          <path class="map-land" d="M82,34 L90,32 L96,34 L98,38 L94,42 L90,44 L86,42 L82,40 Z" fill="#2a4a3a"/>
-          <!-- Anhui -->
-          <path class="map-land" d="M74,38 L82,36 L86,38 L86,42 L82,44 L78,42 L74,40 Z" fill="#2a4a3a"/>
-          <!-- Guangdong / Macau / Hong Kong -->
-          <path class="map-land" d="M66,58 L74,56 L82,58 L86,62 L84,66 L78,68 L72,66 L68,62 Z" fill="#2a4a3a"/>
-          <!-- Taiwan -->
-          <path class="map-land" d="M90,54 L94,52 L96,56 L94,60 L90,58 Z" fill="#2a4a3a"/>
-          <!-- Northeast (Manchuria) -->
-          <path class="map-land" d="M76,8 L84,6 L92,6 L100,8 L104,12 L102,16 L96,20 L88,22 L82,20 L78,16 L76,12 Z" fill="#2a4a3a"/>
-          <!-- Beijing/Tianjin/Hebei -->
-          <path class="map-land" d="M76,22 L82,20 L86,22 L86,26 L82,28 L78,28 L76,26 Z" fill="#2a4a3a"/>
-        </g>
-        <!-- Major cities -->
-        <circle cx="80" cy="24" r="1" class="map-city-dot"/><text x="81" y="23" class="map-city-label">北京</text>
-        <circle cx="90" cy="38" r="1" class="map-city-dot"/><text x="91" y="37" class="map-city-label">上海</text>
-        <circle cx="74" cy="42" r=".8" class="map-city-dot"/><text x="75" y="41" class="map-city-label">武汉</text>
-        <circle cx="82" cy="42" r=".8" class="map-city-dot"/><text x="83" y="41" class="map-city-label">杭州</text>
-        <circle cx="72" cy="34" r=".8" class="map-city-dot"/><text x="73" y="33" class="map-city-label">成都</text>
-        <circle cx="56" cy="12" r=".7" class="map-city-dot"/><text x="57" y="11" class="map-city-label">乌鲁木齐</text>
-        <circle cx="38" cy="16" r=".7" class="map-city-dot"/><text x="39" y="15" class="map-city-label">喀什</text>
-        <circle cx="60" cy="32" r=".7" class="map-city-dot"/><text x="61" y="31" class="map-city-label">兰州</text>
-        <circle cx="74" cy="58" r=".8" class="map-city-dot"/><text x="75" y="57" class="map-city-label">广州</text>
-        <circle cx="86" cy="28" r=".7" class="map-city-dot"/><text x="87" y="27" class="map-city-label">青岛</text>
-        <circle cx="90" cy="12" r=".7" class="map-city-dot"/><text x="91" y="11" class="map-city-label">哈尔滨</text>
-        <circle cx="82" cy="12" r=".7" class="map-city-dot"/><text x="83" y="11" class="map-city-label">沈阳</text>
-        <circle cx="68" cy="48" r=".7" class="map-city-dot"/><text x="69" y="47" class="map-city-label">桂林</text>
-        <circle cx="78" cy="64" r=".7" class="map-city-dot"/><text x="79" y="63" class="map-city-label">深圳</text>
-        <!-- Province labels (select few) -->
-        <text x="40" y="18" class="map-country-label" font-size="1.6px">新疆</text>
-        <text x="38" y="36" class="map-country-label" font-size="1.6px">西藏</text>
-        <text x="68" y="18" class="map-country-label" font-size="1.6px">内蒙古</text>
-        <!-- Surrounding countries -->
-        <g fill="none" stroke="rgba(255,255,255,.08)" stroke-width=".3">
-          <path d="M22,14 L30,10 L34,12 L34,18 L32,22 L28,24 L24,22 L22,18 Z"/><text x="26" y="16" class="map-country-label" font-size="1.4px" fill="rgba(255,255,255,.2)">哈萨克斯坦</text>
-          <path d="M22,24 L30,22 L34,24 L34,30 L32,34 L28,34 L24,32 L22,28 Z"/><text x="24" y="27" class="map-country-label" font-size="1.4px" fill="rgba(255,255,255,.2)">印度</text>
-          <path d="M22,34 L28,32 L32,34 L32,40 L30,44 L26,44 L24,40 L22,36 Z"/><text x="24" y="38" class="map-country-label" font-size="1.4px" fill="rgba(255,255,255,.2)">缅甸</text>
-          <path d="M104,12 L110,10 L114,12 L114,18 L112,22 L108,22 L106,18 Z"/><text x="113" y="16" class="map-country-label" font-size="1.4px" fill="rgba(255,255,255,.2)">俄</text>
-        </g>
-        <!-- East China Sea / South China Sea labels -->
-        <text x="110" y="30" class="map-ocean-label" font-size="2px" fill="rgba(255,255,255,.08)">黄海</text>
-        <text x="110" y="40" class="map-ocean-label" font-size="2px" fill="rgba(255,255,255,.08)">东海</text>
-        <text x="100" y="70" class="map-ocean-label" font-size="2px" fill="rgba(255,255,255,.08)">南海</text>
       </svg>
     </div>
   </div>
@@ -1689,6 +1614,89 @@ body{padding-left:var(--sb-w);transition:padding-left .3s cubic-bezier(.2,.9,.3,
 
 <!-- ===== DAILY OVERVIEW ===== -->
 <div class="do-overlay" id="doOverlay"></div>
+
+<!-- ===== PAPER MILESTONES MODAL ===== -->
+<div class="pm-overlay" id="pmOverlay"></div>
+<div class="pm-modal" id="pmModal">
+  <div class="pm-header">
+    <h3>📄 论文里程碑追踪</h3>
+    <button class="pm-close" id="pmClose">✕</button>
+  </div>
+  <div class="pm-body" id="pmBody">
+    <div class="pm-toolbar">
+      <button class="pm-add-btn" id="pmAddBtn">＋ 添加论文</button>
+    </div>
+    <div id="pmList"></div>
+  </div>
+</div>
+
+<!-- ===== EXPERIMENT LOG MODAL ===== -->
+<div class="el-overlay" id="elOverlay"></div>
+<div class="el-modal" id="elModal">
+  <div class="el-header">
+    <h3>🔬 实验日志</h3>
+    <button class="el-close" id="elClose">✕</button>
+  </div>
+  <div class="el-body" id="elBody">
+    <div class="el-toolbar">
+      <button class="el-add-btn" id="elAddBtn">＋ 添加实验记录</button>
+    </div>
+    <div id="elList"></div>
+  </div>
+</div>
+
+<!-- ===== CAREER TIMELINE MODAL ===== -->
+<div class="ct-overlay" id="ctOverlay"></div>
+<div class="ct-modal" id="ctModal">
+  <div class="ct-header">
+    <h3>📋 选调/求职时间线</h3>
+    <button class="ct-close" id="ctClose">✕</button>
+  </div>
+  <div class="ct-body" id="ctBody">
+    <div class="ct-toolbar">
+      <button class="ct-add-btn" id="ctAddBtn">＋ 添加事项</button>
+      <div class="ct-filter">
+        <button class="ct-filter-btn s" data-filter="all">全部</button>
+        <button class="ct-filter-btn" data-filter="选调">选调</button>
+        <button class="ct-filter-btn" data-filter="求职">求职</button>
+        <button class="ct-filter-btn" data-filter="其他">其他</button>
+      </div>
+    </div>
+    <div class="ct-timeline" id="ctTimeline"></div>
+  </div>
+</div>
+
+<!-- ===== CITY DATA CARDS MODAL ===== -->
+<div class="cc-overlay" id="ccOverlay"></div>
+<div class="cc-modal" id="ccModal">
+  <div class="cc-header">
+    <h3>🏙️ 城市数据卡</h3>
+    <button class="cc-close" id="ccClose">✕</button>
+  </div>
+  <div class="cc-body" id="ccBody">
+    <div class="cc-toolbar">
+      <button class="cc-add-btn" id="ccAddBtn">＋ 添加城市</button>
+    </div>
+    <div id="ccList"></div>
+  </div>
+</div>
+
+<!-- ===== MORTGAGE COMPARE MODAL ===== -->
+<div class="mc-overlay" id="mcOverlay"></div>
+<div class="mc-modal" id="mcModal">
+  <div class="mc-header">
+    <h3>🏦 房贷多方案对比</h3>
+    <button class="mc-close" id="mcClose">✕</button>
+  </div>
+  <div class="mc-body" id="mcBody">
+    <div class="mc-toolbar">
+      <button class="mc-add-btn" id="mcAddBtn">＋ 添加方案</button>
+    </div>
+    <div id="mcScenarios"></div>
+    <div class="mc-compare" id="mcCompare"></div>
+  </div>
+</div>
+
 <div class="do-modal" id="doModal">
   <div class="do-header">
     <h3>☀️ 今日概览</h3>
@@ -4796,18 +4804,18 @@ function initMapApp(){
   var modal=document.getElementById('mapModal'), body=document.getElementById('mapBody');
   if(!modal||!body)return;
   var titleEl=modal.querySelector('.map-header h3'), closeEl=document.getElementById('mapClose');
-  if(titleEl)titleEl.textContent='世界地图 / 中国地图';
+  if(titleEl)titleEl.textContent='世界地图';
   if(closeEl)closeEl.textContent='×';
-  body.innerHTML='<div class="map-app copied-map"><header class="copied-map-topbar" id="topbar"><div class="copied-map-logo">🌍</div><div class="copied-map-title">Map<span>Notes</span></div><div class="page-tabs"><button class="page-tab active" data-page="world">世界地图</button><button class="page-tab" data-page="china">中国地图</button></div><div class="copied-map-zoom"><button id="mapZoomIn" title="放大">+</button><button id="mapZoomOut" title="缩小">−</button><button id="mapZoomReset" title="重置">⌂</button></div></header><div class="copied-map-main"><div class="copied-map-pages"><div class="map-page active" id="page-world"><div id="globe-wrap"><div id="globe-3d" aria-label="可旋转的三维世界地图"></div><svg id="globe-svg" class="globe-fallback" viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid meet"></svg></div></div><div class="map-page" id="page-china"><div id="china-map-wrap"><svg id="china-svg" viewBox="70 70 900 620" preserveAspectRatio="xMidYMid meet"></svg></div></div><div id="tooltip"><div class="tt-name" id="tt-name"></div><div class="tt-sub" id="tt-sub"></div></div><div class="map-status"><span>世界地图可拖拽旋转、滚轮缩放；悬停查看时间和基本信息，点击国家/省份编辑备注</span><span>备注自动保存在本地</span></div></div><aside class="copied-map-note"><div class="map-note-kicker" id="mapScope">World</div><div class="map-note-title" id="mapSelected">请选择一个国家或省份</div><div class="map-note-meta" id="mapMeta">鼠标放在地图区域上会显示当地时间和基本信息；点击后可在这里记录时间、事件、景点、计划等。</div><div class="map-note-form"><label>时间<input id="mapNoteTime" type="text" placeholder="例如：2026-10-01 / 上午 / 第3周"></label><label>事件<textarea id="mapNoteEvent" placeholder="发生了什么，或打算做什么"></textarea></label><label>景点<textarea id="mapNotePlace" placeholder="想去的城市、景点、路线"></textarea></label><label>计划<textarea id="mapNotePlan" placeholder="交通、预算、待办、资料链接"></textarea></label><div class="map-note-actions"><button class="map-note-btn primary" id="mapNoteSave">保存当前页</button><button class="map-note-btn" id="mapNoteNew">新增一页</button><button class="map-note-btn" id="mapNoteClear">删除当前页</button></div></div><div class="map-note-list" id="mapNoteList"></div></aside></div></div>';
+  body.innerHTML='<div class="map-app copied-map"><header class="copied-map-topbar" id="topbar"><div class="copied-map-logo">🌍</div><div class="copied-map-title">Map<span>Notes</span></div><div class="page-tabs"><button class="page-tab active" data-page="world">世界地图</button></div><div class="copied-map-zoom"><button id="mapZoomIn" title="放大">+</button><button id="mapZoomOut" title="缩小">−</button><button id="mapZoomReset" title="重置">⌂</button></div></header><div class="copied-map-main"><div class="copied-map-pages"><div class="map-page active" id="page-world"><div id="globe-wrap"><div id="globe-3d" aria-label="可旋转的三维世界地图"></div><svg id="globe-svg" class="globe-fallback" viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid meet"></svg></div></div><div id="tooltip"><div class="tt-name" id="tt-name"></div><div class="tt-sub" id="tt-sub"></div></div><div class="map-status"><span>世界地图可拖拽旋转、滚轮缩放；悬停查看时间和基本信息，点击国家编辑备注</span><span>备注自动保存在本地</span></div></div><aside class="copied-map-note"><div class="map-note-kicker" id="mapScope">World</div><div class="map-note-title" id="mapSelected">请选择一个国家</div><div class="map-note-meta" id="mapMeta">鼠标放在地图区域上会显示当地时间和基本信息；点击后可在这里记录时间、事件、景点、计划等。</div><div class="map-note-form"><label>时间<input id="mapNoteTime" type="text" placeholder="例如：2026-10-01 / 上午 / 第3周"></label><label>事件<textarea id="mapNoteEvent" placeholder="发生了什么，或打算做什么"></textarea></label><label>景点<textarea id="mapNotePlace" placeholder="想去的城市、景点、路线"></textarea></label><label>计划<textarea id="mapNotePlan" placeholder="交通、预算、待办、资料链接"></textarea></label><div class="map-note-actions"><button class="map-note-btn primary" id="mapNoteSave">保存当前页</button><button class="map-note-btn" id="mapNoteNew">新增一页</button><button class="map-note-btn" id="mapNoteClear">删除当前页</button></div></div><div class="map-note-list" id="mapNoteList"></div></aside></div></div>';
 
   var tabs=[].slice.call(document.querySelectorAll('.map-tab'));
   var pageTabs=[].slice.call(body.querySelectorAll('.page-tab'));
-  var worldSvg=document.getElementById('globe-svg'), chinaSvg=document.getElementById('china-svg'), globeHost=document.getElementById('globe-3d'), globeRenderer=null, globeUnavailable=false, svg=worldSvg, tip=document.getElementById('tooltip'), ttName=document.getElementById('tt-name'), ttSub=document.getElementById('tt-sub');
+  var worldSvg=document.getElementById('globe-svg'), globeHost=document.getElementById('globe-3d'), globeRenderer=null, globeUnavailable=false, svg=worldSvg, tip=document.getElementById('tooltip'), ttName=document.getElementById('tt-name'), ttSub=document.getElementById('tt-sub');
   var selectedTitle=document.getElementById('mapSelected'), scopeEl=document.getElementById('mapScope'), metaEl=document.getElementById('mapMeta');
   var inputTime=document.getElementById('mapNoteTime'), inputEvent=document.getElementById('mapNoteEvent'), inputPlace=document.getElementById('mapNotePlace'), inputPlan=document.getElementById('mapNotePlan'), listEl=document.getElementById('mapNoteList');
   var current='world', selected=null, notes=loadNotes(), notePage=0;
-  var baseViews={world:{x:0,y:40,w:1000,h:540},worldFull:{x:0,y:0,w:1000,h:560},china:{x:70,y:70,w:900,h:620}};
-  var views={world:{x:0,y:40,w:1000,h:540},china:{x:70,y:70,w:900,h:620}};
+  var baseViews={world:{x:0,y:40,w:1000,h:540},worldFull:{x:0,y:0,w:1000,h:560}};
+  var views={world:{x:0,y:40,w:1000,h:540}};
   var worldRegions=[
     {id:'world:CN',name:'中国',tz:'Asia/Shanghai',info:'东亚国家，首都北京。',pop:'约14亿',points:[[690,210],[735,200],[790,220],[805,260],[780,305],[720,315],[670,285],[660,240]]},
     {id:'world:US',name:'美国',tz:'America/New_York',info:'北美国家，首都华盛顿。',pop:'约3.3亿',points:[[160,205],[250,175],[320,205],[305,260],[245,295],[170,270]]},
@@ -4825,37 +4833,16 @@ function initMapApp(){
   ];
   var worldFullRegions=null, worldLoading=false;
   var countryNames={'004':'阿富汗','008':'阿尔巴尼亚','012':'阿尔及利亚','024':'安哥拉','032':'阿根廷','036':'澳大利亚','040':'奥地利','050':'孟加拉国','056':'比利时','076':'巴西','124':'加拿大','156':'中国','250':'法国','276':'德国','356':'印度','360':'印度尼西亚','392':'日本','410':'韩国','484':'墨西哥','643':'俄罗斯','710':'南非','826':'英国','840':'美国'};
-  var chinaFullRegions=null, chinaLoading=false;
-  var chinaRegions=[
-    {id:'china:XJ',name:'新疆',tz:'Asia/Urumqi',info:'中国西北边疆省级行政区，首府乌鲁木齐。',pop:'约2600万',points:[[145,110],[320,100],[385,160],[365,255],[250,285],[135,230]]},
-    {id:'china:XZ',name:'西藏',tz:'Asia/Shanghai',info:'青藏高原主体区域，首府拉萨。',pop:'约360万',points:[[185,290],[360,270],[455,335],[420,420],[250,430],[150,365]]},
-    {id:'china:QH',name:'青海',tz:'Asia/Shanghai',info:'三江源所在省份，省会西宁。',pop:'约590万',points:[[365,255],[485,250],[535,320],[455,365],[360,310]]},
-    {id:'china:NM',name:'内蒙古',tz:'Asia/Shanghai',info:'北方草原与边境带，首府呼和浩特。',pop:'约2400万',points:[[405,120],[650,110],[820,150],[760,220],[585,225],[455,190]]},
-    {id:'china:HLJ',name:'黑龙江',tz:'Asia/Shanghai',info:'东北北部省份，省会哈尔滨。',pop:'约3100万',points:[[760,120],[900,110],[945,175],[870,235],[770,205]]},
-    {id:'china:LNJL',name:'吉林/辽宁',tz:'Asia/Shanghai',info:'东北中南部区域，包含吉林、辽宁概略。',pop:'约6600万',points:[[770,215],[875,235],[850,305],[755,300],[710,250]]},
-    {id:'china:BJHB',name:'京津冀',tz:'Asia/Shanghai',info:'北京、天津、河北核心区域。',pop:'约1.1亿',points:[[610,245],[710,235],[735,300],[675,335],[595,305]]},
-    {id:'china:SD',name:'山东',tz:'Asia/Shanghai',info:'华东沿海省份，省会济南。',pop:'约1亿',points:[[700,320],[805,315],[835,365],[760,395],[690,365]]},
-    {id:'china:GSNX',name:'甘肃/宁夏',tz:'Asia/Shanghai',info:'西北走廊区域，连接西部与中原。',pop:'约3300万',points:[[470,225],[595,225],[610,300],[530,315],[480,275]]},
-    {id:'china:SX',name:'陕西',tz:'Asia/Shanghai',info:'西北门户，省会西安。',pop:'约3900万',points:[[565,315],[635,320],[650,395],[595,425],[540,380]]},
-    {id:'china:SCCQ',name:'四川/重庆',tz:'Asia/Shanghai',info:'成渝地区双城经济圈。',pop:'约1.1亿',points:[[430,365],[555,360],[600,430],[535,490],[420,455]]},
-    {id:'china:YN',name:'云南',tz:'Asia/Shanghai',info:'西南边疆省份，省会昆明。',pop:'约4700万',points:[[410,455],[525,490],[500,555],[390,545],[345,500]]},
-    {id:'china:GZGX',name:'贵州/广西',tz:'Asia/Shanghai',info:'西南至华南连接区域。',pop:'约8600万',points:[[525,460],[640,455],[675,520],[590,555],[500,520]]},
-    {id:'china:HNHUB',name:'河南/湖北/湖南',tz:'Asia/Shanghai',info:'中部核心区域，交通枢纽密集。',pop:'约2.1亿',points:[[635,385],[735,380],[755,465],[680,520],[610,455]]},
-    {id:'china:JZ',name:'江浙沪皖',tz:'Asia/Shanghai',info:'长三角与安徽区域，经济活跃。',pop:'约2.3亿',points:[[735,385],[840,380],[865,455],[795,510],[725,470]]},
-    {id:'china:FJTW',name:'福建/台湾',tz:'Asia/Shanghai',info:'东南沿海与台湾岛概略。',pop:'约6500万',points:[[815,475],[885,480],[870,540],[805,535]]},
-    {id:'china:GDHK',name:'广东/港澳',tz:'Asia/Shanghai',info:'粤港澳大湾区所在区域。',pop:'约1.3亿',points:[[670,520],[800,515],[830,565],[725,590],[645,560]]},
-    {id:'china:HAINAN',name:'海南',tz:'Asia/Shanghai',info:'中国南端热带岛屿省份。',pop:'约1000万',points:[[720,615],[765,620],[760,655],[715,650]]}
-  ];
   function loadNotes(){try{return JSON.parse(localStorage.getItem('_mapNotesV2')||'{}')}catch(e){return {}}}
   function saveNotes(){localStorage.setItem('_mapNotesV2',JSON.stringify(notes))}
   function esc(s){return String(s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
   function pathFrom(points){return points.map(function(p,i){return (i?'L':'M')+p[0]+' '+p[1]}).join(' ')+' Z'}
   function getTime(r){try{return new Date().toLocaleString('zh-CN',{timeZone:r.tz||'Asia/Shanghai',hour12:false,month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})}catch(e){return new Date().toLocaleString('zh-CN',{hour12:false})}}
   function colorFor(i,total){return i%3===0?'var(--bg2)':(i%3===1?'var(--bg3)':'color-mix(in srgb,var(--bg2) 72%,var(--accent))')}
-  function setView(target, view){(target==='china'?chinaSvg:worldSvg).setAttribute('viewBox',view.x+' '+view.y+' '+view.w+' '+view.h)}
-  function baseViewFor(target){return target==='china'?baseViews.china:(worldFullRegions?baseViews.worldFull:baseViews.world)}
+  function setView(target, view){worldSvg.setAttribute('viewBox',view.x+' '+view.y+' '+view.w+' '+view.h)}
+  function baseViewFor(target){return worldFullRegions?baseViews.worldFull:baseViews.world}
   function syncBase(target){var b=baseViewFor(target);var v=views[target];if(!v||Math.abs((v.baseW||0)-b.w)>1||Math.abs((v.baseH||0)-b.h)>1){views[target]={x:b.x,y:b.y,w:b.w,h:b.h,baseW:b.w,baseH:b.h}}}
-  function zoomMap(target, factor){syncBase(target);var v=views[target], minW=(target==='china'?260:220), maxW=baseViewFor(target).w;var nw=Math.max(minW,Math.min(maxW,v.w*factor));var nh=nw*(v.h/v.w);if(nh>baseViewFor(target).h){nh=baseViewFor(target).h;nw=nh*(v.w/v.h)}var cx=v.x+v.w/2,cy=v.y+v.h/2;v.x=cx-nw/2;v.y=cy-nh/2;v.w=nw;v.h=nh;setView(target,v)}
+  function zoomMap(target, factor){syncBase(target);var v=views[target], minW=220, maxW=baseViewFor(target).w;var nw=Math.max(minW,Math.min(maxW,v.w*factor));var nh=nw*(v.h/v.w);if(nh>baseViewFor(target).h){nh=baseViewFor(target).h;nw=nh*(v.w/v.h)}var cx=v.x+v.w/2,cy=v.y+v.h/2;v.x=cx-nw/2;v.y=cy-nh/2;v.w=nw;v.h=nh;setView(target,v)}
   function resetMapZoom(target){var b=baseViewFor(target);views[target]={x:b.x,y:b.y,w:b.w,h:b.h,baseW:b.w,baseH:b.h};setView(target,views[target])}
   function render(){
     var data=current==='china'?(chinaFullRegions||chinaRegions):(worldFullRegions||worldRegions);
@@ -6193,5 +6180,10 @@ renderWeeks = function(cid, preserveState){ _origRenderWeeks(cid, preserveState)
 <script src="js/feature-reminder.js"></script>
 <script src="js/feature-housing-all.js"></script>
 <script src="js/feature-pdf.js"></script>
+<script src="js/feature-paper-milestones.js"></script>
+<script src="js/feature-exp-log.js"></script>
+<script src="js/feature-career-timeline.js"></script>
+<script src="js/feature-mortgage-compare.js"></script>
+<script src="js/feature-city-cards.js"></script>
 </body>
 </html>
