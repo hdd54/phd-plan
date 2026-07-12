@@ -705,6 +705,16 @@
     } else { showToast('⚠️ 保存失败: save 函数不可用'); }
   });
 
+  var haSaveDataBtn = document.getElementById('haSaveDataBtn');
+  if(haSaveDataBtn) haSaveDataBtn.addEventListener('click', function(){
+    var form = document.getElementById('haFormWrap');
+    var name = document.getElementById('hfName');
+    if(form && form.style.display !== 'none' && name && name.value.trim()) saveHouseForm();
+    saveLoanInputs();
+    saveCostInputs();
+    if(typeof window.save === 'function') window.save();
+  }, true);
+
   // ===== Wire sidebar button =====
   var btn = document.getElementById('housingBtn');
   if(btn) btn.addEventListener('click', openModal);

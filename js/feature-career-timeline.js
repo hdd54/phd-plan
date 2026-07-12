@@ -211,6 +211,23 @@
     if(timeline) timeline.scrollTop = timeline.scrollHeight;
   }
 
+  function collectVisibleEntries(){
+    document.querySelectorAll('#ctTimeline .ct-item').forEach(function(itemEl){
+      var idx = parseInt(itemEl.dataset.idx, 10);
+      var item = getData()[idx];
+      if(!item) return;
+      var title = itemEl.querySelector('.ct-item-title');
+      var date = itemEl.querySelector('input[type="date"]');
+      var selects = itemEl.querySelectorAll('select');
+      var desc = itemEl.querySelector('.ct-item-desc');
+      if(title) item.title = title.value;
+      if(date) item.date = date.value;
+      if(selects[0]) item.type = selects[0].value;
+      if(selects[1]) item.status = selects[1].value;
+      if(desc) item.desc = desc.value;
+    });
+  }
+
   // ===== Modal =====
   function show(){ 
     document.getElementById('ctOverlay').classList.add('s');
@@ -218,6 +235,8 @@
     renderAll();
   }
   function hide(){
+    collectVisibleEntries();
+    save();
     document.getElementById('ctOverlay').classList.remove('s');
     document.getElementById('ctModal').classList.remove('s');
   }
@@ -231,6 +250,10 @@
     document.getElementById('careerBtn').addEventListener('click', toggle);
     document.getElementById('ctClose').addEventListener('click', hide);
     document.getElementById('ctOverlay').addEventListener('click', hide);
+    document.getElementById('ctSaveBtn').addEventListener('click', function(){
+      collectVisibleEntries();
+      if(typeof window.save === 'function') window.save();
+    }, true);
     document.getElementById('ctSaveBtn').addEventListener('click', function(){
       if(typeof window.save === 'function') {
         try { window.save(); showToast('💾 求职数据已保存'); }

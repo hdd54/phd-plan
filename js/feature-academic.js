@@ -996,7 +996,57 @@
     }
   }
 
+  function collectVisibleAcademic(){
+    document.querySelectorAll('.ac-el-entry').forEach(function(entryEl){
+      var idx = parseInt(entryEl.dataset.idx, 10);
+      var item = getLog()[idx];
+      if(!item) return;
+      var title = entryEl.querySelector('.ac-el-entry-title');
+      var date = entryEl.querySelector('input[type="date"]');
+      var textareas = entryEl.querySelectorAll('textarea.ac-el-section-input');
+      if(title) item.title = title.value;
+      if(date) item.date = date.value;
+      if(textareas[0]) item.purpose = textareas[0].value;
+      if(textareas[1]) item.method = textareas[1].value;
+      if(textareas[2]) item.results = textareas[2].value;
+      if(textareas[3]) item.notes = textareas[3].value;
+    });
+    document.querySelectorAll('.ac-pm-card').forEach(function(card){
+      var idx = parseInt(card.dataset.idx, 10);
+      var paper = getPapers()[idx];
+      if(!paper) return;
+      var title = card.querySelector('.ac-pm-card-title');
+      var journal = card.querySelector('.ac-pm-meta-input');
+      if(title) paper.title = title.value;
+      if(journal) paper.journal = journal.value;
+      card.querySelectorAll('.ac-pt-entry').forEach(function(entryEl, ei){
+        if(!paper.progress || !paper.progress[ei]) return;
+        paper.progress[ei].items = [];
+        entryEl.querySelectorAll('.ac-pt-item-text').forEach(function(ta){
+          paper.progress[ei].items.push(ta.value);
+        });
+      });
+    });
+    document.querySelectorAll('.ac-lit-card').forEach(function(card){
+      var idx = parseInt(card.dataset.idx, 10);
+      var item = getLitData()[idx];
+      if(!item) return;
+      var title = card.querySelector('.ac-lit-card-title');
+      var meta = card.querySelectorAll('.ac-lit-meta-field input, .ac-lit-meta-field select');
+      var body = card.querySelectorAll('.ac-lit-body-input');
+      if(title) item.title = title.value;
+      if(meta[0]) item.authors = meta[0].value;
+      if(meta[1]) item.journal = meta[1].value;
+      if(meta[2]) item.year = meta[2].value;
+      if(meta[3]) item.status = meta[3].value;
+      if(body[0]) item.contribution = body[0].value;
+      if(body[1]) item.notes = body[1].value;
+    });
+  }
+
   function switchTab(tab){
+    collectVisibleAcademic();
+    save();
     activeTab = tab;
     document.querySelectorAll('.ac-tab').forEach(function(t){ t.classList.remove('a'); });
     document.querySelectorAll('.ac-panel').forEach(function(p){ p.classList.remove('a'); });
@@ -1021,6 +1071,8 @@
   }
 
   function hideModal(){
+    collectVisibleAcademic();
+    save();
     document.getElementById('acOverlay').classList.remove('s');
     document.getElementById('acModal').classList.remove('s');
   }
@@ -1039,6 +1091,10 @@
 
     document.getElementById('acClose').addEventListener('click', hideModal);
     document.getElementById('acOverlay').addEventListener('click', hideModal);
+    document.getElementById('acSaveBtn').addEventListener('click', function(){
+      collectVisibleAcademic();
+      if(typeof window.save === 'function') window.save();
+    }, true);
     document.getElementById('acSaveBtn').addEventListener('click', function(){
       if(typeof window.save === 'function') {
         try { window.save(); showToast('💾 学术数据已保存'); }

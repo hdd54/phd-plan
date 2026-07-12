@@ -171,6 +171,7 @@
     var popup = document.createElement('div');
     popup.className = 'rc-popup';
     popup.id = 'rcPopup';
+    popup.dataset.date = dateStr;
 
     var dateDisplay = dateStr.slice(0,4) + '年' + parseInt(dateStr.slice(5,7)) + '月' + parseInt(dateStr.slice(8,10)) + '日';
     var html = '<button class="rc-pop-close" id="rcPopClose">✕</button>';
@@ -278,6 +279,16 @@
     input.focus();
     // Re-render calendar to update count badges
     renderCalendar();
+  }
+
+  function savePendingPopupInput(){
+    var popup = document.getElementById('rcPopup');
+    var input = document.getElementById('rcPopInput');
+    if(!popup || !input) return;
+    var val = input.value.trim();
+    if(!val) return;
+    var dateStr = popup.dataset.date;
+    if(dateStr) addEntry(dateStr);
   }
 
   function hidePopupOnOutside(e) {
@@ -411,6 +422,10 @@
       viewMonth = now.getMonth();
       renderCalendar();
     });
+    document.getElementById('rcSaveBtn').addEventListener('click', function(){
+      savePendingPopupInput();
+      if(typeof window.save === 'function') window.save();
+    }, true);
     document.getElementById('rcSaveBtn').addEventListener('click', function(){
       if(typeof window.save === 'function') {
         try { window.save(); showToast('💾 日历数据已保存'); }

@@ -4899,12 +4899,39 @@ console.log('DBG: finance try block entered');
   });
   var ovEl = document.getElementById('financeOverlay');
   var clEl = document.getElementById('financeClose');
-  if(ovEl) ovEl.addEventListener('click', function(){ ovEl.classList.remove('s'); var m=document.getElementById('financeModal'); if(m)m.classList.remove('s'); });
-  if(clEl) clEl.addEventListener('click', function(){ var o=document.getElementById('financeOverlay'); if(o)o.classList.remove('s'); var m=document.getElementById('financeModal'); if(m)m.classList.remove('s'); });
+  function financeCollectCurrent_(){
+    var _d = window.data || {};
+    var balEl=document.getElementById('ccBal'), rateEl=document.getElementById('ccRate'), payEl=document.getElementById('ccPay');
+    if(balEl || rateEl || payEl) {
+      _d._ccLast = {
+        bal: parseFloat(balEl && balEl.value) || 0,
+        rate: parseFloat(rateEl && rateEl.value) || 18.25,
+        pay: parseFloat(payEl && payEl.value) || 0
+      };
+    }
+    var goalEl=document.getElementById('svGoal'), initEl=document.getElementById('svInitial'), dateEl=document.getElementById('svDate');
+    if(goalEl || initEl || dateEl) {
+      var sv = _d._savings || {};
+      sv.goal = parseFloat(goalEl && goalEl.value) || 0;
+      sv.initial = parseFloat(initEl && initEl.value) || 0;
+      sv.date = (dateEl && dateEl.value) || '';
+      if(!sv.log) sv.log = [];
+      _d._savings = sv;
+    }
+    window.data = _d;
+  }
+  function financeClose_(){
+    financeCollectCurrent_();
+    if(typeof window.save === 'function') window.save();
+    var o=document.getElementById('financeOverlay'); if(o)o.classList.remove('s');
+    var m=document.getElementById('financeModal'); if(m)m.classList.remove('s');
+  }
+  if(ovEl) ovEl.addEventListener('click', financeClose_);
+  if(clEl) clEl.addEventListener('click', financeClose_);
   var fsb = document.getElementById('financeSaveBtn');
   if(fsb) fsb.addEventListener('click', function(){
     if(typeof window.save === 'function') {
-      try { window.save(); showToast('💾 财务数据已保存'); }
+      try { financeCollectCurrent_(); window.save(); showToast('💾 财务数据已保存'); }
       catch(e) { showToast('⚠️ 保存失败: ' + (e.message||e)); }
     } else { showToast('⚠️ 保存失败: save 函数不可用'); }
   });
@@ -4930,12 +4957,23 @@ console.log('DBG: sn try block entered');
   });
   var snOv = document.getElementById('snOverlay');
   var snCl = document.getElementById('snClose');
-  if(snOv) snOv.addEventListener('click', function(){ snOv.classList.remove('s'); var m=document.getElementById('snModal'); if(m)m.classList.remove('s'); });
-  if(snCl) snCl.addEventListener('click', function(){ var o=document.getElementById('snOverlay'); if(o)o.classList.remove('s'); var m=document.getElementById('snModal'); if(m)m.classList.remove('s'); });
+  function snPersist_(){
+    var _d = window.data || {};
+    if(!_d._snapshots) _d._snapshots = [];
+    window.data = _d;
+    if(typeof window.save === 'function') window.save();
+  }
+  function snClose_(){
+    snPersist_();
+    var o=document.getElementById('snOverlay'); if(o)o.classList.remove('s');
+    var m=document.getElementById('snModal'); if(m)m.classList.remove('s');
+  }
+  if(snOv) snOv.addEventListener('click', snClose_);
+  if(snCl) snCl.addEventListener('click', snClose_);
   var ssb = document.getElementById('snSaveBtn');
   if(ssb) ssb.addEventListener('click', function(){
     if(typeof window.save === 'function') {
-      try { window.save(); showToast('💾 快照数据已保存'); }
+      try { snPersist_(); showToast('💾 快照数据已保存'); }
       catch(e) { showToast('⚠️ 保存失败: ' + (e.message||e)); }
     } else { showToast('⚠️ 保存失败: save 函数不可用'); }
   });

@@ -189,6 +189,21 @@
     renderAll();
   }
 
+  function collectVisibleCards(){
+    document.querySelectorAll('#ccList .cc-card').forEach(function(card){
+      var idx = parseInt(card.dataset.idx, 10);
+      var item = getData()[idx];
+      if(!item) return;
+      var city = card.querySelector('.cc-card-city');
+      if(city) item.city = city.value;
+      var keys = ['price','rent','income','downThreshold','priceIncomeRatio','talentPolicy','jobMarket','lifestyle'];
+      card.querySelectorAll('.cc-card-field').forEach(function(field, fi){
+        var input = field.querySelector('input,textarea');
+        if(input && keys[fi]) item[keys[fi]] = input.value;
+      });
+    });
+  }
+
   // ===== Modal =====
   function show(){
     document.getElementById('ccOverlay').classList.add('s');
@@ -196,6 +211,8 @@
     renderAll();
   }
   function hide(){
+    collectVisibleCards();
+    save();
     document.getElementById('ccOverlay').classList.remove('s');
     document.getElementById('ccModal').classList.remove('s');
   }
@@ -209,6 +226,10 @@
     document.getElementById('cityBtn').addEventListener('click', toggle);
     document.getElementById('ccClose').addEventListener('click', hide);
     document.getElementById('ccOverlay').addEventListener('click', hide);
+    document.getElementById('ccSaveBtn').addEventListener('click', function(){
+      collectVisibleCards();
+      if(typeof window.save === 'function') window.save();
+    }, true);
     document.getElementById('ccSaveBtn').addEventListener('click', function(){
       if(typeof window.save === 'function') {
         try { window.save(); showToast('💾 城市数据已保存'); }
