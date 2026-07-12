@@ -2924,8 +2924,8 @@ function applyEditProposal(proposal, btnEl) {
   setAIStatus('idle');
 }
 
-// Patch save to also persist AI chat history
-{ const _origSave = save; save = function() { _origSave(); saveChatHistory(); debounceAutoSync(); }; }
+// Patch save to also persist AI chat history and keep feature modules on the same data object.
+{ const _origSave = save; save = function() { if (window.data && window.data !== data) data = window.data; else window.data = data; _origSave(); saveChatHistory(); debounceAutoSync(); }; }
 
 // ======================== GIST SYNC ========================
 const GIST_FILENAME = 'phd-plan-data.json';
@@ -3161,15 +3161,17 @@ async function gistPull() {
   setGistStatus('⏳ 拉取中…', '');
   try {
     const remote = await gistFetch();
+    const remoteSyncedAt = parseInt(remote._syncedAt) || Date.now();
     delete remote._syncedAt;
     // Preserve overviews if remote doesn't have them
     const localOverviews = data._overviews;
     data = remote;
+    window.data = data;
     if (!data._overviews && localOverviews) data._overviews = localOverviews;
     ensure(data);
     save();
     renderAll();
-    gistLastSync = Date.now();
+    gistLastSync = remoteSyncedAt;
     localStorage.setItem(GIST_LAST_SYNC_KEY, gistLastSync.toString());
     setGistStatus('✅ 已从云端拉取 ' + new Date(gistLastSync).toLocaleString('zh-CN', {hour:'2-digit',minute:'2-digit'}), 'ok');
     showToast('⚡ 已从云端拉取');
@@ -3218,14 +3220,26 @@ function trySyncOnLoad() {
   if (!gistToken || !gistId) return;
   setGistStatus('⏳ 自动同步中…', '');
   gistFetch().then(function(remote) {
+    const remoteSyncedAt = parseInt(remote._syncedAt) || 0;
+    if (remoteSyncedAt && gistLastSync && remoteSyncedAt <= gistLastSync) {
+      setGistStatus('✅ 本地数据已是最新', 'ok');
+      updateGistUI();
+      return;
+    }
+    if (!remoteSyncedAt && gistLastSync) {
+      setGistStatus('✅ 保留本地数据（云端无更新时间）', 'ok');
+      updateGistUI();
+      return;
+    }
     delete remote._syncedAt;
     const localOverviews = data._overviews;
     data = remote;
+    window.data = data;
     if (!data._overviews && localOverviews) data._overviews = localOverviews;
     ensure(data);
     save();
     renderAll();
-    gistLastSync = Date.now();
+    gistLastSync = remoteSyncedAt || Date.now();
     localStorage.setItem(GIST_LAST_SYNC_KEY, gistLastSync.toString());
     setGistStatus('✅ 已自动同步云端数据', 'ok');
     showToast('⚡ 已同步云端数据');
