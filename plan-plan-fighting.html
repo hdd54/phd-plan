@@ -3679,15 +3679,17 @@ try{
   var bar = document.getElementById('leftBar');
   var btn = document.getElementById('lbToggle');
   if(bar && btn){
+    function syncLeftBarLayout(){
+      document.body.classList.toggle('sb', bar.classList.contains('s'));
+      btn.textContent = bar.classList.contains('s') ? '◀' : '▶';
+    }
     if(localStorage.getItem('_leftBarCollapsed')==='1'){
       bar.classList.remove('s');
-      document.body.classList.remove('sb');
     }
-    btn.textContent = bar.classList.contains('s') ? '◀' : '▶';
+    syncLeftBarLayout();
     btn.addEventListener('click', function(){
       bar.classList.toggle('s');
-      document.body.classList.toggle('sb');
-      btn.textContent = bar.classList.contains('s') ? '◀' : '▶';
+      syncLeftBarLayout();
       try { localStorage.setItem('_leftBarCollapsed', bar.classList.contains('s') ? '0' : '1'); } catch(e){}
     });
   }
