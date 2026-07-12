@@ -1059,7 +1059,7 @@ body{padding-left:calc(var(--sb-w) + var(--content-gutter));padding-right:var(--
 
 /* Safe area insets for modern mobile browsers */
 @supports(padding:max(0px)) {
-  .sb{padding-left:max(1rem,env(safe-area-inset-left));padding-right:max(1rem,env(safe-area-inset-right))}
+  body{padding-left:calc(var(--sb-w) + var(--content-gutter) + env(safe-area-inset-left));padding-right:calc(var(--content-gutter) + env(safe-area-inset-right))}
   .bb{padding-bottom:max(.5rem,env(safe-area-inset-bottom))}
 }
 
