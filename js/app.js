@@ -2697,7 +2697,7 @@ document.querySelectorAll('.pomo-type').forEach(function(btn){
   btn.addEventListener('click',function(){pomoSetType(btn)})
 })
 // Keyboard: Escape to close
-document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(document.getElementById('sleepOverlay').classList.contains('s'))sleepExit();else if(document.getElementById('pomoModal').classList.contains('s'))pomoClose();else if(document.getElementById('housingOverlay')&&document.getElementById('housingOverlay').classList.contains('s')){var ce=document.getElementById('housingClose');if(ce)ce.click()}else if(document.getElementById('mapOverlay')&&document.getElementById('mapOverlay').classList.contains('s'))mapClose_()}})
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(document.getElementById('sleepOverlay').classList.contains('s'))sleepExit();else if(document.getElementById('pomoModal').classList.contains('s'))pomoClose();else if(document.getElementById('housingOverlay')&&document.getElementById('housingOverlay').classList.contains('s')){var ce=document.getElementById('housingClose');if(ce)ce.click()}else if(document.getElementById('ucOverlay')&&document.getElementById('ucOverlay').classList.contains('s')){var ce=document.getElementById('ucClose');if(ce)ce.click()}}})
 try{pomoLoad()}catch(e){}try{pomoLoadPos}catch(e){}
 
 // ======================== FEATURE: Milestone Timeline ========================
@@ -2831,19 +2831,10 @@ try{
 document.getElementById('helpBtn').onclick=helpOpen
 document.getElementById('helpOverlay').onclick=helpClose_
 document.getElementById('helpClose').onclick=helpClose_
-// Map modal
-var mapApp=null;
-function mapOpen(){
-  document.getElementById('mapOverlay').classList.add('s');
-  document.getElementById('mapModal').classList.add('s');
-  initMapApp();
-  setTimeout(function(){ if(mapApp) mapApp.render(); },60);
-}
-function mapClose_(){document.getElementById('mapOverlay').classList.remove('s');document.getElementById('mapModal').classList.remove('s')}
-var mapBtnEl=document.getElementById('mapBtn'), mapOverlayEl=document.getElementById('mapOverlay'), mapCloseEl=document.getElementById('mapClose');
-if(mapBtnEl)mapBtnEl.onclick=mapOpen
-if(mapOverlayEl)mapOverlayEl.onclick=mapClose_
-if(mapCloseEl)mapCloseEl.onclick=mapClose_
+// Academic modal handled by feature-academic.js
+// (merged: paper + experiment + literature)
+
+// ====== DEAD CODE: initMapApp and below (map globe removed from UI) ======
 function initMapApp(){
   if(mapApp){mapApp.render();return}
   var modal=document.getElementById('mapModal'), body=document.getElementById('mapBody');
@@ -3937,11 +3928,11 @@ console.log('DBG: sv try block entered');
     if(!sv.goal){ if(logSection) logSection.style.display='none'; return; }
     if(logSection) logSection.style.display='block';
     var gEl=document.getElementById('svDispGoal'), aEl=document.getElementById('svAutoTotal'), pEl=document.getElementById('svDispPct'), rEl=document.getElementById('svDispRemain'), bEl=document.getElementById('svBar');
-    if(gEl) gEl.textContent = (sv.goal||0).toFixed(1)+' 涓?;
-    if(aEl) aEl.textContent = total.toFixed(1)+' 涓?/ '+(sv.goal||0).toFixed(1)+' 涓?;
+    if(gEl) gEl.textContent = (sv.goal||0).toFixed(1)+' 元;
+    if(aEl) aEl.textContent = total.toFixed(1)+' 元/ '+(sv.goal||0).toFixed(1)+' 元;
     var pct = sv.goal>0 ? Math.min(100, Math.round(total/sv.goal*100)) : 0;
     if(pEl) pEl.textContent = pct+'%';
-    if(rEl) rEl.textContent = Math.max(0,(sv.goal||0)-total).toFixed(1)+' 涓?;
+    if(rEl) rEl.textContent = Math.max(0,(sv.goal||0)-total).toFixed(1)+' 元;
     if(bEl) bEl.style.width = pct+'%';
     svRenderLog_();
   }

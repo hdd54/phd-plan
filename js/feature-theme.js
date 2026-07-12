@@ -15,21 +15,23 @@
         '--cinnabar':'#CC2936','--cinnabar-dim':'rgba(204,41,54,.12)',
         '--jade':'#3b7a5c','--jade-dim':'rgba(59,122,92,.1)',
         '--gold-leaf':'#C9A96E','--gold-dim':'rgba(212,165,116,.12)',
-        '--card':'#14110f','--card-h':'#1f1a16'
+        '--card':'#14110f','--card-h':'#1f1a16',
+        '--bg-gradient':'linear-gradient(180deg,#0a0908,#14100d)'
       },
-      el: {} // no element overrides needed for dark
+      el: {}
     },
     'warm-light': {
       name: '暖色亮', icon: '☀️',
       vars: {
         '--bg':'#faf7f2','--bg2':'#f0ece6','--bg3':'#e8e2d8',
-        '--fg':'#2c2418','--fg-dim':'#6b5d4f','--muted':'#a09888',
+        '--fg':'#2c2418','--fg-dim':'#5a4d3f','--muted':'#7a6a5a',
         '--accent':'#d4a574','--accent-2':'#e85d2f','--accent-3':'#4a7c8c',
         '--line':'rgba(0,0,0,.07)','--line-2':'rgba(0,0,0,.12)',
         '--cinnabar':'#CC2936','--cinnabar-dim':'rgba(204,41,54,.12)',
         '--jade':'#3b7a5c','--jade-dim':'rgba(59,122,92,.1)',
         '--gold-leaf':'#C9A96E','--gold-dim':'rgba(212,165,116,.15)',
-        '--card':'#f5f0e9','--card-h':'#eee8df'
+        '--card':'#f5f0e9','--card-h':'#eee8df',
+        '--bg-gradient':'linear-gradient(180deg,#faf7f2,#f0ece6)'
       },
       el: {
         '.btm-bar':'background:rgba(250,247,242,.92)',
@@ -46,7 +48,8 @@
         '--cinnabar':'#ef4444','--cinnabar-dim':'rgba(239,68,68,.12)',
         '--jade':'#22c55e','--jade-dim':'rgba(34,197,94,.1)',
         '--gold-leaf':'#facc15','--gold-dim':'rgba(96,165,250,.12)',
-        '--card':'#111827','--card-h':'#1a2332'
+        '--card':'#111827','--card-h':'#1a2332',
+        '--bg-gradient':'linear-gradient(180deg,#0a0e17,#0f1525)'
       },
       el: {}
     },
@@ -60,7 +63,8 @@
         '--cinnabar':'#cc3636','--cinnabar-dim':'rgba(204,54,54,.12)',
         '--jade':'#4a9a4a','--jade-dim':'rgba(74,154,74,.1)',
         '--gold-leaf':'#c9a86a','--gold-dim':'rgba(107,205,107,.12)',
-        '--card':'#0f1a0f','--card-h':'#1a2a1a'
+        '--card':'#0f1a0f','--card-h':'#1a2a1a',
+        '--bg-gradient':'linear-gradient(180deg,#0a0f0a,#0f1a0f)'
       },
       el: {}
     },
@@ -74,7 +78,8 @@
         '--cinnabar':'#cc2946','--cinnabar-dim':'rgba(204,41,70,.12)',
         '--jade':'#5aaa7a','--jade-dim':'rgba(90,170,122,.1)',
         '--gold-leaf':'#c9a86a','--gold-dim':'rgba(183,148,244,.12)',
-        '--card':'#18132a','--card-h':'#22183a'
+        '--card':'#18132a','--card-h':'#22183a',
+        '--bg-gradient':'linear-gradient(180deg,#0e0a14,#18132a)'
       },
       el: {}
     },
@@ -88,7 +93,8 @@
         '--cinnabar':'#bb4444','--cinnabar-dim':'rgba(187,68,68,.12)',
         '--jade':'#559955','--jade-dim':'rgba(85,153,85,.1)',
         '--gold-leaf':'#aaaa55','--gold-dim':'rgba(170,170,85,.1)',
-        '--card':'#141414','--card-h':'#1c1c1c'
+        '--card':'#141414','--card-h':'#1c1c1c',
+        '--bg-gradient':'linear-gradient(180deg,#0d0d0d,#161616)'
       },
       el: {}
     },
@@ -102,7 +108,8 @@
         '--cinnabar':'#d03030','--cinnabar-dim':'rgba(208,48,48,.12)',
         '--jade':'#3a8a5a','--jade-dim':'rgba(58,138,90,.1)',
         '--gold-leaf':'#C9A96E','--gold-dim':'rgba(224,80,80,.12)',
-        '--card':'#1a0c0c','--card-h':'#2a1414'
+        '--card':'#1a0c0c','--card-h':'#2a1414',
+        '--bg-gradient':'linear-gradient(180deg,#0f0707,#1a0c0c)'
       },
       el: {}
     },
@@ -116,7 +123,8 @@
         '--cinnabar':'#c04040','--cinnabar-dim':'rgba(192,64,64,.12)',
         '--jade':'#2aaa7a','--jade-dim':'rgba(42,170,122,.1)',
         '--gold-leaf':'#d4a050','--gold-dim':'rgba(92,212,176,.12)',
-        '--card':'#0c1a18','--card-h':'#142a26'
+        '--card':'#0c1a18','--card-h':'#142a26',
+        '--bg-gradient':'linear-gradient(180deg,#080e0e,#0c1a18)'
       },
       el: {}
     },
@@ -130,7 +138,8 @@
         '--cinnabar':'#c04a30','--cinnabar-dim':'rgba(192,74,48,.12)',
         '--jade':'#4a8a4a','--jade-dim':'rgba(74,138,74,.1)',
         '--gold-leaf':'#c99440','--gold-dim':'rgba(212,144,64,.12)',
-        '--card':'#1a140e','--card-h':'#2a1e14'
+        '--card':'#1a140e','--card-h':'#2a1e14',
+        '--bg-gradient':'linear-gradient(180deg,#0f0b06,#1a140e)'
       },
       el: {}
     },
@@ -144,7 +153,8 @@
         '--cinnabar':'#b84848','--cinnabar-dim':'rgba(184,72,72,.12)',
         '--jade':'#4a8a6a','--jade-dim':'rgba(74,138,106,.1)',
         '--gold-leaf':'#a0985a','--gold-dim':'rgba(122,138,184,.12)',
-        '--card':'#151a24','--card-h':'#1e2430'
+        '--card':'#151a24','--card-h':'#1e2430',
+        '--bg-gradient':'linear-gradient(180deg,#0e1118,#151a24)'
       },
       el: {}
     },
@@ -158,7 +168,8 @@
         '--cinnabar':'#ef5f54','--cinnabar-dim':'rgba(239,95,84,.12)',
         '--jade':'#3fcf8e','--jade-dim':'rgba(63,207,142,.1)',
         '--gold-leaf':'#e0c46c','--gold-dim':'rgba(56,200,214,.12)',
-        '--card':'#0b1b20','--card-h':'#112b32'
+        '--card':'#0b1b20','--card-h':'#112b32',
+        '--bg-gradient':'linear-gradient(180deg,#061014,#0b1b20)'
       },
       el: {}
     },
@@ -172,7 +183,8 @@
         '--cinnabar':'#d65a78','--cinnabar-dim':'rgba(214,90,120,.12)',
         '--jade':'#66bfae','--jade-dim':'rgba(102,191,174,.1)',
         '--gold-leaf':'#d8bd7a','--gold-dim':'rgba(224,168,200,.12)',
-        '--card':'#151321','--card-h':'#211d32'
+        '--card':'#151321','--card-h':'#211d32',
+        '--bg-gradient':'linear-gradient(180deg,#0c0b12,#151321)'
       },
       el: {}
     },
@@ -180,13 +192,14 @@
       name: '纸竹', icon: '🎋',
       vars: {
         '--bg':'#f7f3e8','--bg2':'#ece4d2','--bg3':'#ded2b9',
-        '--fg':'#2b261b','--fg-dim':'#665f4d','--muted':'#9b927c',
+        '--fg':'#2b261b','--fg-dim':'#5a4f3d','--muted':'#7a6d55',
         '--accent':'#4f8a5f','--accent-2':'#c46a3a','--accent-3':'#447c93',
         '--line':'rgba(58,47,31,.12)','--line-2':'rgba(58,47,31,.2)',
         '--cinnabar':'#b94632','--cinnabar-dim':'rgba(185,70,50,.12)',
         '--jade':'#4f8a5f','--jade-dim':'rgba(79,138,95,.12)',
         '--gold-leaf':'#b68d42','--gold-dim':'rgba(79,138,95,.14)',
-        '--card':'#f0e9d8','--card-h':'#e4dac4'
+        '--card':'#f0e9d8','--card-h':'#e4dac4',
+        '--bg-gradient':'linear-gradient(180deg,#f7f3e8,#ece4d2)'
       },
       el: {
         '.btm-bar':'background:rgba(247,243,232,.92)',
@@ -203,7 +216,8 @@
         '--cinnabar':'#ef5b62','--cinnabar-dim':'rgba(239,91,98,.12)',
         '--jade':'#55bda7','--jade-dim':'rgba(85,189,167,.1)',
         '--gold-leaf':'#f2c879','--gold-dim':'rgba(255,179,107,.13)',
-        '--card':'#211418','--card-h':'#341d21'
+        '--card':'#211418','--card-h':'#341d21',
+        '--bg-gradient':'linear-gradient(180deg,#140d0f,#211418)'
       },
       el: {}
     },
@@ -211,13 +225,14 @@
       name: '冰川白', icon: '🏔️',
       vars: {
         '--bg':'#f4f8fb','--bg2':'#e8f0f5','--bg3':'#dce8ef',
-        '--fg':'#1b2a32','--fg-dim':'#5d707b','--muted':'#92a2aa',
+        '--fg':'#1b2a32','--fg-dim':'#4a5d6a','--muted':'#6e7d88',
         '--accent':'#2f8fb4','--accent-2':'#d4686f','--accent-3':'#4b9f7d',
         '--line':'rgba(31,63,77,.1)','--line-2':'rgba(31,63,77,.18)',
         '--cinnabar':'#c8525d','--cinnabar-dim':'rgba(200,82,93,.12)',
         '--jade':'#4b9f7d','--jade-dim':'rgba(75,159,125,.1)',
         '--gold-leaf':'#ad8f42','--gold-dim':'rgba(47,143,180,.12)',
-        '--card':'#edf4f8','--card-h':'#e0edf4'
+        '--card':'#edf4f8','--card-h':'#e0edf4',
+        '--bg-gradient':'linear-gradient(180deg,#f4f8fb,#e8f0f5)'
       },
       el: {
         '.btm-bar':'background:rgba(244,248,251,.92)',
@@ -234,7 +249,8 @@
         '--cinnabar':'#fb7185','--cinnabar-dim':'rgba(251,113,133,.12)',
         '--jade':'#34d399','--jade-dim':'rgba(52,211,153,.1)',
         '--gold-leaf':'#fde68a','--gold-dim':'rgba(125,211,252,.12)',
-        '--card':'#0b1020','--card-h':'#131a30'
+        '--card':'#0b1020','--card-h':'#131a30',
+        '--bg-gradient':'linear-gradient(180deg,#05070f,#0b1020)'
       },
       el: {}
     }

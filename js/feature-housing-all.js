@@ -7,16 +7,85 @@
   var MODAL_ID = 'housingModal';
   var STORAGE_KEY = '_housingAll';
   var LIST_KEY = '_houseList';
+  var LOG_KEY = '_housingChangeLog';
+  var MAX_LOG = 500;
 
   // ===== Shared helpers =====
-  function fmtWan(n){ return (n||0).toFixed(1).replace(/\B(?=(\d{3})+(?!\d))/g,',')+' 万'; }
+  function fmtWan(n){ return (n||0).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,',')+' 元'; }
   function fmtYuan(n){ return (n||0).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,',')+' 元'; }
   function fmtYM(n){ return (n||0).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,',')+' 元/月'; }
   function esc(s){ return String(s).replace(/[&<>"]/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]}) }
 
+  // ===== Change logging =====
+  var FIELD_LABELS = {
+    haPrice:'房价总额',haDownPct:'首付比例',haLoanYears:'贷款年限',
+    haFundAmt:'公积金额度',haFundRate:'公积金利率',haFundYears:'公积金年限',
+    haComAmt:'商业额度',haComRate:'商业利率',haComYears:'商业年限',
+    haTax:'税费',haRenov:'装修',haPropFee:'物业费',haOther:'其他费用'
+  };
+  function getChangeLog(){
+    try{var d=JSON.parse(localStorage.getItem(LOG_KEY));return Array.isArray(d)?d:[]}
+    catch(e){return []}
+  }
+  function addChangeLog(fieldId,oldVal,newVal){
+    var label=FIELD_LABELS[fieldId]||fieldId;
+    var log=getChangeLog();
+    log.push({t:Date.now(),f:fieldId,l:label,o:oldVal,n:newVal});
+    if(log.length>MAX_LOG)log=log.slice(log.length-MAX_LOG);
+    try{localStorage.setItem(LOG_KEY,JSON.stringify(log))}catch(e){}
+  }
+  function wireFieldLogging(){
+    Object.keys(FIELD_LABELS).forEach(function(id){
+      var el=document.getElementById(id);
+      if(!el)return;
+      el.addEventListener('focus',function(){this.dataset.prev=this.value});
+      el.addEventListener('change',function(){
+        var old=this.dataset.prev;
+        if(old!==undefined&&String(this.value)!==old)addChangeLog(id,old,this.value);
+        this.dataset.prev=this.value;
+      });
+    });
+  }
+  function showChangeLog(){
+    var log=getChangeLog();
+    if(log.length===0){showToast('暂无变更记录');return}
+    var html='<div style="font-size:.6rem;margin-bottom:.2rem;color:var(--accent)">📋 金额变更记录（最近 '+MAX_LOG+' 条）</div>'+
+      '<div style="max-height:350px;overflow-y:auto;font-size:.48rem">';
+    for(var i=log.length-1;i>=0;i--){
+      var e=log[i];
+      var d=new Date(e.t);
+      var time=d.getMonth()+1+'/'+d.getDate()+' '+d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
+      html+='<div style="padding:.08rem .12rem;border-bottom:1px solid var(--line-2);display:flex;gap:.1rem">'+
+        '<span style="color:var(--muted);white-space:nowrap">'+esc(time)+'</span>'+
+        '<span style="color:var(--accent);white-space:nowrap">'+esc(e.l)+'</span>'+
+        '<span style="color:var(--fg-dim)">'+esc(e.o)+' → </span>'+
+        '<span style="color:var(--fg)">'+esc(e.n)+'</span></div>';
+    }
+    html+='</div>'+
+      '<button id="haLogClearBtn" style="margin-top:.15rem;padding:.1rem .4rem;border:1px solid var(--cinnabar);border-radius:4px;background:transparent;color:var(--cinnabar);cursor:pointer;font-family:var(--font-sans);font-size:.48rem">清空记录</button>'+
+      '<button id="haLogCloseBtn" style="margin-top:.15rem;margin-left:.15rem;padding:.1rem .4rem;border:1px solid var(--line-2);border-radius:4px;background:transparent;color:var(--muted);cursor:pointer;font-family:var(--font-sans);font-size:.48rem">关闭</button>';
+    var overlay=document.createElement('div');
+    overlay.className='pomo-overlay';overlay.id='_logOverlay';
+    overlay.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:10000;display:flex;align-items:center;justify-content:center';
+    var box=document.createElement('div');
+    box.style.cssText='background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:.3rem;width:clamp(300px,70vw,500px);max-height:500px;overflow:hidden;display:flex;flex-direction:column';
+    box.innerHTML=html;
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click',function(e){if(e.target===overlay){overlay.remove()}});
+    document.getElementById('haLogCloseBtn').addEventListener('click',function(){overlay.remove()});
+    var clearBtn=document.getElementById('haLogClearBtn');
+    if(clearBtn)clearBtn.addEventListener('click',function(){
+      if(!confirm('确定清空所有变更记录？'))return;
+      try{localStorage.removeItem(LOG_KEY)}catch(e){}
+      overlay.remove();
+      showToast('已清空');
+    });
+  }
+
   // ===== Loan calculation (等额本息) =====
-  function calcLoan(amtWan, ratePct, years){
-    var P = amtWan * 10000;
+  function calcLoan(amt, ratePct, years){
+    var P = amt;
     var r = ratePct / 100 / 12;
     var n = years * 12;
     var monthly;
@@ -70,7 +139,7 @@
     var warnEl = document.getElementById('haSplitWarn');
     if(loanTotal > 0 && Math.abs(splitTotal - loanTotal) > 0.01){
       warnEl.style.display = 'block';
-      warnEl.textContent = '⚠️ 公积金+' + comAmt.toFixed(1) + ' 商业 ≠ ' + loanTotal.toFixed(1) + ' 万贷款总额，差额 ' + Math.abs(splitTotal - loanTotal).toFixed(1) + ' 万';
+      warnEl.textContent = '⚠️ 公积金 ' + fmtWan(fundAmt) + ' + 商业 ' + fmtWan(comAmt) + ' ≠ 贷款总额 ' + fmtWan(loanTotal) + '，差额 ' + fmtWan(Math.abs(splitTotal - loanTotal));
     } else {
       warnEl.style.display = 'none';
     }
@@ -81,21 +150,21 @@
 
     // Fund results
     document.getElementById('haFundMonthly').textContent = fundAmt > 0 ? fmtYM(fR.monthly) : '—';
-    document.getElementById('haFundInt').textContent = fundAmt > 0 ? fmtWan(fR.totalInt/10000) : '—';
-    document.getElementById('haFundTotal').textContent = fundAmt > 0 ? fmtWan(fR.totalPay/10000) : '—';
+    document.getElementById('haFundInt').textContent = fundAmt > 0 ? fmtWan(fR.totalInt) : '—';
+    document.getElementById('haFundTotal').textContent = fundAmt > 0 ? fmtWan(fR.totalPay) : '—';
 
     // Commercial results
     document.getElementById('haComMonthly').textContent = comAmt > 0 ? fmtYM(cR.monthly) : '—';
-    document.getElementById('haComInt').textContent = comAmt > 0 ? fmtWan(cR.totalInt/10000) : '—';
-    document.getElementById('haComTotal').textContent = comAmt > 0 ? fmtWan(cR.totalPay/10000) : '—';
+    document.getElementById('haComInt').textContent = comAmt > 0 ? fmtWan(cR.totalInt) : '—';
+    document.getElementById('haComTotal').textContent = comAmt > 0 ? fmtWan(cR.totalPay) : '—';
 
     // Combined
     var totalMonthly = fR.monthly + cR.monthly;
     var totalInt = fR.totalInt + cR.totalInt;
     var totalPay = fR.totalPay + cR.totalPay;
     document.getElementById('haTotalMonthly').textContent = fmtYM(totalMonthly);
-    document.getElementById('haTotalInt').textContent = fmtWan(totalInt/10000);
-    document.getElementById('haTotalPay').textContent = fmtWan(totalPay/10000);
+    document.getElementById('haTotalInt').textContent = fmtWan(totalInt);
+    document.getElementById('haTotalPay').textContent = fmtWan(totalPay);
 
     // Store for cost tab
     window._haMortgageResult = { monthly: totalMonthly };
@@ -161,8 +230,8 @@
     var curCom = parseFloat(document.getElementById('haComAmt').value) || 0;
     if(curFund === 0 && curCom === 0 && loanTotal > 0){
       // Default: 60%公积金 40%商贷
-      document.getElementById('haFundAmt').value = Math.round(loanTotal * 0.6 * 10) / 10;
-      document.getElementById('haComAmt').value = Math.round(loanTotal * 0.4 * 10) / 10;
+      document.getElementById('haFundAmt').value = Math.round(loanTotal * 0.6);
+      document.getElementById('haComAmt').value = Math.round(loanTotal * 0.4);
     }
   }
 
@@ -260,7 +329,7 @@
       var si = getStatusIndex(h.status);
       html += '<div class="ha-hcard">' +
         '<div class="hc-hdr"><span class="hc-name">' + esc(h.name) + '</span><span class="hc-status s' + si + '">' + esc(STATUS_LABELS[h.status]||'待看') + '</span></div>' +
-        '<div class="hc-info"><span>' + (h.price||0) + '万</span><span>' + (h.area||0) + '㎡</span><span>' + esc(h.layout||'') + '</span><span>' + esc(h.floor||'') + '</span><span>' + esc(h.orientation||'') + '</span></div>' +
+        '<div class="hc-info"><span>' + fmtWan(h.price||0) + '</span><span>' + (h.area||0) + '㎡</span><span>' + esc(h.layout||'') + '</span><span>' + esc(h.floor||'') + '</span><span>' + esc(h.orientation||'') + '</span></div>' +
         '<div class="hc-stars">' + renderStars(h.score||3) + '</div>' +
         (h.pros ? '<div class="hc-pros">✅ ' + esc(h.pros) + '</div>' : '') +
         (h.cons ? '<div class="hc-cons">⚠️ ' + esc(h.cons) + '</div>' : '') +
@@ -456,7 +525,11 @@
       '<button class="pomo-close" id="housingClose">✕</button>' +
       '<div class="pomo-body" style="gap:.1rem">' +
         // Header
-        '<div style="font-size:.8rem;margin:0 0 .15rem;font-family:var(--font-serif);letter-spacing:.04em;color:var(--accent)">🏠 购房综合</div>' +
+        '<div style="display:flex;align-items:center;gap:.15rem;margin:0 0 .15rem">' +
+          '<div style="flex:1;font-size:.8rem;font-family:var(--font-serif);letter-spacing:.04em;color:var(--accent)">🏠 购房综合</div>' +
+          '<button id="haSaveDataBtn" style="background:rgba(255,255,255,.04);border:1px solid var(--line-2);border-radius:100px;color:var(--fg-dim);font-size:clamp(.5rem,.8vw,.55rem);cursor:pointer;padding:.1rem .4rem;transition:all .2s;font-family:var(--font-sans);line-height:1.2;white-space:nowrap">💾 保存</button>' +
+          '<button id="haLogBtn" style="padding:.1rem .3rem;border:1px solid var(--line-2);border-radius:4px;background:transparent;color:var(--muted);cursor:pointer;font-family:var(--font-sans);font-size:.45rem;white-space:nowrap">📋 变更记录</button>' +
+        '</div>' +
 
         // Tab bar
         '<div class="ha-tabs">' +
@@ -469,7 +542,7 @@
         '<div class="ha-panel active" id="hp-loan">' +
           // 房屋信息
           '<div class="ha-lsec">房屋信息</div>' +
-          '<div class="ha-lrow"><label>房价总额</label><input type="number" id="haPrice" placeholder="200" min="0" step="10"><span class="hu">万元</span></div>' +
+          '<div class="ha-lrow"><label>房价总额</label><input type="number" id="haPrice" placeholder="2000000" min="0" step="10000"><span class="hu">元</span></div>' +
           '<div class="ha-lrow"><label>首付比例</label><select id="haDownPct">' +
             '<option value="15">15%（首套）</option>' +
             '<option value="20">20%</option>' +
@@ -485,8 +558,8 @@
             '<option value="30">30年</option>' +
           '</select></div>' +
           '<div style="display:flex;gap:.3rem;margin-bottom:.15rem;font-size:.5rem;color:var(--fg-dim)">' +
-            '<span>首付：<strong id="haDownAmt" style="color:var(--fg)">0 万</strong></span>' +
-            '<span>贷款总额：<strong id="haLoanTotal" style="color:var(--fg)">—</strong></span>' +
+'<span>首付：<strong id="haDownAmt" style="color:var(--fg)">0 元</strong></span>' +
+'<span>贷款总额：<strong id="haLoanTotal" style="color:var(--fg)">—</strong></span>' +
           '</div>' +
 
           // 贷款组合
@@ -495,14 +568,14 @@
             // 公积金
             '<div class="ha-sb">' +
               '<h5>🏦 公积金贷款</h5>' +
-              '<div class="ha-lrow"><label>额度</label><input type="number" id="haFundAmt" placeholder="60" min="0" step="5"><span class="hu">万</span></div>' +
-              '<div class="ha-lrow"><label>利率</label><input type="number" id="haFundRate" placeholder="3.1" min="0" max="20" step="0.05" value="3.1"><span class="hu">%</span></div>' +
-              '<div class="ha-lrow"><label>年限</label><select id="haFundYears"><option value="10">10年</option><option value="15">15年</option><option value="20">20年</option><option value="25">25年</option><option value="30" selected>30年</option></select></div>' +
-            '</div>' +
-            // 商业
-            '<div class="ha-sb">' +
-              '<h5>🏛 商业贷款</h5>' +
-              '<div class="ha-lrow"><label>额度</label><input type="number" id="haComAmt" placeholder="100" min="0" step="5"><span class="hu">万</span></div>' +
+'<div class="ha-lrow"><label>额度</label><input type="number" id="haFundAmt" placeholder="600000" min="0" step="50000"><span class="hu">元</span></div>' +
+'<div class="ha-lrow"><label>利率</label><input type="number" id="haFundRate" placeholder="3.1" min="0" max="20" step="0.05" value="3.1"><span class="hu">%</span></div>' +
+'<div class="ha-lrow"><label>年限</label><select id="haFundYears"><option value="10">10年</option><option value="15">15年</option><option value="20">20年</option><option value="25">25年</option><option value="30" selected>30年</option></select></div>' +
+'</div>' +
+// 商业
+'<div class="ha-sb">' +
+'<h5>🏛 商业贷款</h5>' +
+'<div class="ha-lrow"><label>额度</label><input type="number" id="haComAmt" placeholder="1000000" min="0" step="50000"><span class="hu">元</span></div>' +
               '<div class="ha-lrow"><label>利率</label><input type="number" id="haComRate" placeholder="3.5" min="0" max="20" step="0.05" value="3.5"><span class="hu">%</span></div>' +
               '<div class="ha-lrow"><label>年限</label><select id="haComYears"><option value="10">10年</option><option value="15">15年</option><option value="20">20年</option><option value="25">25年</option><option value="30" selected>30年</option></select></div>' +
             '</div>' +
@@ -531,14 +604,14 @@
         // ======== TAB 2: 购房成本 ========
         '<div class="ha-panel" id="hp-cost">' +
           '<div class="ha-lsec">其他成本</div>' +
-          '<div class="ha-crow"><label>税费估算</label><input type="number" id="haTax" placeholder="0" min="0" step="0.1"><span class="hu">万元</span></div>' +
-          '<div class="ha-crow"><label>装修预算</label><input type="number" id="haRenov" placeholder="0" min="0" step="0.5"><span class="hu">万元</span></div>' +
-          '<div class="ha-crow"><label>物业费</label><input type="number" id="haPropFee" placeholder="0" min="0" step="10"><span class="hu">元/月</span></div>' +
-          '<div class="ha-crow"><label>其他费用</label><input type="number" id="haOther" placeholder="0" min="0" step="0.5"><span class="hu">万元</span></div>' +
+'<div class="ha-crow"><label>税费估算</label><input type="number" id="haTax" placeholder="0" min="0" step="1000"><span class="hu">元</span></div>' +
+'<div class="ha-crow"><label>装修预算</label><input type="number" id="haRenov" placeholder="0" min="0" step="5000"><span class="hu">元</span></div>' +
+'<div class="ha-crow"><label>物业费</label><input type="number" id="haPropFee" placeholder="0" min="0" step="10"><span class="hu">元/月</span></div>' +
+'<div class="ha-crow"><label>其他费用</label><input type="number" id="haOther" placeholder="0" min="0" step="5000"><span class="hu">元</span></div>' +
 
           '<div class="ha-lsec">汇总</div>' +
           '<div class="ha-sum">' +
-            '<div class="sr highlight"><span>总预算（含房价+税费+装修等）</span><span class="sv" id="haTotalBudget">0 万</span></div>' +
+            '<div class="sr highlight"><span>总预算（含房价+税费+装修等）</span><span class="sv" id="haTotalBudget">0 元</span></div>' +
             '<div class="sr"><span>— 月供（贷款）</span><span class="sv" id="haMonthlyMtg">0 元/月</span></div>' +
             '<div class="sr"><span>— 物业费</span><span class="sv" id="haMonthlyProp">0 元/月</span></div>' +
             '<div class="sr highlight"><span>月固定支出</span><span class="sv" id="haMonthlyTotal">0 元/月</span></div>' +
@@ -566,7 +639,7 @@
             '<div class="ha-hform">' +
               '<div class="hf-f full"><label>名称</label><input type="text" id="hfName" placeholder="小区名/楼盘名"></div>' +
               '<div class="hf-f full"><label>地址</label><input type="text" id="hfAddr" placeholder="地址"></div>' +
-              '<div class="hf-f"><label>价格（万）</label><input type="number" id="hfPrice" placeholder="0" min="0"></div>' +
+              '<div class="hf-f"><label>价格（元）</label><input type="number" id="hfPrice" placeholder="0" min="0"></div>' +
               '<div class="hf-f"><label>面积（㎡）</label><input type="number" id="hfArea" placeholder="0" min="0" step="0.1"></div>' +
               '<div class="hf-f"><label>户型</label><input type="text" id="hfLayout" placeholder="如 3室2厅"></div>' +
               '<div class="hf-f"><label>楼层</label><input type="text" id="hfFloor" placeholder="中层/10"></div>' +
@@ -601,6 +674,11 @@
   // ===== Wire house list events =====
   wireHouseEvents();
 
+  // ===== Wire change logging =====
+  wireFieldLogging();
+  var logBtn = document.getElementById('haLogBtn');
+  if(logBtn) logBtn.addEventListener('click', showChangeLog);
+
   // ===== Open / Close =====
   function openModal(){
     loadLoanInputs();
@@ -620,6 +698,12 @@
 
   document.getElementById(OVERLAY_ID).addEventListener('click', closeModal);
   document.getElementById('housingClose').addEventListener('click', closeModal);
+  document.getElementById('haSaveDataBtn').addEventListener('click', function(){
+    if(typeof window.save === 'function') {
+      try { window.save(); showToast('💾 购房数据已保存'); }
+      catch(e) { showToast('⚠️ 保存失败: ' + (e.message||e)); }
+    } else { showToast('⚠️ 保存失败: save 函数不可用'); }
+  });
 
   // ===== Wire sidebar button =====
   var btn = document.getElementById('housingBtn');

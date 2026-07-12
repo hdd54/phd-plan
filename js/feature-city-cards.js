@@ -41,8 +41,18 @@
 
     .cc-empty{text-align:center;padding:2rem 1rem;color:var(--muted);font-size:clamp(.55rem,.85vw,.6rem);font-family:var(--font-sans)}
     .cc-empty-icon{font-size:2rem;margin-bottom:.5rem;opacity:.5}
+    /* Pagination */
+    .cc-pg-nav{display:flex;align-items:center;justify-content:center;gap:.5rem;margin-top:.5rem;padding-top:.3rem;border-top:1px solid var(--line)}
+    .cc-pg-btn{background:rgba(212,165,116,.1);border:1px solid var(--line-2);border-radius:6px;color:var(--fg-dim);padding:clamp(.12rem,.2vw,.18rem) clamp(.3rem,.5vw,.4rem);cursor:pointer;font-family:var(--font-sans);font-size:clamp(.45rem,.7vw,.5rem);transition:all .2s}
+    .cc-pg-btn:hover{border-color:var(--accent);color:var(--accent)}
+    .cc-pg-btn:disabled{opacity:.3;cursor:default;border-color:var(--line-2);color:var(--muted)}
+    .cc-pg-info{font-size:clamp(.45rem,.7vw,.5rem);color:var(--muted);font-family:var(--font-sans)}
   `;
   document.head.appendChild(style);
+
+  // ===== Pagination state =====
+  var ccPageSize = 2;
+  var ccCurrentPage = 0;
 
   // ===== Data =====
   function getData(){
@@ -131,12 +141,38 @@
       list.innerHTML = '<div class="cc-empty"><div class="cc-empty-icon">🏙️</div>还没有城市数据，点击「添加城市」开始</div>';
       return;
     }
+    var totalPages = Math.max(1, Math.ceil(data.length / ccPageSize));
+    if(ccCurrentPage >= totalPages) ccCurrentPage = totalPages - 1;
+    if(ccCurrentPage < 0) ccCurrentPage = 0;
+    var start = ccCurrentPage * ccPageSize;
+    var end = Math.min(start + ccPageSize, data.length);
+    var pageData = data.slice(start, end);
     var grid = document.createElement('div');
     grid.className = 'cc-grid';
-    data.forEach(function(c, idx){
-      grid.appendChild(renderCard(c, idx));
+    pageData.forEach(function(c, idx){
+      grid.appendChild(renderCard(c, start + idx));
     });
     list.appendChild(grid);
+    // Pagination nav
+    var pgNav = document.createElement('div');
+    pgNav.className = 'cc-pg-nav';
+    var prevBtn = document.createElement('button');
+    prevBtn.className = 'cc-pg-btn';
+    prevBtn.textContent = '‹ Prev';
+    prevBtn.disabled = ccCurrentPage <= 0;
+    prevBtn.addEventListener('click', function(){ ccCurrentPage--; renderAll(); });
+    pgNav.appendChild(prevBtn);
+    var pgInfo = document.createElement('span');
+    pgInfo.className = 'cc-pg-info';
+    pgInfo.textContent = (ccCurrentPage + 1) + ' / ' + totalPages + ' 页 (' + data.length + ' 城市)';
+    pgNav.appendChild(pgInfo);
+    var nextBtn = document.createElement('button');
+    nextBtn.className = 'cc-pg-btn';
+    nextBtn.textContent = 'Next ›';
+    nextBtn.disabled = ccCurrentPage >= totalPages - 1;
+    nextBtn.addEventListener('click', function(){ ccCurrentPage++; renderAll(); });
+    pgNav.appendChild(nextBtn);
+    list.appendChild(pgNav);
   }
 
   function addCity(){
@@ -147,10 +183,10 @@
       talentPolicy: '', jobMarket: '', lifestyle: ''
     });
     save();
+    // Go to the last page
+    ccCurrentPage = Math.floor(d.length / ccPageSize);
+    if(ccCurrentPage > 0 && d.length % ccPageSize === 1) ccCurrentPage = Math.floor((d.length - 1) / ccPageSize);
     renderAll();
-    // Scroll to bottom where the new card appears
-    var body = document.getElementById('ccBody');
-    if(body) setTimeout(function(){ body.scrollTop = body.scrollHeight; }, 50);
   }
 
   // ===== Modal =====
@@ -173,6 +209,12 @@
     document.getElementById('cityBtn').addEventListener('click', toggle);
     document.getElementById('ccClose').addEventListener('click', hide);
     document.getElementById('ccOverlay').addEventListener('click', hide);
+    document.getElementById('ccSaveBtn').addEventListener('click', function(){
+      if(typeof window.save === 'function') {
+        try { window.save(); showToast('💾 城市数据已保存'); }
+        catch(e) { showToast('⚠️ 保存失败: ' + (e.message||e)); }
+      } else { showToast('⚠️ 保存失败: save 函数不可用'); }
+    });
     document.getElementById('ccAddBtn').addEventListener('click', addCity);
   }
 

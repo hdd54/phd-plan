@@ -330,6 +330,7 @@
     html += '<span class="rc-title" id="rcTitleBtn">' + viewYear + '年' + MONTH_NAMES[viewMonth] + ' ▾</span>';
     html += '<button class="rc-btn" id="rcNextBtn">' + nextY + '年' + MONTH_NAMES[nextM] + ' ▶</button>';
     html += '<button class="rc-btn rc-today" id="rcTodayBtn">今天</button>';
+    html += '<button class="rc-btn" id="rcSaveBtn" style="margin-left:auto">💾 保存</button>';
     html += '</div>';
 
     var reminders = reminderItems();
@@ -409,6 +410,14 @@
       viewYear = now.getFullYear();
       viewMonth = now.getMonth();
       renderCalendar();
+    });
+    document.getElementById('rcSaveBtn').addEventListener('click', function(){
+      if(typeof window.save === 'function') {
+        try { window.save(); showToast('💾 日历数据已保存'); }
+        catch(e) { showToast('⚠️ 保存失败: ' + (e.message||e)); }
+      } else {
+        showToast('⚠️ 保存失败: save 函数不可用');
+      }
     });
 
     // Wire year/month picker
@@ -494,13 +503,18 @@
       });
     });
 
-    // Wire cell clicks
-    body.querySelectorAll('.rc-cell:not(.rc-other)').forEach(function(cell) {
-      cell.addEventListener('click', function() {
-        var dateStr = this.dataset.date;
-        showPopup(dateStr, this);
+    // Wire cell clicks via delegation (avoids handler loss after re-render)
+    // Handler is bound once on the body element, not per-cell
+    if (!body._cellDelegated) {
+      body.addEventListener('click', function(e) {
+        var cell = e.target.closest('.rc-cell:not(.rc-other)');
+        if (cell) {
+          var dateStr = cell.dataset.date;
+          showPopup(dateStr, cell);
+        }
       });
-    });
+      body._cellDelegated = true;
+    }
 
   }
 

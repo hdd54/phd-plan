@@ -231,6 +231,12 @@
     document.getElementById('careerBtn').addEventListener('click', toggle);
     document.getElementById('ctClose').addEventListener('click', hide);
     document.getElementById('ctOverlay').addEventListener('click', hide);
+    document.getElementById('ctSaveBtn').addEventListener('click', function(){
+      if(typeof window.save === 'function') {
+        try { window.save(); showToast('💾 求职数据已保存'); }
+        catch(e) { showToast('⚠️ 保存失败: ' + (e.message||e)); }
+      } else { showToast('⚠️ 保存失败: save 函数不可用'); }
+    });
     document.getElementById('ctAddBtn').addEventListener('click', addEntry);
     // Filter buttons
     document.querySelectorAll('.ct-filter-btn').forEach(function(btn){
