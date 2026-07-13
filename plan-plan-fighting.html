@@ -153,17 +153,13 @@
   <button class="bb x" id="editToggle2"><span class="bb-icon">✎</span><span class="lb-lbl">编辑</span></button>
   <button class="bb" id="expandAll2"><span class="bb-icon">📂</span><span class="lb-lbl">展开</span></button>
   <button class="bb" id="collapseAll2"><span class="bb-icon">📁</span><span class="lb-lbl">收起</span></button>
-  <button class="bb" id="exportBtn2"><span class="bb-icon">📥</span><span class="lb-lbl">导出</span></button>
-  <button class="bb" id="importBtn2"><span class="bb-icon">📤</span><span class="lb-lbl">导入</span></button>
   <button class="bb" id="repoSaveBtn" title="保存数据到仓库"><span class="bb-icon">💾</span><span class="lb-lbl">存档</span></button>
   <button class="bb" id="gistIndicator" title="数据同步状态"><span class="bb-icon">⚡</span><span class="lb-lbl">--</span></button>
-  <button class="bb d" id="resetTasks2"><span class="bb-icon">🗑</span><span class="lb-lbl">重置</span></button>
   <button class="bb" id="installBtn" title="安装到桌面" style="display:none"><span class="bb-icon">📥</span><span class="lb-lbl">安装</span></button>
   <button class="bb" id="helpBtn" title="使用说明"><span class="bb-icon">📖</span><span class="lb-lbl">说明</span></button>
   <button class="bb" id="stgBtn" title="设置"><span class="bb-icon">⚙</span><span class="lb-lbl">设置</span></button>
   <button class="bb" id="financeBtn" title="财务管理"><span class="bb-icon">💰</span><span class="lb-lbl">财务</span></button>
   <button class="bb" id="snBtn" title="进度快照"><span class="bb-icon">📸</span><span class="lb-lbl">快照</span></button>
-  <button class="bb" id="themeBtn" title="切换主题"><span class="bb-icon">🌙</span><span class="lb-lbl">主题</span></button>
   <button class="bb" id="bkpBtn" title="数据备份"><span class="bb-icon">💾</span><span class="lb-lbl">备份</span></button>
   <button class="bb" id="rcBtn" title="月历"><span class="bb-icon">🗓️</span><span class="lb-lbl">月历</span></button>
   <button class="bb" id="academicBtn" title="学术进展（论文/实验/文献）"><span class="bb-icon">🎓</span><span class="lb-lbl">学术</span></button>
@@ -235,13 +231,11 @@
         <li><strong>章节信息</strong> 显示当前阅读位置，点击可跳转当前章节</li>
         <li><strong>编辑</strong> 切换全局编辑模式</li>
         <li><strong>展开 / 收起</strong> 批量控制周计划显示状态</li>
-        <li><strong>导出 / 导入</strong> 下载或恢复 JSON 数据备份</li>
         <li><strong>存档</strong> 将当前数据保存到仓库入口</li>
         <li><strong>同步</strong> 打开 GitHub Gist 同步配置和状态</li>
-        <li><strong>重置</strong> 清空任务数据并恢复默认结构，使用前请先备份</li>
         <li><strong>安装</strong> 在浏览器支持时将网页安装到桌面</li>
-        <li><strong>说明</strong> 打开本说明书，<strong>设置</strong> 调整字号、字体、行距和宽度</li>
-        <li><strong>主题</strong> 切换深色主题颜色，也可在主题面板底部保存自定义颜色方案</li>
+        <li><strong>说明</strong> 打开本说明书</li>
+        <li><strong>设置</strong> 调整字号、字体、行距和宽度；导出、导入、主题和重置也在设置面板内完成</li>
         <li><strong>备份</strong> 打开备份与恢复面板</li>
       </ul>
     </section>
@@ -376,6 +370,15 @@
         <button class="stg-btn a" data-v="0">默认</button>
         <button class="stg-btn" data-v="1">宽</button>
         <button class="stg-btn" data-v="2">最宽</button>
+      </div>
+    </div>
+    <div class="stg-group">
+      <div class="stg-label">数据与主题</div>
+      <div class="stg-row stg-action-row">
+        <button class="stg-btn stg-action" id="exportBtnSettings" type="button">📥 导出</button>
+        <button class="stg-btn stg-action" id="importBtnSettings" type="button">📤 导入</button>
+        <button class="stg-btn stg-action" id="themeBtnSettings" type="button">🌙 主题</button>
+        <button class="stg-btn stg-action danger" id="resetTasksSettings" type="button">🗑 重置</button>
       </div>
     </div>
   </div>
@@ -946,7 +949,7 @@ function ensure(p) {
       var newWeeks=[];p[cid].forEach(function(w){
         if(w.s)s=w.s;
         var m=w.w.match(/第(\d+)[-–至](\d+)周/);
-        if(!m){newWeeks.push({w:w.w,s:(w.s||w.summary||''),d:w.d.slice()});return}
+        if(!m){newWeeks.push({w:w.w,s:(w.s||w.summary||''),time:(w.time||w.range||''),d:w.d.slice()});return}
         var start=parseInt(m[1]),end=parseInt(m[2]);
         var tasks=w.d.filter(function(t){return t&&t.trim()});
         var per=Math.max(1,Math.ceil(tasks.length/(end-start+1)));
@@ -978,10 +981,40 @@ function ensure(p) {
     });
   });
 }
-function cloneDeep(arr){return arr.map(w=>({w:w.w,s:w.s||'',d:[...w.d]}))}
+function cloneDeep(arr){return arr.map(w=>({w:w.w,s:w.s||'',time:w.time||w.range||'',d:[...w.d]}))}
 function save(){localStorage.setItem(SK,JSON.stringify(data));saveOpenState();try{computeStats()}catch(e){}}
 
 // ======================== RENDER ========================
+function formatWeekDate(d) {
+  return (d.getMonth()+1) + '.' + d.getDate();
+}
+
+function weekTimeOptions(selected) {
+  var options = [''];
+  var start = new Date();
+  var day = start.getDay() || 7;
+  start.setHours(0,0,0,0);
+  start.setDate(start.getDate() - day + 1);
+  for (var i = 0; i < 56; i++) {
+    var s = new Date(start);
+    s.setDate(start.getDate() + i * 7);
+    var e = new Date(s);
+    e.setDate(s.getDate() + 6);
+    options.push(formatWeekDate(s) + '-' + formatWeekDate(e));
+  }
+  if (selected && options.indexOf(selected) === -1) options.splice(1, 0, selected);
+  return options;
+}
+
+function renderWeekTimeSelect(cardId, wi, selected) {
+  var html = '<select class="wk-time" data-c="'+cardId+'" data-wi="'+wi+'" title="本周时间段">';
+  weekTimeOptions(selected).forEach(function(opt) {
+    html += '<option value="'+esc(opt)+'" '+(opt===selected?'selected':'')+'>'+(opt ? esc(opt) : '周时间段')+'</option>';
+  });
+  html += '</select>';
+  return html;
+}
+
 function renderWeeks(cardId, preserveState) {
   const container = document.querySelector(`.wp[data-c="${cardId}"]`);
   if (!container) return;
@@ -1043,6 +1076,7 @@ function renderWeeks(cardId, preserveState) {
     let done = 0, total = 0;
     dd.forEach(t => { total+=1; if(typeof t==='object'&&t.done) done+=1 });
     const wkOpen = openState[cardId][wi] || false;
+    const weekTime = week.time || week.range || '';
 
     html += `<div class="week" data-wi="${wi}">
       <div class="wk-header">
@@ -1050,6 +1084,7 @@ function renderWeeks(cardId, preserveState) {
           <span class="wka">▶</span><span class="wk-label">${esc(week.w)}</span>
           <span class="wk-prog">${done}/${total}</span>
         </button>
+        ${renderWeekTimeSelect(cardId, wi, weekTime)}
         <button class="wk-del" data-c="${cardId}" data-wi="${wi}" title="删除本周">✕</button>
       </div>
       <div class="wk-body${wkOpen?' o':''}"><div class="days">`;
@@ -1057,19 +1092,11 @@ function renderWeeks(cardId, preserveState) {
       const isObj = typeof t === 'object';
       const txt = isObj ? t.text : (t||'');
       const chk = isObj ? t.done : false;
-      const timeRange = isObj ? (t.time || '') : '';
       const dayLabel = DAYS[di] || 'Day'+(di+1);
       var isToday = dayLabel === todayCN;
       var journalKey=cardId+'-w'+wi,journalVal='';if(data._journal&&data._journal[journalKey]&&data._journal[journalKey][di])journalVal=data._journal[journalKey][di];
       html += `<div class="dr${chk?' done':''}${isToday?' today':''}" data-di="${di}">
         <span class="dl">${dayLabel}</span>
-        <select class="dt" data-c="${cardId}" data-wi="${wi}" data-di="${di}" title="时间段">
-          <option value="" ${timeRange===''?'selected':''}>时间</option>
-          <option value="上午" ${timeRange==='上午'?'selected':''}>上午</option>
-          <option value="下午" ${timeRange==='下午'?'selected':''}>下午</option>
-          <option value="晚上" ${timeRange==='晚上'?'selected':''}>晚上</option>
-          <option value="全天" ${timeRange==='全天'?'selected':''}>全天</option>
-        </select>
         <textarea class="di" rows="1" data-c="${cardId}" data-wi="${wi}" data-di="${di}" placeholder="今天做什么" draggable="true">${esc(txt)}</textarea>
         <div class="md-preview" id="mdp-${cardId}-${wi}-${di}"></div>
         <button class="md-btn" data-c="${cardId}" data-wi="${wi}" data-di="${di}">MD</button>
@@ -1679,7 +1706,7 @@ function renderDynamicPage(pageId) {
       var savedEy = data._overviews && data._overviews[fullSecId+'-ey'];
       var savedH2 = data._overviews && data._overviews[fullSecId+'-h2'];
       var savedSub = data._overviews && data._overviews[fullSecId+'-sub'];
-      html += '<section class="sec reveal'+(si2===0?' v in':'')+'" id="'+fullSecId+'"><div class="sh"><div class="ey">'+esc(savedEy || label)+'</div><h2>'+(savedH2 || esc(label))+'</h2><p class="sub">'+esc(savedSub || '')+'</p></div><div class="tg">';
+      html += '<section class="sec reveal'+(si2===0?' v in':'')+'" id="'+fullSecId+'"><div class="sh dyn-section-head"><button class="dyn-section-del" data-page="'+pageId+'" data-sec="'+secId+'" title="删除此'+(page.type==='month'?'月份':'年份')+'">删除</button><div class="ey">'+esc(savedEy || label)+'</div><h2>'+(savedH2 || esc(label))+'</h2><p class="sub">'+esc(savedSub || '')+'</p></div><div class="tg">';
       
       for (var ci3 = 0; ci3 < page.categories.length; ci3++) {
         var cat = page.categories[ci3];
@@ -1835,6 +1862,39 @@ function addPageSection(pageId) {
   showToast('＋ 已添加「' + secLabel + '」');
 }
 
+function deletePageSection(pageId, secId) {
+  var pages = data._pages || [];
+  var page = null;
+  for (var i = 0; i < pages.length; i++) { if (pages[i].id === pageId) { page = pages[i]; break; } }
+  if (!page || !secId) return;
+  var label = dynamicSectionLabel(pageId, page, secId);
+  if (!confirm('确定删除「' + label + '」及其所有周计划数据？')) return;
+
+  var fullSecId = pageId + '-' + secId;
+  var cardPrefix = fullSecId + '-';
+  Object.keys(data).forEach(function(key) {
+    if (key.indexOf(cardPrefix) === 0 && Array.isArray(data[key])) {
+      delete data[key];
+      if (typeof openState !== 'undefined' && openState && openState[key]) delete openState[key];
+      if (data._journal) {
+        Object.keys(data._journal).forEach(function(jKey) {
+          if (jKey.indexOf(key + '-w') === 0) delete data._journal[jKey];
+        });
+      }
+    }
+  });
+
+  if (data._overviews) {
+    Object.keys(data._overviews).forEach(function(key) {
+      if (key.indexOf(fullSecId) === 0 || key.indexOf(cardPrefix) === 0) delete data._overviews[key];
+    });
+  }
+
+  save();
+  renderDynamicPage(pageId);
+  showToast('已删除「' + label + '」');
+}
+
 function addDynamicStat(pageId) {
   if (!pageId) return;
   var label = prompt('请输入栏目名称', '自定义');
@@ -1867,6 +1927,8 @@ document.addEventListener('click', function(e) {
   if (statDel) { e.stopPropagation(); deleteDynamicStat(statDel.dataset.page, statDel.dataset.statIndex); return; }
   var statAdd = e.target.closest('.dyn-stat-add');
   if (statAdd) { addDynamicStat(statAdd.dataset.page); return; }
+  var sectionDel = e.target.closest('.dyn-section-del');
+  if (sectionDel) { e.stopPropagation(); deletePageSection(sectionDel.dataset.page, sectionDel.dataset.sec); return; }
   var del = e.target.closest('.pbi-del');
   if (del) { deletePage(del.dataset.page); return; }
   var pbi = e.target.closest('.pbi[data-page]');
@@ -2058,14 +2120,14 @@ document.addEventListener('click', e => {
   }
 
   // Export
-  if (t.id==='exportBtn'||t.closest('#exportBtn')||t.id==='exportBtn2'||t.closest('#exportBtn2')) {
+  if (t.id==='exportBtnSettings'||t.closest('#exportBtnSettings')) {
     const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
     const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='phd-plan-'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(a.href);
     showToast('📥 已导出');
     return;
   }
   // Import
-  if (t.id==='importBtn'||t.closest('#importBtn')||t.id==='importBtn2'||t.closest('#importBtn2')) {
+  if (t.id==='importBtnSettings'||t.closest('#importBtnSettings')) {
     document.getElementById('fileInput').click();
     return;
   }
@@ -2111,7 +2173,7 @@ document.addEventListener('click', e => {
   }
 
   // Reset
-  if (t.id==='resetTasks'||t.closest('#resetTasks')||t.id==='resetTasks2'||t.closest('#resetTasks2')) {
+  if (t.id==='resetTasksSettings'||t.closest('#resetTasksSettings')) {
     if (confirm('确定重置所有任务数据？')) {
       localStorage.removeItem(SK); localStorage.removeItem(SK+'_open');
       data = load(); openState = {}; renderAll(); showToast('🗑 已重置');
@@ -2163,13 +2225,12 @@ document.addEventListener('input', e => {
 
 document.addEventListener('change', e => {
   const t = e.target;
-  if (t.classList.contains('dt')) {
-    const cid=t.dataset.c, wi=parseInt(t.dataset.wi), di=parseInt(t.dataset.di);
+  // Week-level time range
+  if (t.classList.contains('wk-time')) {
+    const cid=t.dataset.c, wi=parseInt(t.dataset.wi);
     if (data[cid]&&data[cid][wi]) {
-      const d=data[cid][wi].d;
-      if (!d[di]) d[di]='';
-      if (typeof d[di]==='string') d[di]={text:d[di],done:false,time:t.value};
-      else d[di].time=t.value;
+      data[cid][wi].time = t.value;
+      delete data[cid][wi].range;
       save();
     }
     return;
@@ -2822,7 +2883,7 @@ function buildSystemPrompt() {
   const now = new Date().toLocaleDateString('zh-CN', {year:'numeric',month:'long',day:'numeric',weekday:'long'});
   let prompt = '你是一个博士规划助手，帮助用户管理其博士4-5年全景规划（学术、考公、财务、生活四维度）。\n\n';
   prompt += '## 当前日期\n' + now + '\n\n';
-  prompt += '## 当前数据概览\n每条周记录格式：{w:"周名称", s:"周总结", d:["周一任务","周二任务",...]}\n每周有7天（周一至周日）。如果某天没有内容则为空字符串。\n\n';
+  prompt += '## 当前数据概览\n每条周记录格式：{w:"周名称", time:"周时间段", s:"周总结", d:["周一任务","周二任务",...]}\n每周有7天（周一至周日）。如果某天没有内容则为空字符串。\n\n';
 
   for (const cid in data) {
     const weeks = data[cid];
@@ -2833,7 +2894,7 @@ function buildSystemPrompt() {
         const txt = typeof dd === 'string' ? dd : (dd && dd.text || '');
         return txt ? DAYS[di] + ':' + txt.substring(0,30) : '';
       }).filter(Boolean).join('; ');
-      prompt += '  周' + (i+1) + ' [' + (wk.w||'') + '] 总结:' + (wk.s||'').substring(0,40) + ' 任务:' + (daySummary || '空') + '\n';
+      prompt += '  周' + (i+1) + ' [' + (wk.w||'') + '] 时间:' + (wk.time || wk.range || '未设置') + ' 总结:' + (wk.s||'').substring(0,40) + ' 任务:' + (daySummary || '空') + '\n';
     });
   }
 
@@ -2844,7 +2905,7 @@ function buildSystemPrompt() {
 
   prompt += '\n## 你的能力\n1. **读取数据** - 你拥有完整的规划数据，可以直接回答用户关于数据的问题\n2. **编辑规划** - 如果需要修改，请在回复末尾添加JSON代码块（用 ```json ... ``` 包裹）\n\n';
   prompt += '## 编辑JSON格式\n```json\n{\n  "edits": [\n    {\n      "type": "update_day",\n      "card": "y1-academic",\n      "week_index": 0,\n      "day_index": 0,\n      "new_text": "周一的新任务内容（支持多行，用\\n换行）",\n      "description": "修改第1周周一任务"\n    }\n  ]\n}\n```\n\n';
-  prompt += '## 支持的操作类型\n| type | 参数 | 说明 |\n|------|------|------|\n| update_day | card, week_index(0开始), day_index(0-6), new_text | 修改某天任务（支持多行，\\n换行） |\n| update_week_text | card, week_index, new_text | 修改某天任务为纯文本（不标记完成状态） |\n| update_summary | card, week_index, new_text | 修改周总结 |\n| add_week | card, week_name(如"第X周") | 在卡片末尾添加新的一周（含7天空字符串） |\n| add_weeks | card, week_names(数组如["第5周","第6周"]) | 批量添加多周 |\n| update_overview | card, new_text | 修改卡片概述内容 |\n| update_footer | line(0-1), new_text | 修改页脚文字（line=0第一行, line=1第二行） |\n\n';
+  prompt += '## 支持的操作类型\n| type | 参数 | 说明 |\n|------|------|------|\n| update_day | card, week_index(0开始), day_index(0-6), new_text | 修改某天任务（支持多行，\\n换行） |\n| update_week_text | card, week_index, new_text | 修改某天任务为纯文本（不标记完成状态） |\n| update_week_time | card, week_index, new_text | 修改整周时间段 |\n| update_summary | card, week_index, new_text | 修改周总结 |\n| add_week | card, week_name(如"第X周") | 在卡片末尾添加新的一周（含7天空字符串） |\n| add_weeks | card, week_names(数组如["第5周","第6周"]) | 批量添加多周 |\n| update_overview | card, new_text | 修改卡片概述内容 |\n| update_footer | line(0-1), new_text | 修改页脚文字（line=0第一行, line=1第二行） |\n\n';
   prompt += '## 重要规则\n1. week_index 从0开始。第1周=0，第2周=1，以此类推。\n2. day_index: 0=周一, 1=周二, ... 6=周日。\n3. new_text支持多行内容，用\\n表示换行。\n4. 如果没有需要修改的内容，直接正常回答即可，不要添加编辑JSON。\n5. 每次回复最多提出5个编辑操作。\n6. 编辑操作必须精确，一次修改一件事。\n7. 用户确认后才会执行修改，所以你只需要提出建议。\n8. 回答要用中文，风格亲切专业。\n9. 当用户问及数据内容时，直接基于你看到的数据回答，不需要编辑。';
 
   return prompt;
@@ -3023,6 +3084,16 @@ function applyEditProposal(proposal, btnEl) {
           const week = data[cid][edit.week_index];
           if (!week) { errors.push(edit.card + ' 第' + (edit.week_index+1) + '周不存在'); return; }
           week.s = edit.new_text;
+          applied++;
+          break;
+        }
+        case 'update_week_time': {
+          const cid = edit.card;
+          if (!data[cid]) { errors.push(edit.card + ' 不存在'); return; }
+          const week = data[cid][edit.week_index];
+          if (!week) { errors.push(edit.card + ' 第' + (edit.week_index+1) + '周不存在'); return; }
+          week.time = edit.new_text || '';
+          delete week.range;
           applied++;
           break;
         }

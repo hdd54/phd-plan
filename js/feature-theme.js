@@ -383,10 +383,10 @@
   }
 
   function updateBtn() {
-    var btn = document.getElementById('themeBtn');
-    if (!btn) return;
     var t = THEMES[currentTheme];
-    btn.innerHTML = '<span class="bb-icon">' + t.icon + '</span><span class="lb-lbl">' + t.name + '</span>';
+    document.querySelectorAll('#themeBtnSettings').forEach(function(btn) {
+      btn.innerHTML = '<span class="bb-icon">' + t.icon + '</span><span class="lb-lbl">' + t.name + '</span>';
+    });
   }
 
   var pickerEl = null;
@@ -423,7 +423,7 @@
 
   function showPicker() {
     hidePicker();
-    var btn = document.getElementById('themeBtn');
+    var btn = document.getElementById('themeBtnSettings');
     if (!btn) return;
 
     pickerEl = document.createElement('div');
@@ -481,8 +481,8 @@
   }
 
   function pickerOutside(e) {
-    var btn = document.getElementById('themeBtn');
-    if (pickerEl && !pickerEl.contains(e.target) && btn && e.target !== btn && !btn.contains(e.target)) {
+    var inThemeButton = e.target.closest && e.target.closest('#themeBtnSettings');
+    if (pickerEl && !pickerEl.contains(e.target) && !inThemeButton) {
       hidePicker();
     }
   }
@@ -497,7 +497,7 @@
 
   var pStyle = document.createElement('style');
   pStyle.textContent =
-    '.theme-picker{position:fixed;bottom:clamp(2.5rem,4vw,3.2rem);left:50%;transform:translateX(-50%);z-index:300;' +
+    '.theme-picker{position:fixed;bottom:clamp(2.5rem,4vw,3.2rem);left:50%;transform:translateX(-50%);z-index:520;' +
     'background:var(--bg3);border:1px solid var(--line-2);border-radius:12px;padding:clamp(.35rem,.5vw,.45rem);' +
     'box-shadow:0 8px 40px rgba(0,0,0,.6);display:flex;gap:clamp(.2rem,.3vw,.3rem);flex-wrap:wrap;' +
     'justify-content:center;max-width:clamp(340px,88vw,780px);max-height:min(58vh,420px);overflow:auto}' +
@@ -521,12 +521,11 @@
 
   applyTheme(currentTheme);
 
-  var btn = document.getElementById('themeBtn');
-  if (btn) {
+  document.querySelectorAll('#themeBtnSettings').forEach(function(btn) {
     btn.addEventListener('click', function(e) {
       e.stopPropagation();
       if (pickerEl) hidePicker();
       else showPicker();
     });
-  }
+  });
 })();
