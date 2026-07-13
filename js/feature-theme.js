@@ -1,12 +1,12 @@
 // ===== FEATURE: Theme System =====
 (function(){
-  if(window.__features['theme']) return;
-  window.__features['theme'] = true;
+  if (window.__features && window.__features.theme) return;
+  window.__features = window.__features || {};
+  window.__features.theme = true;
 
-  // ===== Theme Definitions =====
   var THEMES = {
     'warm-dark': {
-      name: '暖色暗', icon: '🌙',
+      name: '暖色暗夜', icon: '🌙',
       vars: {
         '--bg':'#0a0908','--bg2':'#14110f','--bg3':'#1c1815',
         '--fg':'#f4f1ea','--fg-dim':'#a8a29a','--muted':'#5a5550',
@@ -17,166 +17,152 @@
         '--gold-leaf':'#C9A96E','--gold-dim':'rgba(212,165,116,.12)',
         '--card':'#14110f','--card-h':'#1f1a16',
         '--bg-gradient':'linear-gradient(180deg,#0a0908,#14100d)'
-      },
-      el: {}
+      }
     },
-    'warm-light': {
-      name: '暖色亮', icon: '☀️',
+    'ink-gold': {
+      name: '墨金', icon: '✦',
       vars: {
-        '--bg':'#faf7f2','--bg2':'#f0ece6','--bg3':'#e8e2d8',
-        '--fg':'#2c2418','--fg-dim':'#5a4d3f','--muted':'#7a6a5a',
-        '--accent':'#d4a574','--accent-2':'#e85d2f','--accent-3':'#4a7c8c',
-        '--line':'rgba(0,0,0,.07)','--line-2':'rgba(0,0,0,.12)',
-        '--cinnabar':'#CC2936','--cinnabar-dim':'rgba(204,41,54,.12)',
-        '--jade':'#3b7a5c','--jade-dim':'rgba(59,122,92,.1)',
-        '--gold-leaf':'#C9A96E','--gold-dim':'rgba(212,165,116,.15)',
-        '--card':'#f5f0e9','--card-h':'#eee8df',
-        '--bg-gradient':'linear-gradient(180deg,#faf7f2,#f0ece6)'
-      },
-      el: {
-        '.btm-bar':'background:rgba(250,247,242,.92)',
-        '.fm-exit':'background:rgba(250,247,242,.85)'
+        '--bg':'#070707','--bg2':'#10100f','--bg3':'#181713',
+        '--fg':'#f2ead8','--fg-dim':'#b4a98e','--muted':'#6f6655',
+        '--accent':'#d8b45f','--accent-2':'#c75842','--accent-3':'#5f8a78',
+        '--line':'#232019','--line-2':'#342e22',
+        '--cinnabar':'#c54536','--cinnabar-dim':'rgba(197,69,54,.12)',
+        '--jade':'#4f9478','--jade-dim':'rgba(79,148,120,.1)',
+        '--gold-leaf':'#d8b45f','--gold-dim':'rgba(216,180,95,.13)',
+        '--card':'#10100f','--card-h':'#1b1913',
+        '--bg-gradient':'linear-gradient(180deg,#070707,#12100b)'
       }
     },
     'deep-blue': {
-      name: '深邃蓝', icon: '🌊',
+      name: '深海蓝', icon: '🌊',
       vars: {
-        '--bg':'#0a0e17','--bg2':'#111827','--bg3':'#1a2332',
-        '--fg':'#e2e8f0','--fg-dim':'#94a3b8','--muted':'#64748b',
-        '--accent':'#60a5fa','--accent-2':'#f472b6','--accent-3':'#34d399',
-        '--line':'#1e293b','--line-2':'#334155',
-        '--cinnabar':'#ef4444','--cinnabar-dim':'rgba(239,68,68,.12)',
-        '--jade':'#22c55e','--jade-dim':'rgba(34,197,94,.1)',
-        '--gold-leaf':'#facc15','--gold-dim':'rgba(96,165,250,.12)',
-        '--card':'#111827','--card-h':'#1a2332',
-        '--bg-gradient':'linear-gradient(180deg,#0a0e17,#0f1525)'
-      },
-      el: {}
+        '--bg':'#07101b','--bg2':'#0d1828','--bg3':'#14243a',
+        '--fg':'#e5eefb','--fg-dim':'#94a8c5','--muted':'#5d6f8b',
+        '--accent':'#62a8ff','--accent-2':'#ff7aa2','--accent-3':'#34d399',
+        '--line':'#18283f','--line-2':'#263c5a',
+        '--cinnabar':'#ef5b5b','--cinnabar-dim':'rgba(239,91,91,.12)',
+        '--jade':'#22c58a','--jade-dim':'rgba(34,197,138,.1)',
+        '--gold-leaf':'#f2ce6b','--gold-dim':'rgba(98,168,255,.12)',
+        '--card':'#0d1828','--card-h':'#162740',
+        '--bg-gradient':'linear-gradient(180deg,#07101b,#0d1828)'
+      }
     },
     'forest-green': {
       name: '森林绿', icon: '🌲',
       vars: {
-        '--bg':'#0a0f0a','--bg2':'#0f1a0f','--bg3':'#1a2a1a',
-        '--fg':'#e0ede0','--fg-dim':'#8aa88a','--muted':'#5a7a5a',
-        '--accent':'#6bcd6b','--accent-2':'#d4a574','--accent-3':'#4a8c8c',
-        '--line':'#1a2a1a','--line-2':'#2a3a2a',
-        '--cinnabar':'#cc3636','--cinnabar-dim':'rgba(204,54,54,.12)',
-        '--jade':'#4a9a4a','--jade-dim':'rgba(74,154,74,.1)',
-        '--gold-leaf':'#c9a86a','--gold-dim':'rgba(107,205,107,.12)',
-        '--card':'#0f1a0f','--card-h':'#1a2a1a',
-        '--bg-gradient':'linear-gradient(180deg,#0a0f0a,#0f1a0f)'
-      },
-      el: {}
+        '--bg':'#07100a','--bg2':'#0d1a11','--bg3':'#152a1b',
+        '--fg':'#e4f1e4','--fg-dim':'#91ad94','--muted':'#5d7a61',
+        '--accent':'#70d486','--accent-2':'#d4a574','--accent-3':'#54a0a0',
+        '--line':'#17291b','--line-2':'#27402b',
+        '--cinnabar':'#cc4a3d','--cinnabar-dim':'rgba(204,74,61,.12)',
+        '--jade':'#57a86b','--jade-dim':'rgba(87,168,107,.1)',
+        '--gold-leaf':'#c9a86a','--gold-dim':'rgba(112,212,134,.12)',
+        '--card':'#0d1a11','--card-h':'#172b1d',
+        '--bg-gradient':'linear-gradient(180deg,#07100a,#0d1a11)'
+      }
     },
     'twilight-purple': {
-      name: '暮色紫', icon: '🔮',
+      name: '暮色紫', icon: '☂',
       vars: {
-        '--bg':'#0e0a14','--bg2':'#18132a','--bg3':'#22183a',
-        '--fg':'#e8def8','--fg-dim':'#a89bc8','--muted':'#7a6a9a',
-        '--accent':'#b794f4','--accent-2':'#f472b6','--accent-3':'#4a7c8c',
-        '--line':'#2a1e3a','--line-2':'#3a2a4a',
-        '--cinnabar':'#cc2946','--cinnabar-dim':'rgba(204,41,70,.12)',
-        '--jade':'#5aaa7a','--jade-dim':'rgba(90,170,122,.1)',
-        '--gold-leaf':'#c9a86a','--gold-dim':'rgba(183,148,244,.12)',
-        '--card':'#18132a','--card-h':'#22183a',
-        '--bg-gradient':'linear-gradient(180deg,#0e0a14,#18132a)'
-      },
-      el: {}
+        '--bg':'#0d0914','--bg2':'#171126','--bg3':'#241936',
+        '--fg':'#eee6fb','--fg-dim':'#b3a5d0','--muted':'#7a6a9a',
+        '--accent':'#b794f4','--accent-2':'#f472b6','--accent-3':'#60d0c8',
+        '--line':'#2a1e3a','--line-2':'#3a2a4f',
+        '--cinnabar':'#d64a7a','--cinnabar-dim':'rgba(214,74,122,.12)',
+        '--jade':'#64c79e','--jade-dim':'rgba(100,199,158,.1)',
+        '--gold-leaf':'#d2b66a','--gold-dim':'rgba(183,148,244,.12)',
+        '--card':'#171126','--card-h':'#241936',
+        '--bg-gradient':'linear-gradient(180deg,#0d0914,#171126)'
+      }
     },
-    'minimal-gray': {
-      name: '极简灰', icon: '◻️',
+    'graphite': {
+      name: '石墨灰', icon: '●',
       vars: {
-        '--bg':'#0d0d0d','--bg2':'#141414','--bg3':'#1c1c1c',
-        '--fg':'#e8e8e8','--fg-dim':'#999999','--muted':'#666666',
-        '--accent':'#aaaaaa','--accent-2':'#888888','--accent-3':'#777777',
-        '--line':'#222222','--line-2':'#2a2a2a',
-        '--cinnabar':'#bb4444','--cinnabar-dim':'rgba(187,68,68,.12)',
-        '--jade':'#559955','--jade-dim':'rgba(85,153,85,.1)',
-        '--gold-leaf':'#aaaa55','--gold-dim':'rgba(170,170,85,.1)',
-        '--card':'#141414','--card-h':'#1c1c1c',
-        '--bg-gradient':'linear-gradient(180deg,#0d0d0d,#161616)'
-      },
-      el: {}
+        '--bg':'#090909','--bg2':'#121212','--bg3':'#1c1c1c',
+        '--fg':'#ededed','--fg-dim':'#a5a5a5','--muted':'#696969',
+        '--accent':'#b7b7b7','--accent-2':'#d06b61','--accent-3':'#78a8a0',
+        '--line':'#242424','--line-2':'#333333',
+        '--cinnabar':'#bd4d45','--cinnabar-dim':'rgba(189,77,69,.12)',
+        '--jade':'#699e7a','--jade-dim':'rgba(105,158,122,.1)',
+        '--gold-leaf':'#b6a46b','--gold-dim':'rgba(183,183,183,.1)',
+        '--card':'#121212','--card-h':'#1d1d1d',
+        '--bg-gradient':'linear-gradient(180deg,#090909,#141414)'
+      }
     },
     'scarlet-red': {
-      name: '嫣红', icon: '❤️',
+      name: '绯红', icon: '♥',
       vars: {
-        '--bg':'#0f0707','--bg2':'#1a0c0c','--bg3':'#2a1414',
-        '--fg':'#f0e0e0','--fg-dim':'#c09090','--muted':'#905050',
-        '--accent':'#e05050','--accent-2':'#d4a574','--accent-3':'#5a8a8a',
-        '--line':'#2a1818','--line-2':'#3a2020',
-        '--cinnabar':'#d03030','--cinnabar-dim':'rgba(208,48,48,.12)',
-        '--jade':'#3a8a5a','--jade-dim':'rgba(58,138,90,.1)',
-        '--gold-leaf':'#C9A96E','--gold-dim':'rgba(224,80,80,.12)',
-        '--card':'#1a0c0c','--card-h':'#2a1414',
-        '--bg-gradient':'linear-gradient(180deg,#0f0707,#1a0c0c)'
-      },
-      el: {}
+        '--bg':'#100606','--bg2':'#1b0b0b','--bg3':'#2c1212',
+        '--fg':'#f5e4e2','--fg-dim':'#c99a95','--muted':'#87514d',
+        '--accent':'#e85d5d','--accent-2':'#d4a574','--accent-3':'#5fa0a0',
+        '--line':'#2d1717','--line-2':'#422020',
+        '--cinnabar':'#d73f3f','--cinnabar-dim':'rgba(215,63,63,.12)',
+        '--jade':'#49a477','--jade-dim':'rgba(73,164,119,.1)',
+        '--gold-leaf':'#C9A96E','--gold-dim':'rgba(232,93,93,.12)',
+        '--card':'#1b0b0b','--card-h':'#2c1212',
+        '--bg-gradient':'linear-gradient(180deg,#100606,#1b0b0b)'
+      }
     },
     'aurora': {
-      name: '极光', icon: '🌌',
+      name: '极光', icon: '✨',
       vars: {
-        '--bg':'#080e0e','--bg2':'#0c1a18','--bg3':'#142a26',
-        '--fg':'#dcefeb','--fg-dim':'#8ab8b0','--muted':'#4a8278',
-        '--accent':'#5cd4b0','--accent-2':'#7c5cf4','--accent-3':'#f4c85c',
-        '--line':'#1a2a26','--line-2':'#263a34',
-        '--cinnabar':'#c04040','--cinnabar-dim':'rgba(192,64,64,.12)',
-        '--jade':'#2aaa7a','--jade-dim':'rgba(42,170,122,.1)',
-        '--gold-leaf':'#d4a050','--gold-dim':'rgba(92,212,176,.12)',
-        '--card':'#0c1a18','--card-h':'#142a26',
-        '--bg-gradient':'linear-gradient(180deg,#080e0e,#0c1a18)'
-      },
-      el: {}
+        '--bg':'#06100f','--bg2':'#0b1b18','--bg3':'#112b26',
+        '--fg':'#e1f5f0','--fg-dim':'#91bdb4','--muted':'#56857b',
+        '--accent':'#5ce0b8','--accent-2':'#8a6cff','--accent-3':'#f4c85c',
+        '--line':'#18302b','--line-2':'#25443b',
+        '--cinnabar':'#d65c5c','--cinnabar-dim':'rgba(214,92,92,.12)',
+        '--jade':'#2fc78d','--jade-dim':'rgba(47,199,141,.1)',
+        '--gold-leaf':'#d4a050','--gold-dim':'rgba(92,224,184,.12)',
+        '--card':'#0b1b18','--card-h':'#112b26',
+        '--bg-gradient':'linear-gradient(180deg,#06100f,#0b1b18)'
+      }
     },
     'autumn-leaves': {
       name: '秋叶', icon: '🍂',
       vars: {
-        '--bg':'#0f0b06','--bg2':'#1a140e','--bg3':'#2a1e14',
-        '--fg':'#efe4d8','--fg-dim':'#b8a088','--muted':'#7a6a50',
-        '--accent':'#d49040','--accent-2':'#b85530','--accent-3':'#4a7a5a',
-        '--line':'#2a2218','--line-2':'#3a3022',
-        '--cinnabar':'#c04a30','--cinnabar-dim':'rgba(192,74,48,.12)',
-        '--jade':'#4a8a4a','--jade-dim':'rgba(74,138,74,.1)',
+        '--bg':'#0f0a05','--bg2':'#1b120b','--bg3':'#2b1d12',
+        '--fg':'#f1e4d4','--fg-dim':'#b89c7e','--muted':'#7a6149',
+        '--accent':'#d49040','--accent-2':'#c65a34','--accent-3':'#5a8f66',
+        '--line':'#2b2116','--line-2':'#3d2d1d',
+        '--cinnabar':'#c94d34','--cinnabar-dim':'rgba(201,77,52,.12)',
+        '--jade':'#5a9a5a','--jade-dim':'rgba(90,154,90,.1)',
         '--gold-leaf':'#c99440','--gold-dim':'rgba(212,144,64,.12)',
-        '--card':'#1a140e','--card-h':'#2a1e14',
-        '--bg-gradient':'linear-gradient(180deg,#0f0b06,#1a140e)'
-      },
-      el: {}
+        '--card':'#1b120b','--card-h':'#2b1d12',
+        '--bg-gradient':'linear-gradient(180deg,#0f0a05,#1b120b)'
+      }
     },
     'misty-blue': {
-      name: '雾灰蓝', icon: '🌫️',
+      name: '雾蓝', icon: '☁',
       vars: {
-        '--bg':'#0e1118','--bg2':'#151a24','--bg3':'#1e2430',
-        '--fg':'#dce0ec','--fg-dim':'#9098b0','--muted':'#586078',
-        '--accent':'#7a8ab8','--accent-2':'#b8987a','--accent-3':'#5a9a8a',
-        '--line':'#222838','--line-2':'#2e3448',
-        '--cinnabar':'#b84848','--cinnabar-dim':'rgba(184,72,72,.12)',
-        '--jade':'#4a8a6a','--jade-dim':'rgba(74,138,106,.1)',
-        '--gold-leaf':'#a0985a','--gold-dim':'rgba(122,138,184,.12)',
-        '--card':'#151a24','--card-h':'#1e2430',
-        '--bg-gradient':'linear-gradient(180deg,#0e1118,#151a24)'
-      },
-      el: {}
+        '--bg':'#0d1018','--bg2':'#141923','--bg3':'#1e2430',
+        '--fg':'#dfe5f2','--fg-dim':'#9aa4ba','--muted':'#626b80',
+        '--accent':'#8294c8','--accent-2':'#c49b78','--accent-3':'#61aa99',
+        '--line':'#242a39','--line-2':'#333b4d',
+        '--cinnabar':'#bb5555','--cinnabar-dim':'rgba(187,85,85,.12)',
+        '--jade':'#5b9c7a','--jade-dim':'rgba(91,156,122,.1)',
+        '--gold-leaf':'#b4a466','--gold-dim':'rgba(130,148,200,.12)',
+        '--card':'#141923','--card-h':'#1e2430',
+        '--bg-gradient':'linear-gradient(180deg,#0d1018,#141923)'
+      }
     },
     'midnight-cyan': {
-      name: '午夜青', icon: '🌌',
+      name: '午夜青', icon: '◆',
       vars: {
-        '--bg':'#061014','--bg2':'#0b1b20','--bg3':'#112b32',
+        '--bg':'#051015','--bg2':'#0a1b21','--bg3':'#102b33',
         '--fg':'#e7f7f8','--fg-dim':'#9bc6ca','--muted':'#5a8288',
         '--accent':'#38c8d6','--accent-2':'#ff7a59','--accent-3':'#9fe870',
         '--line':'#163039','--line-2':'#21434d',
         '--cinnabar':'#ef5f54','--cinnabar-dim':'rgba(239,95,84,.12)',
         '--jade':'#3fcf8e','--jade-dim':'rgba(63,207,142,.1)',
         '--gold-leaf':'#e0c46c','--gold-dim':'rgba(56,200,214,.12)',
-        '--card':'#0b1b20','--card-h':'#112b32',
-        '--bg-gradient':'linear-gradient(180deg,#061014,#0b1b20)'
-      },
-      el: {}
+        '--card':'#0a1b21','--card-h':'#102b33',
+        '--bg-gradient':'linear-gradient(180deg,#051015,#0a1b21)'
+      }
     },
     'lotus-ink': {
-      name: '莲墨', icon: '🪷',
+      name: '莲墨', icon: '✿',
       vars: {
-        '--bg':'#0c0b12','--bg2':'#151321','--bg3':'#211d32',
+        '--bg':'#0c0a12','--bg2':'#151321','--bg3':'#211d32',
         '--fg':'#f1edf7','--fg-dim':'#b9adc8','--muted':'#7d728d',
         '--accent':'#e0a8c8','--accent-2':'#86d0c4','--accent-3':'#c7b6ff',
         '--line':'#27223a','--line-2':'#3a3350',
@@ -184,30 +170,11 @@
         '--jade':'#66bfae','--jade-dim':'rgba(102,191,174,.1)',
         '--gold-leaf':'#d8bd7a','--gold-dim':'rgba(224,168,200,.12)',
         '--card':'#151321','--card-h':'#211d32',
-        '--bg-gradient':'linear-gradient(180deg,#0c0b12,#151321)'
-      },
-      el: {}
-    },
-    'paper-bamboo': {
-      name: '纸竹', icon: '🎋',
-      vars: {
-        '--bg':'#f7f3e8','--bg2':'#ece4d2','--bg3':'#ded2b9',
-        '--fg':'#2b261b','--fg-dim':'#5a4f3d','--muted':'#7a6d55',
-        '--accent':'#4f8a5f','--accent-2':'#c46a3a','--accent-3':'#447c93',
-        '--line':'rgba(58,47,31,.12)','--line-2':'rgba(58,47,31,.2)',
-        '--cinnabar':'#b94632','--cinnabar-dim':'rgba(185,70,50,.12)',
-        '--jade':'#4f8a5f','--jade-dim':'rgba(79,138,95,.12)',
-        '--gold-leaf':'#b68d42','--gold-dim':'rgba(79,138,95,.14)',
-        '--card':'#f0e9d8','--card-h':'#e4dac4',
-        '--bg-gradient':'linear-gradient(180deg,#f7f3e8,#ece4d2)'
-      },
-      el: {
-        '.btm-bar':'background:rgba(247,243,232,.92)',
-        '.fm-exit':'background:rgba(247,243,232,.85)'
+        '--bg-gradient':'linear-gradient(180deg,#0c0a12,#151321)'
       }
     },
-    'sunrise-peach': {
-      name: '晨桃', icon: '🌅',
+    'sunrise-peach-dark': {
+      name: '暗桃', icon: '◐',
       vars: {
         '--bg':'#140d0f','--bg2':'#211418','--bg3':'#341d21',
         '--fg':'#fff0e8','--fg-dim':'#d5aa9d','--muted':'#8c655d',
@@ -218,29 +185,10 @@
         '--gold-leaf':'#f2c879','--gold-dim':'rgba(255,179,107,.13)',
         '--card':'#211418','--card-h':'#341d21',
         '--bg-gradient':'linear-gradient(180deg,#140d0f,#211418)'
-      },
-      el: {}
-    },
-    'glacier-white': {
-      name: '冰川白', icon: '🏔️',
-      vars: {
-        '--bg':'#f4f8fb','--bg2':'#e8f0f5','--bg3':'#dce8ef',
-        '--fg':'#1b2a32','--fg-dim':'#4a5d6a','--muted':'#6e7d88',
-        '--accent':'#2f8fb4','--accent-2':'#d4686f','--accent-3':'#4b9f7d',
-        '--line':'rgba(31,63,77,.1)','--line-2':'rgba(31,63,77,.18)',
-        '--cinnabar':'#c8525d','--cinnabar-dim':'rgba(200,82,93,.12)',
-        '--jade':'#4b9f7d','--jade-dim':'rgba(75,159,125,.1)',
-        '--gold-leaf':'#ad8f42','--gold-dim':'rgba(47,143,180,.12)',
-        '--card':'#edf4f8','--card-h':'#e0edf4',
-        '--bg-gradient':'linear-gradient(180deg,#f4f8fb,#e8f0f5)'
-      },
-      el: {
-        '.btm-bar':'background:rgba(244,248,251,.92)',
-        '.fm-exit':'background:rgba(244,248,251,.85)'
       }
     },
     'neon-night': {
-      name: '霓虹夜', icon: '🟣',
+      name: '霓虹夜', icon: '▣',
       vars: {
         '--bg':'#05070f','--bg2':'#0b1020','--bg3':'#131a30',
         '--fg':'#eef2ff','--fg-dim':'#a9b5d8','--muted':'#677194',
@@ -251,102 +199,282 @@
         '--gold-leaf':'#fde68a','--gold-dim':'rgba(125,211,252,.12)',
         '--card':'#0b1020','--card-h':'#131a30',
         '--bg-gradient':'linear-gradient(180deg,#05070f,#0b1020)'
-      },
-      el: {}
+      }
+    },
+    'wine-cellar': {
+      name: '酒窖', icon: '◈',
+      vars: {
+        '--bg':'#10070d','--bg2':'#1b0d16','--bg3':'#2d1424',
+        '--fg':'#f6e8ef','--fg-dim':'#c59bad','--muted':'#80586a',
+        '--accent':'#c96f91','--accent-2':'#e0a45d','--accent-3':'#6fb8a8',
+        '--line':'#301b28','--line-2':'#452537',
+        '--cinnabar':'#ce496b','--cinnabar-dim':'rgba(206,73,107,.12)',
+        '--jade':'#5eb39c','--jade-dim':'rgba(94,179,156,.1)',
+        '--gold-leaf':'#d2a45d','--gold-dim':'rgba(201,111,145,.12)',
+        '--card':'#1b0d16','--card-h':'#2d1424',
+        '--bg-gradient':'linear-gradient(180deg,#10070d,#1b0d16)'
+      }
+    },
+    'copper-night': {
+      name: '铜夜', icon: '◇',
+      vars: {
+        '--bg':'#0d0805','--bg2':'#18100b','--bg3':'#271912',
+        '--fg':'#f3e6d9','--fg-dim':'#b99578','--muted':'#765846',
+        '--accent':'#c97d4a','--accent-2':'#e45a47','--accent-3':'#5ea890',
+        '--line':'#2a1c14','--line-2':'#3d281c',
+        '--cinnabar':'#d24e3c','--cinnabar-dim':'rgba(210,78,60,.12)',
+        '--jade':'#5aa084','--jade-dim':'rgba(90,160,132,.1)',
+        '--gold-leaf':'#c89a57','--gold-dim':'rgba(201,125,74,.12)',
+        '--card':'#18100b','--card-h':'#271912',
+        '--bg-gradient':'linear-gradient(180deg,#0d0805,#18100b)'
+      }
+    },
+    'polar-night': {
+      name: '极夜', icon: '◌',
+      vars: {
+        '--bg':'#070b12','--bg2':'#0e1520','--bg3':'#182231',
+        '--fg':'#edf6ff','--fg-dim':'#a8b8c9','--muted':'#68798a',
+        '--accent':'#9bdcff','--accent-2':'#c9a7ff','--accent-3':'#80e0c0',
+        '--line':'#1d2a3a','--line-2':'#2b3a4d',
+        '--cinnabar':'#d86a78','--cinnabar-dim':'rgba(216,106,120,.12)',
+        '--jade':'#6ed0aa','--jade-dim':'rgba(110,208,170,.1)',
+        '--gold-leaf':'#e0c57a','--gold-dim':'rgba(155,220,255,.12)',
+        '--card':'#0e1520','--card-h':'#182231',
+        '--bg-gradient':'linear-gradient(180deg,#070b12,#0e1520)'
+      }
+    },
+    'moss-stone': {
+      name: '苔石', icon: '⬟',
+      vars: {
+        '--bg':'#090e0b','--bg2':'#111912','--bg3':'#1b261d',
+        '--fg':'#e8eddf','--fg-dim':'#a8b396','--muted':'#69745b',
+        '--accent':'#a8c66c','--accent-2':'#d18a5c','--accent-3':'#70a8a0',
+        '--line':'#20291f','--line-2':'#303b2d',
+        '--cinnabar':'#c95d4b','--cinnabar-dim':'rgba(201,93,75,.12)',
+        '--jade':'#83b06e','--jade-dim':'rgba(131,176,110,.1)',
+        '--gold-leaf':'#c8b36b','--gold-dim':'rgba(168,198,108,.12)',
+        '--card':'#111912','--card-h':'#1b261d',
+        '--bg-gradient':'linear-gradient(180deg,#090e0b,#111912)'
+      }
+    },
+    'royal-indigo': {
+      name: '靛蓝', icon: '⬢',
+      vars: {
+        '--bg':'#090a18','--bg2':'#11142a','--bg3':'#1b1f42',
+        '--fg':'#eeeaff','--fg-dim':'#b2aee0','--muted':'#706b9a',
+        '--accent':'#8ea2ff','--accent-2':'#ff8eb3','--accent-3':'#72d6c9',
+        '--line':'#25284a','--line-2':'#343862',
+        '--cinnabar':'#e06080','--cinnabar-dim':'rgba(224,96,128,.12)',
+        '--jade':'#63c7b7','--jade-dim':'rgba(99,199,183,.1)',
+        '--gold-leaf':'#d6bd72','--gold-dim':'rgba(142,162,255,.12)',
+        '--card':'#11142a','--card-h':'#1b1f42',
+        '--bg-gradient':'linear-gradient(180deg,#090a18,#11142a)'
+      }
+    },
+    'black-amber': {
+      name: '黑琥珀', icon: '⬥',
+      vars: {
+        '--bg':'#060504','--bg2':'#100c08','--bg3':'#1d150d',
+        '--fg':'#f4eadc','--fg-dim':'#b9a27f','--muted':'#75624a',
+        '--accent':'#f0b75e','--accent-2':'#e66745','--accent-3':'#61b99a',
+        '--line':'#24190e','--line-2':'#382512',
+        '--cinnabar':'#d9553a','--cinnabar-dim':'rgba(217,85,58,.12)',
+        '--jade':'#56a985','--jade-dim':'rgba(86,169,133,.1)',
+        '--gold-leaf':'#f0b75e','--gold-dim':'rgba(240,183,94,.12)',
+        '--card':'#100c08','--card-h':'#1d150d',
+        '--bg-gradient':'linear-gradient(180deg,#060504,#100c08)'
+      }
     }
   };
 
-  // Load saved theme
-  var currentTheme = localStorage.getItem('_theme');
-  if(!currentTheme || !THEMES[currentTheme]) currentTheme = 'warm-dark';
+  var CUSTOM_THEME_ID = 'custom';
+  var CUSTOM_THEME_KEY = '_customTheme';
+  var CUSTOM_FIELDS = [
+    ['--bg', '背景', '#080808'],
+    ['--bg2', '面板', '#121212'],
+    ['--bg3', '浮层', '#1c1c1c'],
+    ['--card', '卡片', '#141414'],
+    ['--card-h', '卡片悬停', '#202020'],
+    ['--fg', '主文字', '#f2f2f2'],
+    ['--fg-dim', '次文字', '#a8a8a8'],
+    ['--muted', '弱文字', '#686868'],
+    ['--accent', '主色', '#d4a574'],
+    ['--accent-2', '强调二', '#e85d5d'],
+    ['--accent-3', '强调三', '#5fa0a0']
+  ];
 
-  // Inject theme engine CSS
+  function hexToRgb(hex) {
+    var h = String(hex || '').replace('#','').trim();
+    if (h.length === 3) h = h.split('').map(function(ch){ return ch + ch; }).join('');
+    var n = parseInt(h, 16);
+    if (isNaN(n)) return { r: 212, g: 165, b: 116 };
+    return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+  }
+
+  function rgba(hex, alpha) {
+    var c = hexToRgb(hex);
+    return 'rgba(' + c.r + ',' + c.g + ',' + c.b + ',' + alpha + ')';
+  }
+
+  function safeHex(value, fallback) {
+    value = String(value || '').trim();
+    return /^#[0-9a-fA-F]{6}$/.test(value) ? value : fallback;
+  }
+
+  function buildCustomTheme(raw) {
+    raw = raw || {};
+    var base = THEMES['warm-dark'].vars;
+    var vars = {};
+    CUSTOM_FIELDS.forEach(function(field) {
+      vars[field[0]] = safeHex(raw[field[0]], field[2]);
+    });
+    vars['--line'] = raw['--line'] || base['--line'];
+    vars['--line-2'] = raw['--line-2'] || base['--line-2'];
+    vars['--cinnabar'] = vars['--accent-2'];
+    vars['--cinnabar-dim'] = rgba(vars['--accent-2'], .12);
+    vars['--jade'] = vars['--accent-3'];
+    vars['--jade-dim'] = rgba(vars['--accent-3'], .1);
+    vars['--gold-leaf'] = vars['--accent'];
+    vars['--gold-dim'] = rgba(vars['--accent'], .12);
+    vars['--bg-gradient'] = 'linear-gradient(180deg,' + vars['--bg'] + ',' + vars['--bg2'] + ')';
+    return { name: raw.name || '自定义', icon: raw.icon || '🎨', vars: vars, custom: true };
+  }
+
+  function loadCustomTheme() {
+    try {
+      var saved = JSON.parse(localStorage.getItem(CUSTOM_THEME_KEY) || '{}');
+      THEMES[CUSTOM_THEME_ID] = buildCustomTheme(saved);
+    } catch(e) {
+      THEMES[CUSTOM_THEME_ID] = buildCustomTheme({});
+    }
+  }
+
+  function saveCustomTheme(raw) {
+    localStorage.setItem(CUSTOM_THEME_KEY, JSON.stringify(raw));
+    THEMES[CUSTOM_THEME_ID] = buildCustomTheme(raw);
+    applyTheme(CUSTOM_THEME_ID);
+  }
+
+  loadCustomTheme();
+
+  var currentTheme = localStorage.getItem('_theme');
+  if (!currentTheme || !THEMES[currentTheme]) currentTheme = 'warm-dark';
+
   var css = document.createElement('style');
-  css.textContent = '';
   document.head.appendChild(css);
 
-  // ===== Apply theme =====
   function applyTheme(id) {
     var t = THEMES[id];
-    if(!t) return;
+    if (!t) return;
     currentTheme = id;
-
-    // Remove any previous theme class, then add current
-    Object.keys(THEMES).forEach(function(themeId){document.documentElement.classList.remove('t-' + themeId)});
+    Object.keys(THEMES).forEach(function(themeId) {
+      document.documentElement.classList.remove('t-' + themeId);
+    });
     document.documentElement.classList.add('t-' + id);
 
-    // Build CSS variable overrides
     var varCss = '.t-' + id + '{';
-    for(var k in t.vars) {
+    Object.keys(t.vars).forEach(function(k) {
       varCss += k + ':' + t.vars[k] + ';';
-    }
+    });
     varCss += '}';
-
-    // Element-specific overrides
-    if(t.el) {
-      for(var sel in t.el) {
-        varCss += '.t-' + id + ' ' + sel + '{' + t.el[sel] + '}';
-      }
-    }
-
     css.textContent = varCss;
-
-    // Save preference
     localStorage.setItem('_theme', id);
-
-    // Update button
     updateBtn();
   }
 
-  // ===== Update button =====
   function updateBtn() {
     var btn = document.getElementById('themeBtn');
-    if(!btn) return;
+    if (!btn) return;
     var t = THEMES[currentTheme];
-    btn.innerHTML = '<span class="bb-icon">' + t.icon + '</span> ' + t.name;
+    btn.innerHTML = '<span class="bb-icon">' + t.icon + '</span><span class="lb-lbl">' + t.name + '</span>';
   }
 
-  // ===== Theme picker popup =====
   var pickerEl = null;
 
-  function showPicker() {
-    hidePicker(); // remove existing
+  function customThemeValues() {
+    try {
+      var saved = JSON.parse(localStorage.getItem(CUSTOM_THEME_KEY) || '{}');
+      var theme = buildCustomTheme(saved);
+      return theme.vars;
+    } catch(e) {
+      return buildCustomTheme({}).vars;
+    }
+  }
 
+  function customEditorHtml() {
+    var values = customThemeValues();
+    var html = '<div class="tp-custom">';
+    html += '<div class="tp-custom-title">自定义主题颜色</div>';
+    html += '<div class="tp-custom-grid">';
+    CUSTOM_FIELDS.forEach(function(field) {
+      var key = field[0];
+      html += '<label class="tp-color-row">';
+      html += '<span>' + field[1] + '</span>';
+      html += '<input type="color" data-var="' + key + '" value="' + (values[key] || field[2]) + '">';
+      html += '</label>';
+    });
+    html += '</div>';
+    html += '<div class="tp-custom-actions">';
+    html += '<button class="tp-save-custom" type="button">保存自定义</button>';
+    html += '<button class="tp-reset-custom" type="button">恢复默认</button>';
+    html += '</div></div>';
+    return html;
+  }
+
+  function showPicker() {
+    hidePicker();
     var btn = document.getElementById('themeBtn');
-    if(!btn) return;
+    if (!btn) return;
 
     pickerEl = document.createElement('div');
     pickerEl.className = 'theme-picker';
 
     var html = '';
-    for(var id in THEMES) {
+    Object.keys(THEMES).forEach(function(id) {
       var t = THEMES[id];
       var active = id === currentTheme ? ' tp-a' : '';
-      // Extract accent color from vars for the dot
       var dotColor = t.vars['--accent'] || '#888';
-      html += '<div class="tp-item' + active + '" data-theme="' + id + '">';
+      html += '<button class="tp-item' + active + '" data-theme="' + id + '" type="button">';
       html += '<span class="tp-dot" style="background:' + dotColor + '"></span>';
       html += '<span class="tp-label">' + t.icon + ' ' + t.name + '</span>';
       html += active ? '<span class="tp-check">✓</span>' : '';
-      html += '</div>';
-    }
+      html += '</button>';
+    });
+    html += customEditorHtml();
     pickerEl.innerHTML = html;
-
-    // Position near button
     document.body.appendChild(pickerEl);
 
-    // Click handler
     pickerEl.addEventListener('click', function(e) {
       var item = e.target.closest('.tp-item');
-      if(!item) return;
-      var tid = item.dataset.theme;
-      if(tid && THEMES[tid]) {
-        applyTheme(tid);
+      if (item) {
+        var tid = item.dataset.theme;
+        if (tid && THEMES[tid]) {
+          applyTheme(tid);
+          hidePicker();
+        }
+        return;
+      }
+
+      if (e.target.closest('.tp-save-custom')) {
+        var raw = { name: '自定义', icon: '🎨' };
+        pickerEl.querySelectorAll('.tp-custom input[type="color"]').forEach(function(input) {
+          raw[input.dataset.var] = input.value;
+        });
+        saveCustomTheme(raw);
         hidePicker();
+        if (typeof showToast === 'function') showToast('🎨 自定义主题已保存');
+        return;
+      }
+
+      if (e.target.closest('.tp-reset-custom')) {
+        localStorage.removeItem(CUSTOM_THEME_KEY);
+        THEMES[CUSTOM_THEME_ID] = buildCustomTheme({});
+        applyTheme(CUSTOM_THEME_ID);
+        hidePicker();
+        if (typeof showToast === 'function') showToast('🎨 自定义主题已恢复默认');
       }
     });
 
-    // Close on outside click
     setTimeout(function() {
       document.addEventListener('click', pickerOutside, true);
     }, 10);
@@ -354,45 +482,51 @@
 
   function pickerOutside(e) {
     var btn = document.getElementById('themeBtn');
-    if(pickerEl && !pickerEl.contains(e.target) && e.target !== btn && !btn.contains(e.target)) {
+    if (pickerEl && !pickerEl.contains(e.target) && btn && e.target !== btn && !btn.contains(e.target)) {
       hidePicker();
     }
   }
 
   function hidePicker() {
-    if(pickerEl) {
+    if (pickerEl) {
       pickerEl.remove();
       pickerEl = null;
     }
     document.removeEventListener('click', pickerOutside, true);
   }
 
-  // Inject picker CSS
   var pStyle = document.createElement('style');
   pStyle.textContent =
-    '.theme-picker{position:fixed;bottom:clamp(2.5rem,4vw,3.2rem);left:50%;transform:translateX(-50%);z-index:200;' +
+    '.theme-picker{position:fixed;bottom:clamp(2.5rem,4vw,3.2rem);left:50%;transform:translateX(-50%);z-index:300;' +
     'background:var(--bg3);border:1px solid var(--line-2);border-radius:12px;padding:clamp(.35rem,.5vw,.45rem);' +
     'box-shadow:0 8px 40px rgba(0,0,0,.6);display:flex;gap:clamp(.2rem,.3vw,.3rem);flex-wrap:wrap;' +
-    'justify-content:center;max-width:clamp(340px,88vw,760px);max-height:min(58vh,420px);overflow:auto}' +
+    'justify-content:center;max-width:clamp(340px,88vw,780px);max-height:min(58vh,420px);overflow:auto}' +
     '.tp-item{display:flex;align-items:center;gap:clamp(.2rem,.3vw,.25rem);padding:clamp(.25rem,.35vw,.3rem) clamp(.35rem,.5vw,.45rem);' +
-    'border-radius:8px;cursor:pointer;transition:background .15s;border:1px solid transparent}' +
+    'border-radius:8px;cursor:pointer;transition:background .15s,border-color .15s;border:1px solid transparent;background:transparent;color:var(--fg);font-family:var(--font-sans)}' +
     '.tp-item:hover{background:rgba(255,255,255,.06);border-color:var(--line)}' +
     '.tp-item.tp-a{border-color:var(--accent);background:rgba(255,255,255,.04)}' +
     '.tp-dot{width:clamp(10px,1.2vw,12px);height:clamp(10px,1.2vw,12px);border-radius:50%;flex-shrink:0;border:1.5px solid rgba(255,255,255,.15)}' +
     '.tp-label{font-size:clamp(.5rem,.75vw,.55rem);color:var(--fg);white-space:nowrap}' +
-    '.tp-check{font-size:clamp(.45rem,.65vw,.5rem);color:var(--accent);margin-left:.05rem}';
+    '.tp-check{font-size:clamp(.45rem,.65vw,.5rem);color:var(--accent);margin-left:.05rem}' +
+    '.tp-custom{width:100%;border-top:1px solid var(--line);margin-top:.25rem;padding-top:.35rem}' +
+    '.tp-custom-title{font-size:clamp(.55rem,.8vw,.62rem);color:var(--accent);letter-spacing:.08em;margin:0 0 .3rem;text-align:center}' +
+    '.tp-custom-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:.25rem}' +
+    '.tp-color-row{display:flex;align-items:center;justify-content:space-between;gap:.35rem;border:1px solid var(--line);border-radius:8px;padding:.22rem .32rem;background:rgba(255,255,255,.025)}' +
+    '.tp-color-row span{font-size:clamp(.5rem,.75vw,.55rem);color:var(--fg-dim);white-space:nowrap}' +
+    '.tp-color-row input{width:30px;height:22px;border:0;background:transparent;padding:0;cursor:pointer}' +
+    '.tp-custom-actions{display:flex;gap:.3rem;justify-content:center;margin-top:.35rem;flex-wrap:wrap}' +
+    '.tp-custom-actions button{border:1px solid var(--line-2);border-radius:999px;background:rgba(255,255,255,.04);color:var(--fg);font-family:var(--font-sans);font-size:clamp(.52rem,.78vw,.58rem);padding:.22rem .55rem;cursor:pointer}' +
+    '.tp-save-custom{border-color:var(--accent)!important;color:var(--accent)!important;background:rgba(212,165,116,.08)!important}';
   document.head.appendChild(pStyle);
 
-  // ===== Initialize =====
   applyTheme(currentTheme);
 
-  // ===== Button handler =====
   var btn = document.getElementById('themeBtn');
-  if(btn) {
+  if (btn) {
     btn.addEventListener('click', function(e) {
       e.stopPropagation();
-      if(pickerEl) { hidePicker(); }
-      else { showPicker(); }
+      if (pickerEl) hidePicker();
+      else showPicker();
     });
   }
 })();

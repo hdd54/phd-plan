@@ -82,6 +82,13 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 .hstat{text-align:center;padding:0 .5rem}
 .hstat .n{font-size:clamp(1.1rem,2.5vw,1.4rem);font-weight:400;font-family:var(--font-data);color:var(--accent);letter-spacing:-.02em}
 .hstat .l{font-size:clamp(.55rem,1vw,.65rem);color:var(--muted);margin-top:.1rem;letter-spacing:.15em;text-transform:uppercase}
+.dyn-custom-stat{position:relative}
+.dyn-stat-add{align-self:center;border:1px dashed rgba(212,165,116,.36);border-radius:999px;background:rgba(212,165,116,.05);color:var(--accent);font-family:var(--font-sans);font-size:clamp(.5rem,.8vw,.58rem);padding:.16rem .48rem;cursor:pointer;letter-spacing:.08em}
+.dyn-stat-add:hover{background:rgba(212,165,116,.12);border-color:var(--accent)}
+.dyn-stat-del{position:absolute;right:.1rem;top:-.35rem;width:16px;height:16px;border-radius:50%;border:1px solid rgba(232,93,47,.45);background:rgba(10,9,8,.86);color:var(--accent-2);font-size:11px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:.75}
+.dyn-stat-del:hover{opacity:1;background:rgba(232,93,47,.12)}
+body:not(.is-editing) .dyn-stat-add,
+body:not(.is-editing) .dyn-stat-del{display:none}
 @keyframes fU{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
 
 /* ===== year stats (Chinese seal badges) ===== */
@@ -129,7 +136,7 @@ body.sb .pb{padding-left:clamp(2.2rem,4vw,3.2rem)}
 .yni.a .yl{color:var(--cinnabar);letter-spacing:.18em;text-shadow:0 0 8px rgba(204,41,54,.15)}
 
 /* ===== sections ===== */
-.sec{position:relative;z-index:1;max-width:clamp(600px,var(--page-width,calc(100vw - var(--sb-w) - 2.4rem)),1020px);margin:0 auto;padding:clamp(1.8rem,4.5vw,2.8rem) clamp(.6rem,2vw,1.2rem)}
+.sec{position:relative;z-index:1;max-width:clamp(600px,var(--page-width,calc(100vw - var(--sb-w) - 2.4rem)),1020px);margin:0 auto;padding:clamp(1.8rem,4.5vw,2.8rem) clamp(.6rem,2vw,1.2rem);content-visibility:auto;contain-intrinsic-size:900px}
 .sec:last-of-type{padding-bottom:clamp(3rem,6vw,4.5rem)}
 .sec-divider{position:relative;z-index:1;max-width:clamp(600px,var(--page-width,calc(100vw - var(--sb-w) - 2.4rem)),1020px);margin:0 auto;padding:0 clamp(.6rem,2vw,1.2rem)}
 .sec-divider hr{border:none;height:1px;background:linear-gradient(90deg,transparent,rgba(212,165,116,.12) 25%,rgba(212,165,116,.12) 75%,transparent);margin:0 auto;max-width:50%}
@@ -144,7 +151,7 @@ body.sb .pb{padding-left:clamp(2.2rem,4vw,3.2rem)}
 @media(max-width:680px){.tg{grid-template-columns:1fr}}
 
 /* ===== card ===== */
-.tc{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:clamp(.85rem,2vw,1.15rem);transition:all .35s cubic-bezier(.2,.8,.2,1);position:relative;overflow:hidden}
+.tc{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:clamp(.85rem,2vw,1.15rem);transition:background .25s,border-color .25s,transform .25s,box-shadow .25s;position:relative;overflow:hidden;contain:layout paint}
 /* Chinese window lattice corner ornament */
 .tc::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;opacity:0;transition:opacity .3s}
 .tc::after{content:'';position:absolute;top:-60%;right:-60%;width:120%;height:120%;background:radial-gradient(circle,rgba(212,165,116,.02)0%,transparent 70%);opacity:0;transition:opacity .5s;pointer-events:none}
@@ -216,6 +223,9 @@ body.sb .pb{padding-left:clamp(2.2rem,4vw,3.2rem)}
 .dr.today:hover{background:rgba(212,165,116,.09)}
 .dr.today .dl{color:var(--accent);font-weight:400}
 .dl{font-size:clamp(.55rem,1vw,.62rem);color:var(--muted);width:clamp(1.5em,3.5vw,1.7em);flex-shrink:0;text-align:right;padding-top:.22rem;line-height:1.4;letter-spacing:.05em;font-weight:300}
+.dt{flex:0 0 clamp(2.6rem,5.8vw,3.4rem);max-width:clamp(2.6rem,5.8vw,3.4rem);margin-top:.05rem;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:var(--rs);color:var(--fg-dim);font-family:var(--font-sans);font-size:clamp(.48rem,.75vw,.54rem);padding:.12rem .18rem;outline:none;cursor:pointer}
+.dt:hover{border-color:var(--line-2);color:var(--fg)}
+.dt:focus{border-color:var(--accent);color:var(--accent);background:rgba(212,165,116,.04)}
 
 /* day textarea (multi-line support) */
 .di{flex:1;min-width:0;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:var(--rs);padding:.15rem .35rem;color:var(--fg);font-family:var(--font-sans);font-size:clamp(.62rem,1vw,.68rem);outline:none;transition:border-color .2s,background .2s;resize:none;overflow:hidden;min-height:1.5em;line-height:1.4;display:block;width:100%;font-weight:300}
@@ -240,7 +250,7 @@ body.sb .pb{padding-left:clamp(2.2rem,4vw,3.2rem)}
 /* summary section */
 .sg{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
 @media(max-width:680px){.sg{grid-template-columns:1fr}}
-.sc{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:clamp(1rem,2.5vw,1.3rem);transition:all .35s cubic-bezier(.2,.8,.2,1);position:relative;overflow:hidden}
+.sc{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:clamp(1rem,2.5vw,1.3rem);transition:background .25s,border-color .25s,transform .25s,box-shadow .25s;position:relative;overflow:hidden;contain:layout paint}
 .sc:hover{background:var(--card-h);border-color:var(--line-2);transform:translateY(-2px);box-shadow:0 8px 40px rgba(0,0,0,.5)}
 .sc::before{content:'';display:block;width:32px;height:1.5px;background:var(--accent);margin-bottom:.6rem;transition:width .35s ease-out;border-radius:2px}
 .sc:hover::before{width:40px}
@@ -582,6 +592,7 @@ body{padding-left:calc(var(--sb-w) + var(--content-gutter));padding-right:var(--
   .left-bar .chapter-info{display:none}
   .left-bar .lb-toggle{width:26px;height:26px;font-size:.75rem}
   body{padding-left:42px!important;padding-right:.45rem!important}
+  body.sb{padding-left:calc(145px + .45rem)!important}
   .nav-rail{left:50px!important}
   .yni .yl{font-size:.5rem}
   .sh h2{font-size:clamp(.8rem,5vw,.9rem)}
