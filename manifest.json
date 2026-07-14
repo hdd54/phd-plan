@@ -1,7 +1,7 @@
 {
-  "name": "计划",
-  "short_name": "计划",
-  "description": "博士五年规划 - 周计划/番茄钟/里程碑",
+  "name": "计划本",
+  "short_name": "计划本",
+  "description": "通用计划本 - 周计划、月历、番茄钟、里程碑",
   "start_url": "plan-plan-fighting.html",
   "display": "standalone",
   "display_override": ["window-controls-overlay", "standalone"],
@@ -9,7 +9,7 @@
   "background_color": "#0a0908",
   "theme_color": "#d4a574",
   "scope": "/phd-plan/",
-  "categories": ["productivity", "education"],
+  "categories": ["productivity"],
   "lang": "zh-CN",
   "icons": [
     { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }

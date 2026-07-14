@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>计划</title>
+<title>计划本</title>
 <script>if(location.protocol!=='file:')document.write('<link rel="manifest" href="manifest.json">')</script>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="计划">
+<meta name="apple-mobile-web-app-title" content="计划本">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" type="image/svg+xml" href="icon.svg">
 <meta name="mobile-web-app-capable" content="yes">
@@ -25,11 +25,11 @@
 
 <!-- left nav rail -->
 <nav class="nav-rail" id="navRail" aria-label="年份导航">
-  <button class="nav-dot a" data-target="y1" data-label="博一" aria-label="博一"></button>
-  <button class="nav-dot" data-target="y2" data-label="博二" aria-label="博二"></button>
-  <button class="nav-dot" data-target="y3" data-label="博三" aria-label="博三"></button>
-  <button class="nav-dot" data-target="y4" data-label="博四" aria-label="博四"></button>
-  <button class="nav-dot" data-target="y5" data-label="博五" aria-label="博五"></button>
+  <button class="nav-dot a" data-target="y1" data-label="阶段一" aria-label="阶段一"></button>
+  <button class="nav-dot" data-target="y2" data-label="阶段二" aria-label="阶段二"></button>
+  <button class="nav-dot" data-target="y3" data-label="阶段三" aria-label="阶段三"></button>
+  <button class="nav-dot" data-target="y4" data-label="阶段四" aria-label="阶段四"></button>
+  <button class="nav-dot" data-target="y5" data-label="阶段五" aria-label="阶段五"></button>
   <button class="nav-dot" data-target="sum" data-label="总结" aria-label="总结"></button>
 </nav>
 <div class="ed-badge" id="edBadge">✎ 编辑模式</div>
@@ -39,21 +39,21 @@
 <span id="planAppStart"></span>
 <!-- PAGE TOOLBAR -->
 <div class="pb" id="pageBar">
-  <button class="pbi a" data-page="p0">🎓 博士计划</button>
+  <button class="pbi a" data-page="p0">📒 计划本</button>
   <button class="pbi add" id="addPageBtn" title="添加新页">＋</button>
 </div>
 
-<!-- PAGE 0 CONTENT (博士计划 - existing content) -->
+<!-- PAGE 0 CONTENT (计划本 - existing content) -->
 <div id="page0Content" class="page-content a">
 
 <!-- HERO -->
 <header class="hero" id="mainHero">
-  <h1 class="hmark reveal in" id="heroTitle"><span class="line"><span>博士四年 · <em>全景规划</em></span></span></h1>
+  <h1 class="hmark reveal in" id="heroTitle"><span class="line"><span>计划本 · <em>全景规划</em></span></span></h1>
   <div class="hline reveal in" id="heroHline"></div>
-  <p class="hsub reveal in" id="heroSub">北京航空航天大学 · 生物医学光子学</p>
+  <p class="hsub reveal in" id="heroSub">长期目标 · 阶段推进 · 每周行动</p>
   <div class="hstats reveal in" id="heroStats">
-    <div class="hstat"><div class="n">3</div><div class="l">SCI</div></div>
-    <div class="hstat"><div class="n">2</div><div class="l">专利</div></div>
+    <div class="hstat"><div class="n">5</div><div class="l">阶段</div></div>
+    <div class="hstat"><div class="n">4</div><div class="l">维度</div></div>
     <div class="hstat"><div class="n" id="statTotal">0</div><div class="l">任务</div></div>
     <div class="hstat"><div class="n" id="statDone">0</div><div class="l">已完成</div></div>
   </div>
@@ -65,11 +65,11 @@
 <!-- NAV -->
 <nav class="ynw" id="ynw">
   <div class="yn">
-    <button class="yni a" data-y="y1"><span class="yd"></span><span class="yl">博一</span></button>
-    <button class="yni" data-y="y2"><span class="yd"></span><span class="yl">博二</span></button>
-    <button class="yni" data-y="y3"><span class="yd"></span><span class="yl">博三</span></button>
-    <button class="yni" data-y="y4"><span class="yd"></span><span class="yl">博四</span></button>
-    <button class="yni" data-y="y5"><span class="yd"></span><span class="yl">博五</span></button>
+    <button class="yni a" data-y="y1"><span class="yd"></span><span class="yl">阶段一</span></button>
+    <button class="yni" data-y="y2"><span class="yd"></span><span class="yl">阶段二</span></button>
+    <button class="yni" data-y="y3"><span class="yd"></span><span class="yl">阶段三</span></button>
+    <button class="yni" data-y="y4"><span class="yd"></span><span class="yl">阶段四</span></button>
+    <button class="yni" data-y="y5"><span class="yd"></span><span class="yl">阶段五</span></button>
   </div>
 </nav>
 
@@ -126,7 +126,7 @@
 <!-- ===== SUMMARY ===== -->
 <section class="sec reveal" id="sum"><div class="sh"><div class="ey">全局</div><h2>优势 &amp; 预警</h2></div>
 <div class="sg">
-<div class="sc"><h3>✦ 核心优势</h3><ul><li>北航博士——选调资格全开</li><li>江西籍——本地选调偏好</li><li>理工科——行测数量+逻辑是主场</li><li>现有5万元存款——比多数博士从容</li><li>无家庭负担——财务灵活</li></ul></div>
+<div class="sc"><h3>✦ 核心优势</h3><ul><li>长期目标拆解为阶段计划</li><li>周计划与每日行动实时联动</li><li>任务、财务、生活和自定义模块统一管理</li><li>本地优先保存，支持导入导出和同步</li><li>可按年、月或自定义栏目扩展</li></ul></div>
 <div class="sc r"><h3>△ 风险预警</h3><ul><li>3SCI+2专利压力大——尽早启动</li><li>Push型导师×考公时间矛盾</li><li>论文答辩与考试时间可能冲突</li><li>核心部门竞争激烈，要有B计划</li></ul></div>
 </div></section>
 
@@ -179,7 +179,7 @@
   <div class="help-body">
     <section>
       <h4>🎯 总览</h4>
-      <p>这是一个本地优先的多页面计划系统。首页用于博士全景规划，顶部页签可新增按年或按月组织的大计划；左侧工具栏提供编辑、备份、同步、月历、财务、学术、购房、求职、城市和记录本等模块。</p>
+      <p>这是一个本地优先的多页面计划系统。首页用于通用全景规划，顶部页签可新增按年或按月组织的大计划；左侧工具栏提供编辑、备份、同步、月历、财务、学术、购房、求职、城市和记录本等模块。</p>
       <ul>
         <li>数据默认保存在浏览器本地存储，刷新后会自动恢复</li>
         <li>周计划、月历提醒、工具面板数据和地图备注均走本地保存</li>
@@ -793,12 +793,12 @@
   <div class="ai-chat" id="aiChat">
     <div class="ai-msg ai">
       <span class="role-tag">AI 助手</span>
-      你好！我可以读取并编辑你的博士规划。告诉我你想做什么——修改任务、添加周计划、调整概述都可以。所有修改需要你确认后才会生效。
+      你好！我可以读取并编辑你的计划本。告诉我你想做什么——修改任务、添加周计划、调整概述都可以。所有修改需要你确认后才会生效。
     </div>
   </div>
   <div class="ai-input-area">
     <button class="ai-mic-btn" id="aiMicBtn" title="语音输入">🎤</button>
-    <textarea id="aiInput" rows="1" placeholder="输入需求，如：修改博一第3周周三的任务..." maxlength="2000"></textarea>
+    <textarea id="aiInput" rows="1" placeholder="输入需求，如：修改阶段一第3周周三的任务..." maxlength="2000"></textarea>
     <button class="ai-send-btn" id="aiSend" disabled>发送</button>
   </div>
 </div>
@@ -869,14 +869,14 @@ const Y3A = [
   {w:'第6周',s:'',d:['完成实验数据采集','数据统计分析','制作实验结果图','验证实验结论','总结实验发现','撰写实验方法部分','完成实验部分']},
   {w:'第7周',s:'',d:['Paper2写作开始','撰写引言部分','构建论文框架','文献综述更新','撰写结果与讨论','绘制论文图表','完成方法部分']},
   {w:'第8周',s:'',d:['完成Paper2初稿','全文通读修改','语言润色','格式调整','修改后投出','追踪投稿状态','确认投稿成功']},
-  {w:'第9周',s:'',d:['专利2申请材料整理','调研相关专利','撰写专利文件','提交专利2','博士论文开题报告撰写','阅读开题相关文献','确定论文选题方向']},
+  {w:'第9周',s:'',d:['项目材料整理','调研相关资料','撰写阶段文件','提交阶段成果','长期项目开题报告撰写','阅读相关资料','确定项目方向']},
   {w:'第10周',s:'',d:['文献综述章节完成','研究内容与技术路线确定','撰写开题报告','创新点提炼','研究计划时间表','开题PPT制作','预演开题汇报']},
   {w:'第11周',s:'',d:['开题答辩预演','模拟问答准备','正式开题答辩','记录专家意见','答辩总结','整理修改建议','庆祝开题通过']},
   {w:'第12周',s:'',d:['开题通过后整理专家意见','修改研究方案','更新研究计划','整理开题材料归档','制定下一阶段研究计划','与导师讨论反馈','更新实验时间表']},
 ];
 const Y4A = [
-  {w:'第1周',s:'',d:['博士论文第一章定稿','完善绪论部分','补充最新文献','更新研究背景','明确研究意义','确定论文框架','第一章格式规范']},
-  {w:'第2周',s:'',d:['博士论文第二章写作','文献综述深化','理论框架建立','研究方法描述','章节衔接连贯','第二章初稿完成','交叉检查引用']},
+  {w:'第1周',s:'',d:['长期项目第一部分定稿','完善背景说明','补充最新资料','更新项目背景','明确项目意义','确定项目框架','第一部分格式规范']},
+  {w:'第2周',s:'',d:['长期项目第二部分写作','资料综述深化','理论框架建立','方法描述','章节衔接连贯','第二部分初稿完成','交叉检查引用']},
   {w:'第3周',s:'',d:['第三章实验数据整理','实验结果补全','数据统计分析','制作实验结果图表','撰写实验章节','验证实验结论','第三章初稿']},
   {w:'第4周',s:'',d:['第四章初稿','第五章初稿','全文进度检查','检查章节逻辑','补充缺失内容','论文结构优化','完成初稿整合']},
   {w:'第5周',s:'',d:['论文初稿完成发给导师','等待导师审阅','准备修改计划','按导师意见第一轮修改','修改重点章节','补充实验数据','修改说明记录']},
@@ -900,12 +900,13 @@ const Y5A = [
 ];
 
 // ======================== STATE ========================
-const SK = 'phd_v4';
+const SK = 'planbook_v1';
+const LEGACY_SK = 'phd_v4';
 let data = load();
 // openState: { 'y1-academic': {0:true, 1:false, ...} }
 let openState = loadOpenState();
 function loadOpenState() {
-  try { return JSON.parse(localStorage.getItem(SK+'_open')||'{}'); } catch(e) { return {}; }
+  try { return JSON.parse(localStorage.getItem(SK+'_open') || localStorage.getItem(LEGACY_SK+'_open') || '{}'); } catch(e) { return {}; }
 }
 function saveOpenState() {
   try { localStorage.setItem(SK+'_open', JSON.stringify(openState)); } catch(e) {}
@@ -917,6 +918,13 @@ function load() {
     if (raw) {
       const p = JSON.parse(raw);
       ensure(p);
+      return p;
+    }
+    const legacyRaw = localStorage.getItem(LEGACY_SK);
+    if (legacyRaw) {
+      const p = JSON.parse(legacyRaw);
+      ensure(p);
+      try { localStorage.setItem(SK, JSON.stringify(p)); } catch(e) {}
       return p;
     }
   } catch(e) {}
@@ -1544,8 +1552,8 @@ function initPages() {
   if (!data._pages || !Array.isArray(data._pages) || data._pages.length === 0) {
     data._pages = [{
       id: 'p0',
-      label: '博士计划',
-      icon: '🎓',
+      label: '计划本',
+      icon: '📒',
       type: 'year',
       categories: [
         { id: 'academic', icon: '📚', label: '学术' },
@@ -1586,7 +1594,7 @@ function renderPageToolbar() {
   var p0btn = document.createElement('button');
   p0btn.className = 'pbi' + (activePageId === 'p0' ? ' a' : '');
   p0btn.dataset.page = 'p0';
-  p0btn.textContent = '🎓 博士计划';
+  p0btn.textContent = '📒 计划本';
   bar.appendChild(p0btn);
   // Add dynamic page buttons (with delete button)
   pages.forEach(function(p) {
@@ -2134,7 +2142,7 @@ document.addEventListener('click', e => {
   // Export
   if (t.id==='exportBtnSettings'||t.closest('#exportBtnSettings')) {
     const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='phd-plan-'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(a.href);
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='planbook-'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(a.href);
     showToast('📥 已导出');
     return;
   }
@@ -2717,7 +2725,7 @@ function renderChatHistory() {
   if (!msgs.length) {
     const div = document.createElement('div');
     div.className = 'ai-msg ai';
-    div.innerHTML = '<span class="role-tag">AI 助手</span><div style="white-space:pre-wrap">你好！我可以读取并编辑你的博士规划。告诉我你想做什么——修改任务、添加周计划、调整概述都可以。所有修改需要你确认后才会生效。</div>';
+    div.innerHTML = '<span class="role-tag">AI 助手</span><div style="white-space:pre-wrap">你好！我可以读取并编辑你的计划本。告诉我你想做什么——修改任务、添加周计划、调整概述都可以。所有修改需要你确认后才会生效。</div>';
     aiChat.appendChild(div);
     return;
   }
@@ -2870,7 +2878,7 @@ h1{font-size:18pt;color:#d4a574;border-bottom:2px solid #d4a574;padding-bottom:6
     const label = m.role === 'u' ? '👤 我' : m.role === 'ai' ? '🤖 AI 助手' : '⚙️ 系统';
     html += '<div class="msg ' + cls + '"><div class="label">' + label + '</div><div class="content">' + esc(m.content) + '</div></div>';
   });
-  html += '<p style="text-align:center;color:#ccc;font-size:9pt;margin-top:30px">—— 由博士规划助手导出 ——</p></body></html>';
+  html += '<p style="text-align:center;color:#ccc;font-size:9pt;margin-top:30px">—— 由计划本助手导出 ——</p></body></html>';
   w.document.write(html);
   w.document.close();
   setTimeout(() => { w.focus(); w.print(); }, 300);
@@ -2896,7 +2904,7 @@ function buildSystemPrompt() {
   });
 
   const now = new Date().toLocaleDateString('zh-CN', {year:'numeric',month:'long',day:'numeric',weekday:'long'});
-  let prompt = '你是一个博士规划助手，帮助用户管理其博士4-5年全景规划（学术、考公、财务、生活四维度）。\n\n';
+  let prompt = '你是一个计划本助手，帮助用户管理长期目标、阶段计划、周计划和每日任务。\n\n';
   prompt += '## 当前日期\n' + now + '\n\n';
   prompt += '## 当前数据概览\n每条周记录格式：{w:"周名称", time:"周时间段", s:"周总结", d:["周一任务","周二任务",...]}\n每周有7天（周一至周日）。如果某天没有内容则为空字符串。\n\n';
 
@@ -3180,7 +3188,7 @@ function applyEditProposal(proposal, btnEl) {
 { const _origSave = save; save = function() { if (window.data && window.data !== data) data = window.data; else window.data = data; _origSave(); saveChatHistory(); debounceAutoSync(); }; }
 
 // ======================== GIST SYNC ========================
-const GIST_FILENAME = 'phd-plan-data.json';
+const GIST_FILENAME = 'planbook-data.json';
 const GIST_TOKEN_KEY = SK + '_gist_token';
 const GIST_ID_KEY = SK + '_gist_id';
 const GIST_LAST_SYNC_KEY = SK + '_gist_last_sync';
@@ -3326,7 +3334,7 @@ async function gistCreate(content) {
     method: 'POST',
     headers: { 'Authorization': 'token ' + gistToken, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' },
     body: JSON.stringify({
-      description: '博士规划数据同步 (' + new Date().toLocaleDateString('zh-CN') + ')',
+      description: '计划本数据同步 (' + new Date().toLocaleDateString('zh-CN') + ')',
       public: false,
       files: { [GIST_FILENAME]: { content: content } }
     })
@@ -3720,10 +3728,10 @@ function renderTemplates(){document.querySelectorAll('.tpl-list').forEach(functi
 // ======================== FEATURE: Pomodoro ========================
 var pomo={running:false,time:25*60,left:25*60,interval:null,label:'focus',sessionType:'focus',tag:'',date:null,totalToday:0}
 var POMO_MS=[{n:'50个',c:50,i:'🌱'},{n:'100个',c:100,i:'🌿'},{n:'200个',c:200,i:'🌳'},{n:'500个',c:500,i:'🏆'},{n:'1000个',c:1000,i:'👑'},{n:'2000个',c:2000,i:'💎'},{n:'5000个',c:5000,i:'🏅'},{n:'10000个',c:10000,i:'💫'}]
-function pomoLoad(){var s=localStorage.getItem('phd_v4_pomo');if(s)try{var p=JSON.parse(s);pomo.time=p.time||25*60;pomo.left=p.left||pomo.time;pomo.label=p.label||'focus';pomo.sessionType=p.sessionType||'focus'}catch(e){}
+function pomoLoad(){var s=localStorage.getItem('planbook_v1_pomo')||localStorage.getItem('phd_v4_pomo');if(s)try{var p=JSON.parse(s);pomo.time=p.time||25*60;pomo.left=p.left||pomo.time;pomo.label=p.label||'focus';pomo.sessionType=p.sessionType||'focus'}catch(e){}
   var t=new Date().toDateString();if(pomo.date!==t){pomo.date=t;pomo.totalToday=0}
   updatePomoDisplay();updatePomoBadge();renderPomoRecords();renderPomoStats();renderPomoMstones()}
-function pomoSaveState(){localStorage.setItem('phd_v4_pomo',JSON.stringify({time:pomo.time,left:pomo.left,label:pomo.label,sessionType:pomo.sessionType,date:pomo.date}))}
+function pomoSaveState(){localStorage.setItem('planbook_v1_pomo',JSON.stringify({time:pomo.time,left:pomo.left,label:pomo.label,sessionType:pomo.sessionType,date:pomo.date}))}
 function pomoOpen(){document.getElementById('pomoOverlay').classList.add('s');document.getElementById('pomoModal').classList.add('s')}
 function pomoClose(){if(pomo.running&&!confirm('计时器正在运行，确定关闭？'))return
   document.getElementById('pomoOverlay').classList.remove('s');document.getElementById('pomoModal').classList.remove('s')}
@@ -3846,7 +3854,7 @@ function soReset(){if(pomo.running&&!confirm('重置当前番茄？'))return
   function pMove(ex,ey){if(!pd)return;if(!pd2&&(Math.abs(ex-sx)>3||Math.abs(ey-sy)>3)){pd2=true;window.__pomoBtnDragged=true}
     if(!pd2)return;b.style.left=(sl+(ex-sx))+'px';b.style.top=(st+(ey-sy))+'px'}
   function pEnd(){if(!pd)return;pd=false;b.classList.remove('dragging')
-    if(pd2)try{localStorage.setItem('phd_v4_pomo_btn_pos',JSON.stringify({l:b.style.left,t:b.style.top}))}catch(e){}
+    if(pd2)try{localStorage.setItem('planbook_v1_pomo_btn_pos',JSON.stringify({l:b.style.left,t:b.style.top}))}catch(e){}
     setTimeout(function(){window.__pomoBtnDragged=false},50)}
   b.addEventListener('mousedown',function(e){if(e.button!==0)return;pStart(e.clientX,e.clientY)})
   document.addEventListener('mousemove',function(e){pMove(e.clientX,e.clientY)})
@@ -3855,10 +3863,10 @@ function soReset(){if(pomo.running&&!confirm('重置当前番茄？'))return
   document.addEventListener('touchmove',function(e){var t=e.touches[0];pMove(t.clientX,t.clientY)},{passive:true})
   document.addEventListener('touchend',pEnd,{passive:true})
   // Load saved position
-  try{var s=localStorage.getItem('phd_v4_pomo_btn_pos');if(s){var p=JSON.parse(s);if(p.l&&p.t){b.style.left=p.l;b.style.top=p.t;b.style.right='auto';b.style.bottom='auto'}}}catch(e){}})();
+  try{var s=localStorage.getItem('planbook_v1_pomo_btn_pos')||localStorage.getItem('phd_v4_pomo_btn_pos');if(s){var p=JSON.parse(s);if(p.l&&p.t){b.style.left=p.l;b.style.top=p.t;b.style.right='auto';b.style.bottom='auto'}}}catch(e){}})();
 function pomoSavePos(){var f=document.getElementById('pomoFloat');var l=parseInt(f.style.left);var t=parseInt(f.style.top)
-  if(l||t)try{localStorage.setItem('phd_v4_pomo_pos',JSON.stringify({l:l,t:t}))}catch(e){}}
-function pomoLoadPos(){try{var s=localStorage.getItem('phd_v4_pomo_pos');if(!s)return;var p=JSON.parse(s);var f=document.getElementById('pomoFloat');if(p.l||p.t){f.style.left=p.l+'px';f.style.top=p.t+'px';f.style.right='auto';f.style.bottom='auto'}}catch(e){}}
+  if(l||t)try{localStorage.setItem('planbook_v1_pomo_pos',JSON.stringify({l:l,t:t}))}catch(e){}}
+function pomoLoadPos(){try{var s=localStorage.getItem('planbook_v1_pomo_pos')||localStorage.getItem('phd_v4_pomo_pos');if(!s)return;var p=JSON.parse(s);var f=document.getElementById('pomoFloat');if(p.l||p.t){f.style.left=p.l+'px';f.style.top=p.t+'px';f.style.right='auto';f.style.bottom='auto'}}catch(e){}}
 // Pomodoro UI bindings
 document.getElementById('pomoBtn').addEventListener('click',function(){if(window.__pomoBtnDragged){window.__pomoBtnDragged=false;return}pomoOpen()})
 document.getElementById('pomoOverlay').addEventListener('click',pomoClose)
