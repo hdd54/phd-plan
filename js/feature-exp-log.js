@@ -72,7 +72,7 @@
     var titleInput = document.createElement('input');
     titleInput.type = 'text';
     titleInput.className = 'el-entry-title';
-    titleInput.placeholder = '实验标题/编号';
+    titleInput.placeholder = '执行标题/编号';
     titleInput.value = entry.title || '';
     titleInput.addEventListener('input', function(){
       getLog()[idx].title = titleInput.value;
@@ -91,7 +91,7 @@
     delBtn.textContent = '🗑';
     delBtn.title = '删除';
     delBtn.addEventListener('click', function(){
-      if(!confirm('确认删除此实验记录？')) return;
+      if(!confirm('确认删除此执行记录？')) return;
       getLog().splice(idx, 1);
       saveLog();
       renderAll();
@@ -131,7 +131,7 @@
     var purposeInput = document.createElement('textarea');
     purposeInput.className = 'el-section-input short';
     purposeInput.rows = 1;
-    purposeInput.placeholder = '实验目的...';
+    purposeInput.placeholder = '执行目的...';
     purposeInput.value = entry.purpose || '';
     purposeInput.addEventListener('input', function(){
       getLog()[idx].purpose = purposeInput.value;
@@ -150,7 +150,7 @@
     var methodInput = document.createElement('textarea');
     methodInput.className = 'el-section-input';
     methodInput.rows = 2;
-    methodInput.placeholder = '实验方法、关键步骤、参数...';
+    methodInput.placeholder = '执行方法、关键步骤、参数...';
     methodInput.value = entry.method || '';
     methodInput.addEventListener('input', function(){
       getLog()[idx].method = methodInput.value;
@@ -169,7 +169,7 @@
     var resultsInput = document.createElement('textarea');
     resultsInput.className = 'el-section-input';
     resultsInput.rows = 2;
-    resultsInput.placeholder = '实验结果、数据、观察...';
+    resultsInput.placeholder = '执行结果、数据、观察...';
     resultsInput.value = entry.results || '';
     resultsInput.addEventListener('input', function(){
       getLog()[idx].results = resultsInput.value;
@@ -233,7 +233,7 @@
     // Actually, let's just render from the log array directly (index-based)
     list.innerHTML = '';
     if(log.length === 0){
-      list.innerHTML = '<div class="el-empty"><div class="el-empty-icon">🔬</div>还没有实验记录，点击「添加实验记录」开始记录</div>';
+      list.innerHTML = '<div class="el-empty"><div class="el-empty-icon">🔬</div>还没有执行记录，点击「添加执行记录」开始记录</div>';
       return;
     }
     log.forEach(function(entry, idx){

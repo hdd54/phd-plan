@@ -1,4 +1,4 @@
-// ===== FEATURE: Career Timeline (选调/求职) =====
+// ===== FEATURE: Career Timeline (职业/求职) =====
 (function(){
   if(window.__features['career-timeline']) return;
   window.__features['career-timeline'] = true;
@@ -29,7 +29,7 @@
     .ct-item{position:relative;margin-bottom:clamp(.4rem,.65vw,.55rem);background:var(--card);border:1px solid var(--line);border-radius:var(--rs);padding:clamp(.3rem,.5vw,.45rem) clamp(.35rem,.55vw,.5rem);transition:all .2s}
     .ct-item:hover{border-color:var(--accent-2)}
     .ct-item::before{content:'';position:absolute;left:clamp(-.85rem,-1.4vw,-1.1rem);top:clamp(.45rem,.7vw,.55rem);width:clamp(.35rem,.55vw,.4rem);height:clamp(.35rem,.55vw,.4rem);border-radius:50%;background:var(--accent);border:2px solid var(--bg2)}
-    .ct-item.type-选调::before{background:#4a9eff}
+    .ct-item.type-职业::before{background:#4a9eff}
     .ct-item.type-求职::before{background:#f0a030}
     .ct-item.type-其他::before{background:var(--accent-2)}
 
@@ -38,7 +38,7 @@
     .ct-item-title:focus{color:var(--accent)}
     .ct-item-date{font-size:clamp(.4rem,.65vw,.48rem);color:var(--muted);white-space:nowrap;font-family:var(--font-mono,'Courier New')}
     .ct-item-badge{font-size:clamp(.35rem,.55vw,.42rem);padding:.02rem .25rem;border-radius:3px;font-family:var(--font-sans);font-weight:500;margin-right:.2rem}
-    .ct-item-badge.选调{background:rgba(74,158,255,.12);color:#4a9eff}
+    .ct-item-badge.职业{background:rgba(74,158,255,.12);color:#4a9eff}
     .ct-item-badge.求职{background:rgba(240,160,48,.12);color:#f0a030}
     .ct-item-badge.其他{background:rgba(212,165,116,.12);color:var(--accent)}
     .ct-item-actions{display:flex;gap:.15rem;flex-shrink:0}
@@ -82,7 +82,7 @@
     var titleInput = document.createElement('input');
     titleInput.type = 'text';
     titleInput.className = 'ct-item-title';
-    titleInput.placeholder = '事项名称（如：XX省选调报名）';
+    titleInput.placeholder = '事项名称（如：XX省职业报名）';
     titleInput.value = entry.title || '';
     titleInput.addEventListener('input', function(){ getData()[idx].title = titleInput.value; save(); });
     header.appendChild(titleInput);
@@ -123,7 +123,7 @@
 
     var typeSelect = document.createElement('select');
     typeSelect.style.cssText = 'font-size:clamp(.4rem,.65vw,.48rem);background:var(--bg3);border:1px solid var(--line);border-radius:3px;padding:.05rem .1rem;color:var(--fg);font-family:var(--font-sans)';
-    ['选调','求职','其他'].forEach(function(t){
+    ['职业','求职','其他'].forEach(function(t){
       var opt = document.createElement('option');
       opt.value = t; opt.textContent = t;
       if(t === (entry.type || '其他')) opt.selected = true;
@@ -202,7 +202,7 @@
     var data = getData();
     data.push({
       id: genId(), date: todayStr(), title: '',
-      type: '选调', status: '待办', desc: ''
+      type: '职业', status: '待办', desc: ''
     });
     save();
     renderAll();

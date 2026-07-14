@@ -4,13 +4,13 @@
 // ===== Tag Color System (13 colors) =====
 window.TAG_COLORS = {
   '':   { cls: 'n',  label: '无标签', bg: 'var(--line-2)' },
-  'r':  { cls: 'r',  label: '实验',   bg: '#e74c3c' },
+  'r':  { cls: 'r',  label: '执行',   bg: '#e74c3c' },
   'g':  { cls: 'g',  label: '写作',   bg: '#2ecc71' },
   'y':  { cls: 'y',  label: '备考',   bg: '#c9a040' },
   'b':  { cls: 'b',  label: '杂务',   bg: '#4a7c8c' },
   'p':  { cls: 'p',  label: '阅读',   bg: '#8b5cf6' },
   'o':  { cls: 'o',  label: '其他',   bg: '#d4a574' },
-  'k':  { cls: 'k',  label: '论文',   bg: '#e91e63' },
+  'k':  { cls: 'k',  label: '项目',   bg: '#e91e63' },
   't':  { cls: 't',  label: '代码',   bg: '#00bcd4' },
   's':  { cls: 's',  label: '会议',   bg: '#64b5f6' },
   'l':  { cls: 'l',  label: '健身',   bg: '#8bc34a' },

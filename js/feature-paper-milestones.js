@@ -1,17 +1,17 @@
-// ===== FEATURE: Paper Milestone Tracker =====
-// Tracks papers through their lifecycle stages with timeline visualization
+// ===== FEATURE: 项目 Milestone Tracker =====
+// Tracks 项目s through their lifecycle stages with timeline visualization
 
 (function(){
-  if(window.__features['paper-milestones']) return;
-  window.__features['paper-milestones'] = true;
+  if(window.__features['项目-milestones']) return;
+  window.__features['项目-milestones'] = true;
 
   // ===== Constants =====
   var STAGES = [
     { key: 'idea',       label: '选题/想法',     icon: '💡' },
-    { key: 'literature', label: '文献调研',     icon: '📚' },
-    { key: 'experiment', label: '实验/设计',   icon: '🔬' },
-    { key: 'writing',    label: '论文写作',     icon: '✍️' },
-    { key: 'submit',     label: '已投稿',       icon: '📤' },
+    { key: 'literature', label: '资料调研',     icon: '📚' },
+    { key: 'experiment', label: '执行/设计',   icon: '🔬' },
+    { key: 'writing',    label: '项目写作',     icon: '✍️' },
+    { key: 'submit',     label: '已提交',       icon: '📤' },
     { key: 'under-review', label: '审稿中',     icon: '👁️' },
     { key: 'revise',     label: '修改中',       icon: '🔧' },
     { key: 'accept',     label: '已接收',       icon: '✅' },
@@ -34,7 +34,7 @@
     .pm-add-btn{background:rgba(212,165,116,.12);border:1px dashed var(--accent);color:var(--accent);padding:clamp(.25rem,.4vw,.35rem) clamp(.4rem,.6vw,.6rem);border-radius:var(--rs);cursor:pointer;font-family:var(--font-sans);font-size:clamp(.5rem,.8vw,.6rem);transition:all .2s}
     .pm-add-btn:hover{background:rgba(212,165,116,.2)}
 
-    /* Paper Card */
+    /* 项目 Card */
     .pm-card{background:var(--card);border:1px solid var(--line);border-radius:var(--rs);margin-bottom:.5rem;padding:clamp(.4rem,.6vw,.6rem);position:relative}
     .pm-card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:.3rem;margin-bottom:.3rem}
     .pm-card-title{flex:1;font-family:var(--font-sans);font-size:clamp(.6rem,.95vw,.7rem);font-weight:600;color:var(--fg);background:none;border:none;width:100%;outline:none;resize:none;padding:0;line-height:1.4}
@@ -63,13 +63,13 @@
   document.head.appendChild(style);
 
   // ===== Data helpers =====
-  function getPapers(){
+  function get项目s(){
     var d = window.data || {};
-    if(!d._papers) d._papers = [];
-    return d._papers;
+    if(!d._项目s) d._项目s = [];
+    return d._项目s;
   }
 
-  function savePapers(){
+  function save项目s(){
     window.save();
   }
 
@@ -77,8 +77,8 @@
     return 'p' + Date.now() + Math.random().toString(36).slice(2,6);
   }
 
-  // ===== Render a single paper card =====
-  function renderPaperCard(paper, idx){
+  // ===== Render a single 项目 card =====
+  function render项目Card(项目, idx){
     var card = document.createElement('div');
     card.className = 'pm-card';
     card.dataset.idx = idx;
@@ -90,11 +90,11 @@
     var titleInput = document.createElement('input');
     titleInput.type = 'text';
     titleInput.className = 'pm-card-title';
-    titleInput.placeholder = '输入论文标题...';
-    titleInput.value = paper.title || '';
+    titleInput.placeholder = '输入项目标题...';
+    titleInput.value = 项目.title || '';
     titleInput.addEventListener('input', function(){
-      getPapers()[idx].title = titleInput.value;
-      savePapers();
+      get项目s()[idx].title = titleInput.value;
+      save项目s();
     });
     header.appendChild(titleInput);
 
@@ -102,11 +102,11 @@
     actions.className = 'pm-card-actions';
     var delBtn = document.createElement('button');
     delBtn.textContent = '🗑';
-    delBtn.title = '删除此论文';
+    delBtn.title = '删除此项目';
     delBtn.addEventListener('click', function(){
-      if(!confirm('确认删除「' + (paper.title || '未命名论文') + '」？')) return;
-      getPapers().splice(idx, 1);
-      savePapers();
+      if(!confirm('确认删除「' + (项目.title || '未命名项目') + '」？')) return;
+      get项目s().splice(idx, 1);
+      save项目s();
       renderAll();
     });
     actions.appendChild(delBtn);
@@ -119,11 +119,11 @@
     var journalInput = document.createElement('input');
     journalInput.type = 'text';
     journalInput.className = 'pm-meta-input';
-    journalInput.placeholder = '期刊/会议名称';
-    journalInput.value = paper.journal || '';
+    journalInput.placeholder = '平台/会议名称';
+    journalInput.value = 项目.journal || '';
     journalInput.addEventListener('input', function(){
-      getPapers()[idx].journal = journalInput.value;
-      savePapers();
+      get项目s()[idx].journal = journalInput.value;
+      save项目s();
     });
     meta.appendChild(journalInput);
     card.appendChild(meta);
@@ -132,7 +132,7 @@
     var timeline = document.createElement('div');
     timeline.className = 'pm-timeline';
 
-    var milestones = paper.milestones || {};
+    var milestones = 项目.milestones || {};
     var allStages = STAGES;
 
     // Find current active stage index
@@ -173,61 +173,61 @@
     return card;
   }
 
-  // ===== Toggle a milestone on/off for a paper =====
+  // ===== Toggle a milestone on/off for a 项目 =====
   function toggleMilestone(idx, stageKey){
-    var papers = getPapers();
-    if(!papers[idx]) return;
-    var paper = papers[idx];
-    if(!paper.milestones) paper.milestones = {};
+    var 项目s = get项目s();
+    if(!项目s[idx]) return;
+    var 项目 = 项目s[idx];
+    if(!项目.milestones) 项目.milestones = {};
 
-    if(paper.milestones[stageKey]){
+    if(项目.milestones[stageKey]){
       // Remove this milestone and all later milestones
       var keys = STAGES.map(function(s){ return s.key; });
       var startIdx = keys.indexOf(stageKey);
       if(startIdx >= 0){
         for(var i = startIdx; i < keys.length; i++){
-          delete paper.milestones[keys[i]];
+          delete 项目.milestones[keys[i]];
         }
       }
     } else {
       // Set milestone to today's date
       var d = new Date();
-      paper.milestones[stageKey] = d.toISOString().slice(0, 10);
+      项目.milestones[stageKey] = d.toISOString().slice(0, 10);
     }
-    savePapers();
+    save项目s();
     renderAll();
   }
 
-  // ===== Add new paper =====
-  function addPaper(){
-    var papers = getPapers();
-    papers.push({
+  // ===== Add new 项目 =====
+  function add项目(){
+    var 项目s = get项目s();
+    项目s.push({
       id: genId(),
       title: '',
       journal: '',
       milestones: {},
     });
-    savePapers();
+    save项目s();
     renderAll();
-    // Focus the new paper's title input
+    // Focus the new 项目's title input
     setTimeout(function(){
       var inputs = document.querySelectorAll('.pm-card-title');
       if(inputs.length > 0) inputs[inputs.length - 1].focus();
     }, 100);
   }
 
-  // ===== Render all papers =====
+  // ===== Render all 项目s =====
   function renderAll(){
     var list = document.getElementById('pmList');
     if(!list) return;
-    var papers = getPapers();
+    var 项目s = get项目s();
     list.innerHTML = '';
-    if(papers.length === 0){
-      list.innerHTML = '<div class="pm-empty"><div class="pm-empty-icon">📄</div>还没有论文，点击上方「添加论文」开始追踪</div>';
+    if(项目s.length === 0){
+      list.innerHTML = '<div class="pm-empty"><div class="pm-empty-icon">📄</div>还没有项目，点击上方「添加项目」开始追踪</div>';
       return;
     }
-    papers.forEach(function(paper, idx){
-      list.appendChild(renderPaperCard(paper, idx));
+    项目s.forEach(function(项目, idx){
+      list.appendChild(render项目Card(项目, idx));
     });
   }
 
@@ -259,7 +259,7 @@
   // ===== Init =====
   function init(){
     // Wire up button
-    var btn = document.getElementById('paperBtn');
+    var btn = document.getElementById('项目Btn');
     if(btn) btn.addEventListener('click', toggleModal);
 
     // Wire up modal controls
@@ -268,7 +268,7 @@
     var overlay = document.getElementById('pmOverlay');
     if(overlay) overlay.addEventListener('click', hideModal);
     var addBtn = document.getElementById('pmAddBtn');
-    if(addBtn) addBtn.addEventListener('click', addPaper);
+    if(addBtn) addBtn.addEventListener('click', add项目);
   }
 
   // Run on DOM ready
@@ -278,5 +278,5 @@
     init();
   }
 
-  console.log('feature-paper-milestones: loaded');
+  console.log('feature-项目-milestones: loaded');
 })();

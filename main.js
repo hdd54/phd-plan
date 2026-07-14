@@ -7,7 +7,7 @@ function createWindow() {
     height: 780,
     minWidth: 360,
     minHeight: 600,
-    title: '买房计划',
+    title: '计划本',
     icon: path.join(__dirname, 'icon.svg'),
     autoHideMenuBar: true,
     webPreferences: {
