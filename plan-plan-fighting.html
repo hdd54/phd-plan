@@ -985,34 +985,46 @@ function cloneDeep(arr){return arr.map(w=>({w:w.w,s:w.s||'',time:w.time||w.range
 function save(){localStorage.setItem(SK,JSON.stringify(data));saveOpenState();try{computeStats()}catch(e){}}
 
 // ======================== RENDER ========================
-function formatWeekDate(d) {
-  return (d.getMonth()+1) + '.' + d.getDate();
+function formatDateKey(d) {
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
 }
 
-function weekTimeOptions(selected) {
-  var options = [''];
-  var start = new Date();
-  var day = start.getDay() || 7;
-  start.setHours(0,0,0,0);
-  start.setDate(start.getDate() - day + 1);
-  for (var i = 0; i < 56; i++) {
-    var s = new Date(start);
-    s.setDate(start.getDate() + i * 7);
-    var e = new Date(s);
-    e.setDate(s.getDate() + 6);
-    options.push(formatWeekDate(s) + '-' + formatWeekDate(e));
+function parseWeekTimeRange(value) {
+  value = (value || '').trim();
+  var empty = {start:'', end:''};
+  if (!value) return empty;
+  var iso = value.match(/(\d{4}-\d{2}-\d{2})\s*(?:至|到|~|—|-)\s*(\d{4}-\d{2}-\d{2})/);
+  if (iso) return {start: iso[1], end: iso[2]};
+  var cn = value.match(/(\d{4})年(\d{1,2})月(\d{1,2})日\s*(?:至|到|~|—|-)\s*(?:(\d{4})年)?(\d{1,2})月(\d{1,2})日/);
+  if (cn) {
+    return {
+      start: cn[1] + '-' + String(cn[2]).padStart(2,'0') + '-' + String(cn[3]).padStart(2,'0'),
+      end: (cn[4] || cn[1]) + '-' + String(cn[5]).padStart(2,'0') + '-' + String(cn[6]).padStart(2,'0')
+    };
   }
-  if (selected && options.indexOf(selected) === -1) options.splice(1, 0, selected);
-  return options;
+  var md = value.match(/(\d{1,2})\.(\d{1,2})\s*(?:至|到|~|—|-)\s*(\d{1,2})\.(\d{1,2})/);
+  if (md) {
+    var y = new Date().getFullYear();
+    return {
+      start: y + '-' + String(md[1]).padStart(2,'0') + '-' + String(md[2]).padStart(2,'0'),
+      end: y + '-' + String(md[3]).padStart(2,'0') + '-' + String(md[4]).padStart(2,'0')
+    };
+  }
+  return empty;
+}
+
+function formatWeekTimeValue(start, end) {
+  if (start && end) return start + ' 至 ' + end;
+  return start || end || '';
 }
 
 function renderWeekTimeSelect(cardId, wi, selected) {
-  var html = '<select class="wk-time" data-c="'+cardId+'" data-wi="'+wi+'" title="本周时间段">';
-  weekTimeOptions(selected).forEach(function(opt) {
-    html += '<option value="'+esc(opt)+'" '+(opt===selected?'selected':'')+'>'+(opt ? esc(opt) : '周时间段')+'</option>';
-  });
-  html += '</select>';
-  return html;
+  var range = parseWeekTimeRange(selected);
+  return '<div class="wk-time-range" title="本周时间段">'
+    + '<input class="wk-date" type="date" data-part="start" data-c="'+cardId+'" data-wi="'+wi+'" value="'+esc(range.start)+'" aria-label="本周开始日期">'
+    + '<span>至</span>'
+    + '<input class="wk-date" type="date" data-part="end" data-c="'+cardId+'" data-wi="'+wi+'" value="'+esc(range.end)+'" aria-label="本周结束日期">'
+    + '</div>';
 }
 
 function renderWeeks(cardId, preserveState) {
@@ -2225,11 +2237,14 @@ document.addEventListener('input', e => {
 
 document.addEventListener('change', e => {
   const t = e.target;
-  // Week-level time range
-  if (t.classList.contains('wk-time')) {
+  // Week-level date range
+  if (t.classList.contains('wk-date')) {
     const cid=t.dataset.c, wi=parseInt(t.dataset.wi);
     if (data[cid]&&data[cid][wi]) {
-      data[cid][wi].time = t.value;
+      var wrap = t.closest('.wk-time-range');
+      var start = wrap ? (wrap.querySelector('.wk-date[data-part="start"]') || {}).value || '' : '';
+      var end = wrap ? (wrap.querySelector('.wk-date[data-part="end"]') || {}).value || '' : '';
+      data[cid][wi].time = formatWeekTimeValue(start, end);
       delete data[cid][wi].range;
       save();
     }
