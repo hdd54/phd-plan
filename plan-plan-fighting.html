@@ -36,6 +36,7 @@
     </div>
     <div class="github-login-meta">
       <button id="githubLogoutBtn" type="button">退出登录</button>
+      <button id="githubSwitchBtn" type="button">切换账号</button>
       <span id="githubLoginStatus">Token 仅保存在本机浏览器，用于验证 GitHub 账号和同步数据。</span>
     </div>
   </div>
@@ -3588,8 +3589,10 @@ function setGithubLoginStatus(msg, isErr) {
 function showGithubLoginUser(user) {
   var box = githubLoginDom('githubLoginUser');
   if (!box) return;
+  var gate = githubLoginDom('githubLogin');
   if (!user || !user.login) {
     box.hidden = true;
+    if (gate) gate.classList.remove('is-authed');
     return;
   }
   var avatar = githubLoginDom('githubLoginAvatar');
@@ -3599,6 +3602,7 @@ function showGithubLoginUser(user) {
   if (name) name.textContent = user.name || user.login;
   if (handle) handle.textContent = '@' + user.login;
   box.hidden = false;
+  if (gate) gate.classList.add('is-authed');
 }
 
 function closeGithubLogin() {
@@ -3609,6 +3613,18 @@ function closeGithubLogin() {
 function openGithubLogin() {
   var gate = githubLoginDom('githubLogin');
   if (gate) gate.classList.remove('is-hidden');
+}
+
+function showGithubLoginForm() {
+  showGithubLoginUser(null);
+  var input = githubLoginDom('githubTokenLoginInput');
+  if (input) input.value = '';
+  setGithubLoginStatus('请使用 GitHub Token 登录。Token 仅保存在本机浏览器。');
+  openGithubLogin();
+  setTimeout(function() {
+    var tokenInput = githubLoginDom('githubTokenLoginInput');
+    if (tokenInput) tokenInput.focus();
+  }, 50);
 }
 
 async function verifyGithubToken(token) {
@@ -3684,16 +3700,25 @@ function initGithubLoginGate() {
   var tokenBtn = githubLoginDom('githubTokenLoginBtn');
   var localBtn = githubLoginDom('githubLocalModeBtn');
   var logoutBtn = githubLoginDom('githubLogoutBtn');
+  var switchBtn = githubLoginDom('githubSwitchBtn');
   var tokenInput = githubLoginDom('githubTokenLoginInput');
   if (tokenBtn) tokenBtn.addEventListener('click', loginWithGithubToken);
   if (localBtn) localBtn.addEventListener('click', useGithubLocalMode);
   if (logoutBtn) logoutBtn.addEventListener('click', logoutGithubLogin);
+  if (switchBtn) switchBtn.addEventListener('click', function() {
+    localStorage.removeItem(GITHUB_AUTH_KEY);
+    localStorage.removeItem(GITHUB_LOCAL_MODE_KEY);
+    showGithubLoginForm();
+  });
   var accountBtn = githubLoginDom('githubAccountBtn');
   if (accountBtn) accountBtn.addEventListener('click', function() {
     var user = githubStoredUser();
     if (user && user.login) {
       showGithubLoginUser(user);
-      setGithubLoginStatus('已登入：@' + user.login);
+      setGithubLoginStatus('当前账号：@' + user.login + '。此账号的数据与其他账号独立保存。');
+    } else {
+      showGithubLoginForm();
+      return;
     }
     openGithubLogin();
   });
@@ -3703,7 +3728,7 @@ function initGithubLoginGate() {
   var user = githubStoredUser();
   if (user && user.login) {
     showGithubLoginUser(user);
-    setGithubLoginStatus('已登入：@' + user.login);
+    setGithubLoginStatus('当前账号：@' + user.login + '。此账号的数据与其他账号独立保存。');
     closeGithubLogin();
     return;
   }
@@ -3711,7 +3736,7 @@ function initGithubLoginGate() {
     closeGithubLogin();
     return;
   }
-  openGithubLogin();
+  showGithubLoginForm();
 }
 
 initGithubLoginGate();

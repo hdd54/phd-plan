@@ -71,6 +71,9 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
 .github-login-meta{display:flex;gap:.6rem;align-items:center;justify-content:center;margin-top:.8rem;color:var(--txt4);font-size:.58rem;line-height:1.45}
 .github-login-meta button{flex:0 0 auto;background:transparent;color:var(--txt3);padding:.22rem .45rem;font-size:.56rem}
 .github-login-meta button:hover{border-color:var(--accent-2);color:var(--accent-2)}
+.github-login.is-authed .github-token-input,.github-login.is-authed .github-login-actions{display:none}
+.github-login:not(.is-authed) #githubSwitchBtn{display:none}
+.github-login:not(.is-authed) #githubLogoutBtn{display:none}
 @media(max-width:520px){.github-login-actions{grid-template-columns:1fr}.github-login-meta{align-items:flex-start;flex-direction:column;text-align:left}}
 
 /* ===== scroll progress (Chinese ribbon style) ===== */
