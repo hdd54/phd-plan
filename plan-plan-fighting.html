@@ -3615,6 +3615,15 @@ function openGithubLogin() {
   if (gate) gate.classList.remove('is-hidden');
 }
 
+function canCloseGithubLogin() {
+  var user = githubStoredUser();
+  return !!(user && user.login) || localStorage.getItem(GITHUB_LOCAL_MODE_KEY) === '1';
+}
+
+function closeGithubLoginIfAllowed() {
+  if (canCloseGithubLogin()) closeGithubLogin();
+}
+
 function showGithubLoginForm() {
   showGithubLoginUser(null);
   var input = githubLoginDom('githubTokenLoginInput');
@@ -3705,6 +3714,13 @@ function initGithubLoginGate() {
   if (tokenBtn) tokenBtn.addEventListener('click', loginWithGithubToken);
   if (localBtn) localBtn.addEventListener('click', useGithubLocalMode);
   if (logoutBtn) logoutBtn.addEventListener('click', logoutGithubLogin);
+  var gate = githubLoginDom('githubLogin');
+  if (gate) gate.addEventListener('click', function(e) {
+    if (e.target === gate) closeGithubLoginIfAllowed();
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeGithubLoginIfAllowed();
+  });
   if (switchBtn) switchBtn.addEventListener('click', function() {
     localStorage.removeItem(GITHUB_AUTH_KEY);
     localStorage.removeItem(GITHUB_LOCAL_MODE_KEY);
