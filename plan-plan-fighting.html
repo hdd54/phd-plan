@@ -896,13 +896,32 @@ const Y5A = [
 ];
 
 // ======================== STATE ========================
-const SK = 'planbook_v1';
+const BASE_SK = 'planbook_v1';
+const GITHUB_AUTH_KEY = BASE_SK + '_github_auth';
+const GITHUB_LOCAL_MODE_KEY = BASE_SK + '_github_local_mode';
+function readStoredGithubUser() {
+  try { return JSON.parse(localStorage.getItem(GITHUB_AUTH_KEY) || 'null'); } catch(e) { return null; }
+}
+function storageSafeName(value) {
+  return String(value || 'user').toLowerCase().replace(/[^a-z0-9_-]+/g, '_').replace(/^_+|_+$/g, '') || 'user';
+}
+function currentStorageScope() {
+  var user = readStoredGithubUser();
+  if (user && user.login) return 'github_' + storageSafeName(user.login);
+  if (localStorage.getItem(GITHUB_LOCAL_MODE_KEY) === '1') return 'local';
+  return 'guest';
+}
+const SK = BASE_SK + '_' + currentStorageScope();
 const LEGACY_SK = 'phd_v4';
 let data = load();
 // openState: { 'y1-academic': {0:true, 1:false, ...} }
 let openState = loadOpenState();
 function loadOpenState() {
-  try { return JSON.parse(localStorage.getItem(SK+'_open') || localStorage.getItem(LEGACY_SK+'_open') || '{}'); } catch(e) { return {}; }
+  try {
+    var raw = localStorage.getItem(SK + '_open');
+    if (!raw && SK === BASE_SK + '_local') raw = localStorage.getItem(BASE_SK + '_open') || localStorage.getItem(LEGACY_SK + '_open');
+    return JSON.parse(raw || '{}');
+  } catch(e) { return {}; }
 }
 function saveOpenState() {
   try { localStorage.setItem(SK+'_open', JSON.stringify(openState)); } catch(e) {}
@@ -916,8 +935,17 @@ function load() {
       ensure(p);
       return p;
     }
+    if (SK === BASE_SK + '_local') {
+      const localRaw = localStorage.getItem(BASE_SK);
+      if (localRaw) {
+        const p = JSON.parse(localRaw);
+        ensure(p);
+        try { localStorage.setItem(SK, JSON.stringify(p)); } catch(e) {}
+        return p;
+      }
+    }
     const legacyRaw = localStorage.getItem(LEGACY_SK);
-    if (legacyRaw) {
+    if (legacyRaw && SK === BASE_SK + '_local') {
       const p = JSON.parse(legacyRaw);
       ensure(p);
       try { localStorage.setItem(SK, JSON.stringify(p)); } catch(e) {}
@@ -3544,14 +3572,10 @@ function updateGistUI() {
   }
 }
 
-// ===== GitHub Login Gate =====
-const GITHUB_AUTH_KEY = SK + '_github_auth';
-const GITHUB_LOCAL_MODE_KEY = SK + '_github_local_mode';
-
 function githubLoginDom(id) { return document.getElementById(id); }
 
 function githubStoredUser() {
-  try { return JSON.parse(localStorage.getItem(GITHUB_AUTH_KEY) || 'null'); } catch(e) { return null; }
+  return readStoredGithubUser();
 }
 
 function setGithubLoginStatus(msg, isErr) {
@@ -3620,15 +3644,12 @@ async function loginWithGithubToken() {
     };
     localStorage.setItem(GITHUB_AUTH_KEY, JSON.stringify(savedUser));
     localStorage.removeItem(GITHUB_LOCAL_MODE_KEY);
-    localStorage.setItem(GIST_TOKEN_KEY, token);
-    gistToken = token;
-    var gistInput = gistDom('gistTokenInput');
-    if (gistInput) gistInput.value = token;
     showGithubLoginUser(savedUser);
-    setGithubLoginStatus('已登入：@' + savedUser.login);
-    updateGistUI();
-    setTimeout(closeGithubLogin, 450);
+    var scopedTokenKey = BASE_SK + '_github_' + storageSafeName(savedUser.login) + '_gist_token';
+    localStorage.setItem(scopedTokenKey, token);
+    setGithubLoginStatus('已登入：@' + savedUser.login + '，正在切换账号空间...');
     showToast('GitHub 已登入');
+    setTimeout(function() { location.reload(); }, 500);
   } catch (err) {
     setGithubLoginStatus(err.message || 'GitHub 登录失败', true);
   } finally {
@@ -3638,8 +3659,9 @@ async function loginWithGithubToken() {
 
 function useGithubLocalMode() {
   localStorage.setItem(GITHUB_LOCAL_MODE_KEY, '1');
-  closeGithubLogin();
+  localStorage.removeItem(GITHUB_AUTH_KEY);
   showToast('已进入本地模式');
+  setTimeout(function() { location.reload(); }, 250);
 }
 
 function logoutGithubLogin() {
@@ -3655,6 +3677,7 @@ function logoutGithubLogin() {
   showGithubLoginUser(null);
   openGithubLogin();
   setGithubLoginStatus('已退出。Token 仅保存在本机浏览器，用于验证 GitHub 账号和同步数据。');
+  setTimeout(function() { location.reload(); }, 300);
 }
 
 function initGithubLoginGate() {
