@@ -1726,7 +1726,7 @@ function renderDynamicPage(pageId) {
       var savedEy = data._overviews && data._overviews[fullSecId+'-ey'];
       var savedH2 = data._overviews && data._overviews[fullSecId+'-h2'];
       var savedSub = data._overviews && data._overviews[fullSecId+'-sub'];
-      html += '<section class="sec reveal'+(si2===0?' v in':'')+'" id="'+fullSecId+'"><div class="sh dyn-section-head"><button class="dyn-section-del" data-page="'+pageId+'" data-sec="'+secId+'" title="删除此'+(page.type==='month'?'月份':'年份')+'">删除</button><div class="ey">'+esc(savedEy || label)+'</div><h2>'+(savedH2 || esc(label))+'</h2><p class="sub">'+esc(savedSub || '')+'</p></div><div class="tg">';
+      html += '<section class="sec reveal'+(si2===0?' v in':'')+'" id="'+fullSecId+'"><div class="sh dyn-section-head"><button class="dyn-section-del" data-page="'+pageId+'" data-sec="'+secId+'" type="button" aria-label="删除'+esc(label)+'" title="删除此'+(page.type==='month'?'月份':'年份')+'">× 删除'+(page.type==='month'?'本月':'本年')+'</button><div class="ey">'+esc(savedEy || label)+'</div><h2>'+(savedH2 || esc(label))+'</h2><p class="sub">'+esc(savedSub || '')+'</p></div><div class="tg">';
       
       for (var ci3 = 0; ci3 < page.categories.length; ci3++) {
         var cat = page.categories[ci3];
@@ -1911,6 +1911,7 @@ function deletePageSection(pageId, secId) {
   }
 
   save();
+  saveOpenState();
   renderDynamicPage(pageId);
   showToast('已删除「' + label + '」');
 }
