@@ -94,14 +94,14 @@
 
   var trendRange = 12; // 12 or 24 weeks
 
-  // ====== Helper: get 项目 stats ======
-  function get项目Stats(){
+  // ====== Helper: get paper stats ======
+  function getPaperStats(){
     var _d = window.data || {};
-    var 项目s = _d._项目s || [];
+    var papers = _d._papers || [];
     var stages = ['idea','literature','experiment','writing','submit','under-review','revise','accept','published'];
     var byStage = {};
     var accepted = 0, published = 0, inProgress = 0;
-    项目s.forEach(function(p){
+    papers.forEach(function(p){
       var ms = p.milestones || {};
       var highest = -1;
       stages.forEach(function(s, i){
@@ -119,10 +119,10 @@
     });
     // Calculate academic score for radar (0-100)
     var score = 0;
-    if(项目s.length > 0){
-      score = Math.round((accepted + published * 2) / Math.max(项目s.length, 1) * 50 + inProgress / Math.max(项目s.length, 1) * 20);
+    if(papers.length > 0){
+      score = Math.round((accepted + published * 2) / Math.max(papers.length, 1) * 50 + inProgress / Math.max(papers.length, 1) * 20);
     }
-    return { total: 项目s.length, byStage: byStage, accepted: accepted, published: published, inProgress: inProgress, score: Math.min(score, 95) };
+    return { total: papers.length, byStage: byStage, accepted: accepted, published: published, inProgress: inProgress, score: Math.min(score, 95) };
   }
 
   // ====== Helper: get per-dimension task stats ======
@@ -164,7 +164,7 @@
   function renderOverview(){
     var agg = window.aggregateTasks ? window.aggregateTasks() : null;
     if(!agg) return '';
-    var ps = get项目Stats();
+    var ps = getPaperStats();
     var dim = getDimStats();
     var rate = agg.total ? Math.round(agg.done/agg.total*100) : 0;
     var pomoH = Math.round(agg.pomoHours * 10) / 10;
@@ -183,7 +183,7 @@
     html += '<div class="dash-card o"><div class="num">' + (dim.finance.total || 0) + '</div><div class="lbl">\u8D22\u52A1 \u00B7 \u5B8C\u6210\u7387 ' + finRate + '</div></div>';
     html += '</div>';
 
-    // Row 2: 项目 pipeline mini
+    // Row 2: paper pipeline mini
     html += '<div class="stat-section" style="margin-top:clamp(.15rem,.25vw,.2rem)"><div class="stat-section-title">\u8BBA\u6587 Pipeline</div><div class="dash-grid">';
     var stages = [
       { key: 'idea', label: '\u60F3\u6CD5', icon: '\uD83D\uDCA1' },
@@ -204,14 +204,14 @@
 
   // ====== Render: Radar chart (Canvas) ======
   function renderRadar(){
-    var ps = get项目Stats();
+    var ps = getPaperStats();
     var dim = getDimStats();
     var agg = window.aggregateTasks ? window.aggregateTasks() : null;
 
     // Compute 5 dimension values (0-100)
     var acadTaskRate = dim.academic.total ? dim.academic.rate : 0;
-    var acad项目Score = ps.score || 0;
-    var academic = Math.min(95, Math.round(acadTaskRate * 0.4 + acad项目Score * 0.6));
+    var acadPaperScore = ps.score || 0;
+    var academic = Math.min(95, Math.round(acadTaskRate * 0.4 + acadPaperScore * 0.6));
 
     var exam = dim.exam.total ? Math.min(95, dim.exam.rate) : 10;
 

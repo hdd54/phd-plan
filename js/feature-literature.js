@@ -1,5 +1,5 @@
-// ===== FEATURE: Literature Notes (资料笔记) =====
-// Track 项目s read: title, authors, journal, keywords, contribution, evaluation
+// ===== FEATURE: Literature Notes (文献笔记) =====
+// Track papers read: title, authors, journal, keywords, contribution, evaluation
 (function(){
   if(window.__features['literature']) return;
   window.__features['literature'] = true;
@@ -86,7 +86,7 @@
     var titleBox = document.createElement('textarea');
     titleBox.className = 'lit-card-title';
     titleBox.rows = 1;
-    titleBox.placeholder = '项目标题';
+    titleBox.placeholder = '论文标题';
     titleBox.value = entry.title || '';
     titleBox.addEventListener('input', function(){ getData()[idx].title = titleBox.value; save(); });
     header.appendChild(titleBox);
@@ -115,7 +115,7 @@
     var delBtn = document.createElement('button');
     delBtn.textContent = '🗑'; delBtn.title = '删除';
     delBtn.addEventListener('click', function(){
-      if(!confirm('确认删除资料「' + (getData()[idx].title || '未命名') + '」？')) return;
+      if(!confirm('确认删除文献「' + (getData()[idx].title || '未命名') + '」？')) return;
       getData().splice(idx,1); save(); renderAll();
     });
     actions.appendChild(delBtn);
@@ -128,7 +128,7 @@
 
     var metaFields = [
       { label:'作者', key:'authors', val:entry.authors || '', cls:'long' },
-      { label:'平台/会议', key:'journal', val:entry.journal || '', cls:'long' },
+      { label:'期刊/会议', key:'journal', val:entry.journal || '', cls:'long' },
       { label:'年份', key:'year', val:entry.year || '', cls:'', type:'number' },
       { label:'状态', key:'status', val:entry.status || '想读', type:'select',
         opts:['想读','在读','已读','精读','引用'] }
@@ -237,7 +237,7 @@
     var contribInput = document.createElement('textarea');
     contribInput.className = 'lit-body-input ta';
     contribInput.rows = 2;
-    contribInput.placeholder = '这篇项目最核心的贡献是什么？';
+    contribInput.placeholder = '这篇论文最核心的贡献是什么？';
     contribInput.value = entry.contribution || '';
     contribInput.addEventListener('input', function(){ getData()[idx].contribution = contribInput.value; save(); });
     contribSection.appendChild(contribInput);
@@ -295,7 +295,7 @@
 
     if(filtered.length === 0){
       list.innerHTML = '<div class="lit-empty"><div class="lit-empty-icon">📚</div>' +
-        (searchQuery ? '没有匹配的资料' : '还没有资料，点击「添加资料」开始') + '</div>';
+        (searchQuery ? '没有匹配的文献' : '还没有文献，点击「添加文献」开始') + '</div>';
       return;
     }
 

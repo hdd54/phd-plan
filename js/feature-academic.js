@@ -1,5 +1,5 @@
-// ===== FEATURE: Academic Progress (项目进展) =====
-// Merged tabbed modal: Experiment Log + 项目 Milestones + Literature Notes
+// ===== FEATURE: Academic Progress (学术进展) =====
+// Merged tabbed modal: Experiment Log + Paper Milestones + Literature Notes
 (function(){
   if(window.__features['academic']) return;
   window.__features['academic'] = true;
@@ -44,7 +44,7 @@
     .ac-el-empty{text-align:center;padding:2rem 1rem;color:var(--muted);font-size:clamp(.55rem,.85vw,.6rem);font-family:var(--font-sans)}
     .ac-el-empty-icon{font-size:2rem;margin-bottom:.5rem;opacity:.5}
 
-    /* ---- 项目 Milestones (reused from feature-项目-milestones.js) ---- */
+    /* ---- Paper Milestones (reused from feature-paper-milestones.js) ---- */
     .ac-pm-toolbar{display:flex;gap:.4rem;margin-bottom:.6rem}
     .ac-pm-add-btn{background:rgba(212,165,116,.12);border:1px dashed var(--accent);color:var(--accent);padding:clamp(.25rem,.4vw,.35rem) clamp(.4rem,.6vw,.6rem);border-radius:var(--rs);cursor:pointer;font-family:var(--font-sans);font-size:clamp(.5rem,.8vw,.6rem);transition:all .2s}
     .ac-pm-add-btn:hover{background:rgba(212,165,116,.2)}
@@ -110,7 +110,7 @@
     .ac-pg-nav .pg-btn:hover{border-color:var(--accent);color:var(--accent)}
     .ac-pg-nav .pg-btn:disabled{opacity:.3;cursor:default;border-color:var(--line-2);color:var(--muted)}
 
-    /* ---- 项目 Progress Timeline ---- */
+    /* ---- Paper Progress Timeline ---- */
     .ac-pt-entry{background:var(--bg3);border:1px solid var(--line);border-radius:var(--rs);padding:clamp(.3rem,.5vw,.4rem);margin-bottom:.35rem}
     .ac-pt-header{display:flex;align-items:center;gap:.25rem;margin-bottom:.2rem}
     .ac-pt-date{font-size:clamp(.4rem,.65vw,.48rem);color:var(--accent);font-family:var(--font-mono,'Courier New');font-weight:600}
@@ -146,9 +146,9 @@
   var expPageSize = 1;
   var expCurrentPage = 0;
   var expSearchQuery = '';
-  var 项目PageSize = 1;
-  var 项目CurrentPage = 0;
-  var 项目SearchQuery = '';
+  var paperPageSize = 1;
+  var paperCurrentPage = 0;
+  var paperSearchQuery = '';
   var litPageSize = 1;
   var litCurrentPage = 0;
 
@@ -158,10 +158,10 @@
     if(!d._expLog) d._expLog = [];
     return d._expLog;
   }
-  function get项目s(){
+  function getPapers(){
     var d = window.data || {};
-    if(!d._项目s) d._项目s = [];
-    return d._项目s;
+    if(!d._papers) d._papers = [];
+    return d._papers;
   }
   function getLitData(){
     var d = window.data || {};
@@ -175,10 +175,10 @@
   // ====== Experiment Log Tab ======
   var PM_STAGES = [
     { key: 'idea',       label: '选题/想法',     icon: '💡' },
-    { key: 'literature', label: '资料调研',     icon: '📚' },
-    { key: 'experiment', label: '执行/设计',   icon: '🔬' },
-    { key: 'writing',    label: '项目写作',     icon: '✍️' },
-    { key: 'submit',     label: '已提交',       icon: '📤' },
+    { key: 'literature', label: '文献调研',     icon: '📚' },
+    { key: 'experiment', label: '实验/设计',   icon: '🔬' },
+    { key: 'writing',    label: '论文写作',     icon: '✍️' },
+    { key: 'submit',     label: '已投稿',       icon: '📤' },
     { key: 'under-review', label: '审稿中',     icon: '👁️' },
     { key: 'revise',     label: '修改中',       icon: '🔧' },
     { key: 'accept',     label: '已接收',       icon: '✅' },
@@ -194,7 +194,7 @@
     var titleInput = document.createElement('input');
     titleInput.type = 'text';
     titleInput.className = 'ac-el-entry-title';
-    titleInput.placeholder = '执行标题/编号';
+    titleInput.placeholder = '实验标题/编号';
     titleInput.value = entry.title || '';
     titleInput.addEventListener('input', function(){ getLog()[idx].title = titleInput.value; save(); });
     header.appendChild(titleInput);
@@ -208,7 +208,7 @@
     delBtn.textContent = '🗑';
     delBtn.title = '删除';
     delBtn.addEventListener('click', function(){
-      if(!confirm('确认删除此执行记录？')) return;
+      if(!confirm('确认删除此实验记录？')) return;
       getLog().splice(idx, 1); save(); renderAll();
     });
     actions.appendChild(delBtn);
@@ -243,7 +243,7 @@
     var purposeInput = document.createElement('textarea');
     purposeInput.className = 'ac-el-section-input short';
     purposeInput.rows = 1;
-    purposeInput.placeholder = '执行目的...';
+    purposeInput.placeholder = '实验目的...';
     purposeInput.value = entry.purpose || '';
     purposeInput.addEventListener('input', function(){ getLog()[idx].purpose = purposeInput.value; save(); });
     purposeSection.appendChild(purposeInput);
@@ -259,7 +259,7 @@
     var methodInput = document.createElement('textarea');
     methodInput.className = 'ac-el-section-input';
     methodInput.rows = 2;
-    methodInput.placeholder = '执行方法、关键步骤、参数...';
+    methodInput.placeholder = '实验方法、关键步骤、参数...';
     methodInput.value = entry.method || '';
     methodInput.addEventListener('input', function(){ getLog()[idx].method = methodInput.value; save(); });
     methodSection.appendChild(methodInput);
@@ -275,7 +275,7 @@
     var resultsInput = document.createElement('textarea');
     resultsInput.className = 'ac-el-section-input';
     resultsInput.rows = 2;
-    resultsInput.placeholder = '执行结果、数据、观察...';
+    resultsInput.placeholder = '实验结果、数据、观察...';
     resultsInput.value = entry.results || '';
     resultsInput.addEventListener('input', function(){ getLog()[idx].results = resultsInput.value; save(); });
     resultsSection.appendChild(resultsInput);
@@ -322,7 +322,7 @@
     var srInput = document.createElement('input');
     srInput.className = 'ac-sr-input';
     srInput.type = 'text';
-    srInput.placeholder = '搜索执行标题、目的...';
+    srInput.placeholder = '搜索实验标题、目的...';
     srInput.value = expSearchQuery;
     srInput.addEventListener('input', function(){
       expSearchQuery = this.value; expCurrentPage = 0; renderExpPanel();
@@ -345,7 +345,7 @@
     }
     if(filtered.length === 0){
       list.innerHTML += '<div class="ac-el-empty"><div class="ac-el-empty-icon">🔬</div>' +
-        (expSearchQuery ? '没有匹配的执行记录' : '还没有执行记录，点击「添加执行记录」开始记录') + '</div>';
+        (expSearchQuery ? '没有匹配的实验记录' : '还没有实验记录，点击「添加实验记录」开始记录') + '</div>';
       return;
     }
     // Paginate
@@ -380,8 +380,8 @@
     list.appendChild(pgNav);
   }
 
-  // ====== 项目 Milestones Tab ======
-  function render项目Card(项目, idx){
+  // ====== Paper Milestones Tab ======
+  function renderPaperCard(paper, idx){
     var card = document.createElement('div');
     card.className = 'ac-pm-card';
     card.dataset.idx = idx;
@@ -390,18 +390,18 @@
     var titleInput = document.createElement('input');
     titleInput.type = 'text';
     titleInput.className = 'ac-pm-card-title';
-    titleInput.placeholder = '输入项目标题...';
-    titleInput.value = 项目.title || '';
-    titleInput.addEventListener('input', function(){ get项目s()[idx].title = titleInput.value; save(); });
+    titleInput.placeholder = '输入论文标题...';
+    titleInput.value = paper.title || '';
+    titleInput.addEventListener('input', function(){ getPapers()[idx].title = titleInput.value; save(); });
     header.appendChild(titleInput);
     var actions = document.createElement('div');
     actions.className = 'ac-pm-card-actions';
     var delBtn = document.createElement('button');
     delBtn.textContent = '🗑';
-    delBtn.title = '删除此项目';
+    delBtn.title = '删除此论文';
     delBtn.addEventListener('click', function(){
-      if(!confirm('确认删除「' + (项目.title || '未命名项目') + '」？')) return;
-      get项目s().splice(idx, 1); save(); renderAll();
+      if(!confirm('确认删除「' + (paper.title || '未命名论文') + '」？')) return;
+      getPapers().splice(idx, 1); save(); renderAll();
     });
     actions.appendChild(delBtn);
     header.appendChild(actions);
@@ -412,15 +412,15 @@
     var journalInput = document.createElement('input');
     journalInput.type = 'text';
     journalInput.className = 'ac-pm-meta-input';
-    journalInput.placeholder = '平台/会议名称';
-    journalInput.value = 项目.journal || '';
-    journalInput.addEventListener('input', function(){ get项目s()[idx].journal = journalInput.value; save(); });
+    journalInput.placeholder = '期刊/会议名称';
+    journalInput.value = paper.journal || '';
+    journalInput.addEventListener('input', function(){ getPapers()[idx].journal = journalInput.value; save(); });
     meta.appendChild(journalInput);
     card.appendChild(meta);
     // Timeline
     var timeline = document.createElement('div');
     timeline.className = 'ac-pm-timeline';
-    var milestones = 项目.milestones || {};
+    var milestones = paper.milestones || {};
     var activeIdx = -1;
     for(var i = PM_STAGES.length - 1; i >= 0; i--){
       if(milestones[PM_STAGES[i].key]){ activeIdx = i; break; }
@@ -446,33 +446,33 @@
     });
     card.appendChild(timeline);
     // Progress timeline entries
-    card.appendChild(render项目Progress(项目, idx));
+    card.appendChild(renderPaperProgress(paper, idx));
     return card;
   }
 
   function toggleMilestone(idx, stageKey){
-    var 项目s = get项目s();
-    if(!项目s[idx]) return;
-    var 项目 = 项目s[idx];
-    if(!项目.milestones) 项目.milestones = {};
-    if(项目.milestones[stageKey]){
+    var papers = getPapers();
+    if(!papers[idx]) return;
+    var paper = papers[idx];
+    if(!paper.milestones) paper.milestones = {};
+    if(paper.milestones[stageKey]){
       var keys = PM_STAGES.map(function(s){ return s.key; });
       var startIdx = keys.indexOf(stageKey);
       if(startIdx >= 0){
-        for(var i = startIdx; i < keys.length; i++){ delete 项目.milestones[keys[i]]; }
+        for(var i = startIdx; i < keys.length; i++){ delete paper.milestones[keys[i]]; }
       }
     } else {
-      项目.milestones[stageKey] = todayStr();
+      paper.milestones[stageKey] = todayStr();
     }
     save();
     renderAll();
   }
 
-  function add项目(){
-    var 项目s = get项目s();
-    项目s.push({ id: genId('p'), title: '', journal: '', milestones: {}, progress: [] });
+  function addPaper(){
+    var papers = getPapers();
+    papers.push({ id: genId('p'), title: '', journal: '', milestones: {}, progress: [] });
     save(); renderAll();
-    项目CurrentPage = Math.floor((项目s.length - 1) / 项目PageSize);
+    paperCurrentPage = Math.floor((papers.length - 1) / paperPageSize);
     renderAll();
     setTimeout(function(){
       var inputs = document.querySelectorAll('.ac-pm-card-title');
@@ -480,12 +480,12 @@
     }, 100);
   }
 
-  // ===== 项目 Progress Timeline =====
-  function render项目Progress(项目, idx){
+  // ===== Paper Progress Timeline =====
+  function renderPaperProgress(paper, idx){
     var container = document.createElement('div');
     container.style.marginTop = '.4rem';
     // Existing entries
-    var entries = Array.isArray(项目.progress) ? 项目.progress : [];
+    var entries = Array.isArray(paper.progress) ? paper.progress : [];
     if(entries.length === 0){
       var emptyHint = document.createElement('div');
       emptyHint.style.cssText = 'font-size:clamp(.4rem,.65vw,.48rem);color:var(--muted);text-align:center;padding:.3rem;font-family:var(--font-sans)';
@@ -507,7 +507,7 @@
         delEntryBtn.title = '删除此进展';
         delEntryBtn.addEventListener('click', function(){
           if(!confirm('确认删除此进展记录？')) return;
-          get项目s()[idx].progress.splice(ei, 1); save(); renderAll();
+          getPapers()[idx].progress.splice(ei, 1); save(); renderAll();
         });
         eHeader.appendChild(delEntryBtn);
         eDiv.appendChild(eHeader);
@@ -521,14 +521,14 @@
           iText.rows = 1;
           iText.value = item;
           iText.addEventListener('input', function(){
-            get项目s()[idx].progress[ei].items[ii] = iText.value; save();
+            getPapers()[idx].progress[ei].items[ii] = iText.value; save();
           });
           iDiv.appendChild(iText);
           var iDel = document.createElement('button');
           iDel.className = 'ac-pt-del-item';
           iDel.textContent = '×';
           iDel.addEventListener('click', function(){
-            get项目s()[idx].progress[ei].items.splice(ii, 1); save(); renderAll();
+            getPapers()[idx].progress[ei].items.splice(ii, 1); save(); renderAll();
           });
           iDiv.appendChild(iDel);
           eDiv.appendChild(iDiv);
@@ -538,7 +538,7 @@
         addItemBtn.className = 'ac-pt-add-item';
         addItemBtn.textContent = '+ 添加描述';
         addItemBtn.addEventListener('click', function(){
-          var p = get项目s()[idx].progress;
+          var p = getPapers()[idx].progress;
           if(!Array.isArray(p[ei].items)) p[ei].items = [];
           p[ei].items.push('');
           save(); renderAll();
@@ -552,7 +552,7 @@
     addEntryBtn.className = 'ac-pt-add-entry';
     addEntryBtn.textContent = '+ 添加进展记录';
     addEntryBtn.addEventListener('click', function(){
-      var p = get项目s()[idx];
+      var p = getPapers()[idx];
       if(!Array.isArray(p.progress)) p.progress = [];
       var today = new Date();
       var dateStr = today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2,'0') + '-' + String(today.getDate()).padStart(2,'0');
@@ -563,23 +563,23 @@
     return container;
   }
 
-  function render项目PipelineHTML(项目s){
+  function renderPaperPipelineHTML(papers){
     var ALL_STAGES = [
       { key: 'idea',     label: '想法', icon: '💡' },
-      { key: 'litReview', label: '资料综述', icon: '📚' },
+      { key: 'litReview', label: '文献综述', icon: '📚' },
       { key: 'method',   label: '方法设计', icon: '🔧' },
-      { key: 'exp',      label: '执行', icon: '🧪' },
+      { key: 'exp',      label: '实验', icon: '🧪' },
       { key: 'writing',  label: '写作', icon: '✍️' },
-      { key: 'submit',   label: '提交', icon: '📮' },
+      { key: 'submit',   label: '投稿', icon: '📮' },
       { key: 'revision', label: '修改中', icon: '🔄' },
       { key: 'accept',   label: '已接收', icon: '✅' },
       { key: 'publish',  label: '已发表', icon: '🎉' },
     ];
-    var total = 项目s.length;
+    var total = papers.length;
     var doneCount = 0;
     var stageCounts = {};
     ALL_STAGES.forEach(function(s){ stageCounts[s.key] = 0; });
-    项目s.forEach(function(p){
+    papers.forEach(function(p){
       var ms = p.milestones || {};
       // Find highest completed stage
       var cur = -1;
@@ -624,21 +624,21 @@
     return html;
   }
 
-  var 项目SortMode = 'default';
-  window.toggle项目Sort = function(){
+  var paperSortMode = 'default';
+  window.togglePaperSort = function(){
     var modes = ['default', 'stage', 'title'];
-    var idx = modes.indexOf(项目SortMode);
-    项目SortMode = modes[(idx + 1) % modes.length];
-    render项目sPanel();
+    var idx = modes.indexOf(paperSortMode);
+    paperSortMode = modes[(idx + 1) % modes.length];
+    renderPapersPanel();
   };
-  window.get项目SortLabel = function(mode){
+  window.getPaperSortLabel = function(mode){
     return { 'default': '默认排序', 'stage': '按进度', 'title': '按标题' }[mode] || '默认排序';
   };
 
-  function render项目sPanel(){
+  function renderPapersPanel(){
     var list = document.getElementById('acPmList');
     if(!list) return;
-    var 项目s = get项目s();
+    var papers = getPapers();
     list.innerHTML = '';
 
     // Search bar
@@ -647,48 +647,48 @@
     var srInput = document.createElement('input');
     srInput.className = 'ac-sr-input';
     srInput.type = 'text';
-    srInput.placeholder = '搜索项目标题、平台...';
-    srInput.value = 项目SearchQuery;
+    srInput.placeholder = '搜索论文标题、期刊...';
+    srInput.value = paperSearchQuery;
     srInput.addEventListener('input', function(){
-      项目SearchQuery = this.value; 项目CurrentPage = 0; render项目sPanel();
+      paperSearchQuery = this.value; paperCurrentPage = 0; renderPapersPanel();
     });
     srBar.appendChild(srInput);
     var clrBtn = document.createElement('button');
     clrBtn.className = 'ac-sr-clear';
     clrBtn.textContent = '✕';
-    clrBtn.addEventListener('click', function(){ 项目SearchQuery = ''; 项目CurrentPage = 0; render项目sPanel(); });
+    clrBtn.addEventListener('click', function(){ paperSearchQuery = ''; paperCurrentPage = 0; renderPapersPanel(); });
     srBar.appendChild(clrBtn);
     list.appendChild(srBar);
 
     // Filter
-    var filtered = 项目s;
-    if(项目SearchQuery.trim()){
-      var q = 项目SearchQuery.toLowerCase();
-      filtered = 项目s.filter(function(p){
+    var filtered = papers;
+    if(paperSearchQuery.trim()){
+      var q = paperSearchQuery.toLowerCase();
+      filtered = papers.filter(function(p){
         return (p.title || '').toLowerCase().indexOf(q) >= 0 || (p.journal || '').toLowerCase().indexOf(q) >= 0;
       });
     }
 
     // Stats header (only on first page or when no search)
     var header = document.createElement('div');
-    header.innerHTML = render项目PipelineHTML(filtered);
+    header.innerHTML = renderPaperPipelineHTML(filtered);
     list.appendChild(header);
 
     if(filtered.length === 0){
       list.innerHTML += '<div class="ac-pm-empty"><div class="ac-pm-empty-icon">📄</div>' +
-        (项目SearchQuery ? '没有匹配的项目' : '还没有项目，点击上方「添加项目」开始追踪') + '</div>';
+        (paperSearchQuery ? '没有匹配的论文' : '还没有论文，点击上方「添加论文」开始追踪') + '</div>';
       return;
     }
     // Paginate
-    var totalPages = Math.max(1, Math.ceil(filtered.length / 项目PageSize));
-    if(项目CurrentPage >= totalPages) 项目CurrentPage = totalPages - 1;
-    if(项目CurrentPage < 0) 项目CurrentPage = 0;
-    var start = 项目CurrentPage * 项目PageSize;
-    var page项目 = filtered[start];
+    var totalPages = Math.max(1, Math.ceil(filtered.length / paperPageSize));
+    if(paperCurrentPage >= totalPages) paperCurrentPage = totalPages - 1;
+    if(paperCurrentPage < 0) paperCurrentPage = 0;
+    var start = paperCurrentPage * paperPageSize;
+    var pagePaper = filtered[start];
     // Find actual index
     var actualIdx = -1;
-    for(var i=0; i<项目s.length; i++){ if(项目s[i] === page项目){ actualIdx = i; break; } }
-    if(actualIdx >= 0) list.appendChild(render项目Card(项目s[actualIdx], actualIdx));
+    for(var i=0; i<papers.length; i++){ if(papers[i] === pagePaper){ actualIdx = i; break; } }
+    if(actualIdx >= 0) list.appendChild(renderPaperCard(papers[actualIdx], actualIdx));
 
     // Pagination nav
     var pgNav = document.createElement('div');
@@ -696,26 +696,26 @@
     var prevBtn = document.createElement('button');
     prevBtn.className = 'pg-btn';
     prevBtn.textContent = '‹ Prev';
-    prevBtn.disabled = 项目CurrentPage <= 0;
-    prevBtn.addEventListener('click', function(){ 项目CurrentPage--; render项目sPanel(); });
+    prevBtn.disabled = paperCurrentPage <= 0;
+    prevBtn.addEventListener('click', function(){ paperCurrentPage--; renderPapersPanel(); });
     pgNav.appendChild(prevBtn);
     var pgInfo = document.createElement('span');
     pgInfo.className = 'pg-info';
-    pgInfo.textContent = (项目CurrentPage + 1) + ' / ' + totalPages + ' 页 (' + filtered.length + ' 篇)';
+    pgInfo.textContent = (paperCurrentPage + 1) + ' / ' + totalPages + ' 页 (' + filtered.length + ' 篇)';
     pgNav.appendChild(pgInfo);
     var nextBtn = document.createElement('button');
     nextBtn.className = 'pg-btn';
     nextBtn.textContent = 'Next ›';
-    nextBtn.disabled = 项目CurrentPage >= totalPages - 1;
-    nextBtn.addEventListener('click', function(){ 项目CurrentPage++; render项目sPanel(); });
+    nextBtn.disabled = paperCurrentPage >= totalPages - 1;
+    nextBtn.addEventListener('click', function(){ paperCurrentPage++; renderPapersPanel(); });
     pgNav.appendChild(nextBtn);
     list.appendChild(pgNav);
 
     // Sort toggle (moved to bottom)
     var sortBar = document.createElement('div');
     sortBar.style.cssText = 'display:flex;justify-content:space-between;align-items:center;margin-top:8px';
-    sortBar.innerHTML = '<span style="font-size:.75rem;color:var(--txt3)">共 ' + 项目s.length + ' 篇项目</span>'+
-      '<button class="bb" onclick="toggle项目Sort()" style="font-size:.72rem;padding:3px 10px">排序: ' + get项目SortLabel(项目SortMode) + '</button>';
+    sortBar.innerHTML = '<span style="font-size:.75rem;color:var(--txt3)">共 ' + papers.length + ' 篇论文</span>'+
+      '<button class="bb" onclick="togglePaperSort()" style="font-size:.72rem;padding:3px 10px">排序: ' + getPaperSortLabel(paperSortMode) + '</button>';
     list.appendChild(sortBar);
   }
 
@@ -731,7 +731,7 @@
     var titleBox = document.createElement('textarea');
     titleBox.className = 'ac-lit-card-title';
     titleBox.rows = 1;
-    titleBox.placeholder = '项目标题';
+    titleBox.placeholder = '论文标题';
     titleBox.value = entry.title || '';
     titleBox.addEventListener('input', function(){ getLitData()[idx].title = titleBox.value; save(); });
     header.appendChild(titleBox);
@@ -759,7 +759,7 @@
     var delBtn = document.createElement('button');
     delBtn.textContent = '🗑'; delBtn.title = '删除';
     delBtn.addEventListener('click', function(){
-      if(!confirm('确认删除资料「' + (getLitData()[idx].title || '未命名') + '」？')) return;
+      if(!confirm('确认删除文献「' + (getLitData()[idx].title || '未命名') + '」？')) return;
       getLitData().splice(idx,1); save(); renderAll();
     });
     actions.appendChild(delBtn);
@@ -771,7 +771,7 @@
     meta.className = 'ac-lit-meta';
     var metaFields = [
       { label:'作者', key:'authors', val:entry.authors || '', cls:'long' },
-      { label:'平台/会议', key:'journal', val:entry.journal || '', cls:'long' },
+      { label:'期刊/会议', key:'journal', val:entry.journal || '', cls:'long' },
       { label:'年份', key:'year', val:entry.year || '', cls:'', type:'number' },
       { label:'状态', key:'status', val:entry.status || '想读', type:'select', opts:['想读','在读','已读','精读','引用'] }
     ];
@@ -875,7 +875,7 @@
     var contribInput = document.createElement('textarea');
     contribInput.className = 'ac-lit-body-input ta';
     contribInput.rows = 2;
-    contribInput.placeholder = '这篇项目最核心的贡献是什么？';
+    contribInput.placeholder = '这篇论文最核心的贡献是什么？';
     contribInput.value = entry.contribution || '';
     contribInput.addEventListener('input', function(){ getLitData()[idx].contribution = contribInput.value; save(); });
     contribSection.appendChild(contribInput);
@@ -948,7 +948,7 @@
     }
     if(filtered.length === 0){
       list.innerHTML += '<div class="ac-lit-empty"><div class="ac-lit-empty-icon">📚</div>' +
-        (litSearchQuery ? '没有匹配的资料' : '还没有资料，点击「添加资料」开始') + '</div>';
+        (litSearchQuery ? '没有匹配的文献' : '还没有文献，点击「添加文献」开始') + '</div>';
       return;
     }
     filtered.sort(function(a,b){
@@ -991,7 +991,7 @@
   function renderAll(){
     switch(activeTab){
       case 'exp': renderExpPanel(); break;
-      case '项目': render项目sPanel(); break;
+      case 'paper': renderPapersPanel(); break;
       case 'lit': renderLitPanel(); break;
     }
   }
@@ -1013,17 +1013,17 @@
     });
     document.querySelectorAll('.ac-pm-card').forEach(function(card){
       var idx = parseInt(card.dataset.idx, 10);
-      var 项目 = get项目s()[idx];
-      if(!项目) return;
+      var paper = getPapers()[idx];
+      if(!paper) return;
       var title = card.querySelector('.ac-pm-card-title');
       var journal = card.querySelector('.ac-pm-meta-input');
-      if(title) 项目.title = title.value;
-      if(journal) 项目.journal = journal.value;
+      if(title) paper.title = title.value;
+      if(journal) paper.journal = journal.value;
       card.querySelectorAll('.ac-pt-entry').forEach(function(entryEl, ei){
-        if(!项目.progress || !项目.progress[ei]) return;
-        项目.progress[ei].items = [];
+        if(!paper.progress || !paper.progress[ei]) return;
+        paper.progress[ei].items = [];
         entryEl.querySelectorAll('.ac-pt-item-text').forEach(function(ta){
-          项目.progress[ei].items.push(ta.value);
+          paper.progress[ei].items.push(ta.value);
         });
       });
     });
@@ -1097,19 +1097,19 @@
     }, true);
     document.getElementById('acSaveBtn').addEventListener('click', function(){
       if(typeof window.save === 'function') {
-        try { window.save(); showToast('💾 项目数据已保存'); }
+        try { window.save(); showToast('💾 学术数据已保存'); }
         catch(e) { showToast('⚠️ 保存失败: ' + (e.message||e)); }
       } else { showToast('⚠️ 保存失败: save 函数不可用'); }
     });
 
     // Tab switching
     document.getElementById('acTabExp').addEventListener('click', function(){ switchTab('exp'); });
-    document.getElementById('acTab项目').addEventListener('click', function(){ switchTab('项目'); });
+    document.getElementById('acTabPaper').addEventListener('click', function(){ switchTab('paper'); });
     document.getElementById('acTabLit').addEventListener('click', function(){ switchTab('lit'); });
 
     // Add buttons
     document.getElementById('acElAddBtn').addEventListener('click', function(){ addExpEntry(); expCurrentPage = 0; });
-    document.getElementById('acPmAddBtn').addEventListener('click', add项目);
+    document.getElementById('acPmAddBtn').addEventListener('click', addPaper);
     document.getElementById('acLitAddBtn').addEventListener('click', function(){ addLitEntry(); litCurrentPage = 0; });
 
     // Escape key
