@@ -50,6 +50,28 @@ body{
 body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:0.06;pointer-events:none;z-index:2;mix-blend-mode:overlay}
 ::selection{background:var(--accent);color:var(--bg)}
 h1,h2,h3{font-family:var(--font-serif);font-weight:300;letter-spacing:-.02em}
+.github-login{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;padding:clamp(1rem,4vw,2rem);background:radial-gradient(circle at 50% 0%,rgba(212,165,116,.16),transparent 38%),rgba(5,5,5,.92);backdrop-filter:blur(20px);transition:opacity .25s ease,visibility .25s ease}
+.github-login.is-hidden{opacity:0;visibility:hidden;pointer-events:none}
+.github-login-card{width:min(92vw,420px);border:1px solid rgba(212,165,116,.24);border-radius:10px;background:linear-gradient(180deg,rgba(26,12,12,.94),rgba(8,7,7,.96));box-shadow:0 24px 80px rgba(0,0,0,.5);padding:clamp(1.1rem,3vw,1.65rem);text-align:center;color:var(--fg)}
+.github-login-mark{width:3rem;height:3rem;margin:0 auto .7rem;border:1px solid rgba(212,165,116,.34);border-radius:999px;display:flex;align-items:center;justify-content:center;background:rgba(212,165,116,.08);font-size:1.25rem}
+.github-login-card h1{font-family:var(--font-serif);font-size:clamp(1.45rem,5vw,2.1rem);font-weight:300;letter-spacing:0;margin:0;color:var(--fg)}
+.github-login-sub{margin:.3rem 0 1rem;color:var(--txt3);font-size:clamp(.68rem,1.2vw,.78rem)}
+.github-login-user{display:flex;align-items:center;gap:.65rem;text-align:left;border:1px solid rgba(255,255,255,.08);border-radius:8px;background:rgba(255,255,255,.04);padding:.55rem;margin-bottom:.75rem}
+.github-login-user img{width:2.2rem;height:2.2rem;border-radius:50%;background:rgba(255,255,255,.08)}
+.github-login-user strong{display:block;font-size:.8rem;font-weight:500;color:var(--fg)}
+.github-login-user span{display:block;font-size:.62rem;color:var(--txt3)}
+.github-token-input{width:100%;box-sizing:border-box;border:1px solid rgba(212,165,116,.25);border-radius:8px;background:rgba(0,0,0,.28);color:var(--fg);padding:.65rem .75rem;font-family:var(--font-sans);font-size:.78rem;outline:none}
+.github-token-input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(212,165,116,.12)}
+.github-login-actions{display:grid;grid-template-columns:1fr 1fr;gap:.55rem;margin-top:.75rem}
+.github-login-actions button,.github-login-meta button{border:1px solid rgba(212,165,116,.25);border-radius:8px;font-family:var(--font-sans);cursor:pointer;transition:background .2s,border-color .2s,color .2s}
+.github-login-primary{background:var(--accent);color:#160d08;padding:.62rem .7rem;font-weight:700}
+.github-login-primary:hover{background:var(--accent-2);color:#fff;border-color:var(--accent-2)}
+.github-login-secondary{background:rgba(255,255,255,.04);color:var(--fg-dim);padding:.62rem .7rem}
+.github-login-secondary:hover{border-color:var(--accent);color:var(--fg)}
+.github-login-meta{display:flex;gap:.6rem;align-items:center;justify-content:center;margin-top:.8rem;color:var(--txt4);font-size:.58rem;line-height:1.45}
+.github-login-meta button{flex:0 0 auto;background:transparent;color:var(--txt3);padding:.22rem .45rem;font-size:.56rem}
+.github-login-meta button:hover{border-color:var(--accent-2);color:var(--accent-2)}
+@media(max-width:520px){.github-login-actions{grid-template-columns:1fr}.github-login-meta{align-items:flex-start;flex-direction:column;text-align:left}}
 
 /* ===== scroll progress (Chinese ribbon style) ===== */
 #progress{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--cinnabar),var(--accent));width:0%;z-index:300;transition:width .15s ease-out;box-shadow:0 0 12px rgba(204,41,54,.4),0 0 24px rgba(212,165,116,.2)}
