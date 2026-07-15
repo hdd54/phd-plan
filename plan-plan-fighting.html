@@ -2374,6 +2374,7 @@ document.addEventListener('click', e => {
 
   // Export
   if (t.id==='exportBtnSettings'||t.closest('#exportBtnSettings')) {
+    persistLiveEdits();
     const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
     const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='planbook-'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(a.href);
     showToast('📥 已导出');
@@ -2459,6 +2460,84 @@ document.getElementById('fileInput').addEventListener('change', function(e) {
 // ===== Textarea input with auto-resize and debounced save =====
 let saveTimer;
 function qSave() { clearTimeout(saveTimer); saveTimer = setTimeout(() => { save(); scheduleUpdateAllStats(); }, 350); }
+
+function persistLiveEdits() {
+  clearTimeout(saveTimer);
+  document.querySelectorAll('.di').forEach(function(t) {
+    const cid=t.dataset.c, wi=parseInt(t.dataset.wi), di=parseInt(t.dataset.di);
+    if (data[cid]&&data[cid][wi]) {
+      const d = data[cid][wi].d;
+      if (!d[di]||typeof d[di]==='string') d[di]=t.value;
+      else d[di].text=t.value;
+    }
+  });
+  document.querySelectorAll('textarea[data-c][data-wi]').forEach(function(t) {
+    if (!t.closest('.ws-box')) return;
+    const cid=t.dataset.c, wi=parseInt(t.dataset.wi);
+    if (data[cid]&&data[cid][wi]) data[cid][wi].s=t.value;
+  });
+  document.querySelectorAll('.tb[id^="ov-"]').forEach(function(tb) {
+    var tbCid = tb.id.replace('ov-', '');
+    if (!data._overviews) data._overviews = {};
+    var tbRaw = data._overviews[tbCid];
+    if (tbRaw && typeof tbRaw === 'object') overviewBucket(tbCid).html = tb.innerHTML;
+    else data._overviews[tbCid] = tb.innerHTML;
+  });
+  document.querySelectorAll('.tc[data-c]').forEach(function(card) {
+    var cid = card.dataset.c;
+    if (!cid) return;
+    var ti = card.querySelector('.ti');
+    var tt = card.querySelector('.tt > span:first-child');
+    var tm = card.querySelector('.tm');
+    if ((ti && ti.isContentEditable) || (tt && tt.isContentEditable) || (tm && tm.isContentEditable)) {
+      var bucket = overviewBucket(cid);
+      if (ti && ti.isContentEditable) bucket.ti = ti.textContent;
+      if (tt && tt.isContentEditable) bucket.tt = tt.textContent;
+      if (tm && tm.isContentEditable) bucket.tm = tm.innerHTML;
+    }
+  });
+  document.querySelectorAll('.sec[id]').forEach(function(sec) {
+    if (!data._overviews) data._overviews = {};
+    var ey = sec.querySelector('.sh .ey');
+    var h2el = sec.querySelector('.sh h2');
+    var sub = sec.querySelector('.sh .sub');
+    if (ey && ey.isContentEditable) data._overviews[sec.id+'-ey'] = ey.textContent;
+    if (h2el && h2el.isContentEditable) data._overviews[sec.id+'-h2'] = h2el.innerHTML;
+    if (sub && sub.isContentEditable) data._overviews[sec.id+'-sub'] = sub.textContent;
+  });
+  document.querySelectorAll('.hero').forEach(function(hero) {
+    var dynPageId = hero.dataset.dynPage || '';
+    var hm = hero.querySelector('.hmark');
+    var hs = hero.querySelector('.hsub');
+    if (hm && hm.isContentEditable) {
+      if (dynPageId) data[dynPageId + '-hmark'] = esc(hm.textContent.trim());
+      else { if (!data._overviews) data._overviews = {}; data._overviews.hmark = hm.innerHTML; }
+    }
+    if (hs && hs.isContentEditable) {
+      if (dynPageId) data[dynPageId + '-hsub'] = hs.textContent;
+      else { if (!data._overviews) data._overviews = {}; data._overviews.hsub = hs.textContent; }
+    }
+    if (dynPageId) {
+      saveDynamicBaseStatsFromDom(dynPageId);
+      saveDynamicCustomStatsFromDom(dynPageId);
+    }
+  });
+  document.querySelectorAll('.ft p').forEach(function(ftp) {
+    if (!ftp.isContentEditable) return;
+    if (!data._footer || !Array.isArray(data._footer)) data._footer = ['', ''];
+    if (ftp.id === 'footerLine1') data._footer[0] = ftp.textContent;
+    else if (ftp.id === 'footerLine2') data._footer[1] = ftp.textContent;
+  });
+  save();
+  scheduleUpdateAllStats();
+}
+
+window.addEventListener('pagehide', function() {
+  try { persistLiveEdits(); } catch(e) {}
+});
+window.addEventListener('beforeunload', function() {
+  try { persistLiveEdits(); } catch(e) {}
+});
 
 document.addEventListener('input', e => {
   const t = e.target;
@@ -3629,6 +3708,7 @@ async function gistPush() {
   gistDom('gistSyncBtn').disabled = true;
   setGistStatus('⏳ 推送中…', '');
   try {
+    persistLiveEdits();
     const now = Date.now();
     const pushData = JSON.parse(JSON.stringify(data));
     pushData._syncedAt = now;
@@ -3942,6 +4022,7 @@ document.getElementById('repoSaveBtn').addEventListener('click', async function(
   if (btn.dataset.busy === '1') return;
   btn.dataset.busy = '1';
   btn.textContent = '⏳ 存档中…';
+  persistLiveEdits();
   var token = gistToken || localStorage.getItem(GIST_TOKEN_KEY) || '';
   if (!token) {
     showToast('⚠️ 请先在 ⚡ 中配置 GitHub Token（需 repo 权限）');
