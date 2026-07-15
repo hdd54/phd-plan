@@ -1015,8 +1015,47 @@ function ensure(p) {
       }
     });
   });
+  ensureGenericPlanbookInfo(p);
 }
 function cloneDeep(arr){return arr.map(w=>({w:w.w,s:w.s||'',time:w.time||w.range||'',d:[...w.d]}))}
+function hasPlanbookLegacyText(value) {
+  return /博士|博一|博二|博三|博四|博五|北航|北京航空|生物医学|光子|SCI|专利|考公|选调|导师|论文|文献|实验|毕业|答辩|开题|行测|申论|上岸|江西|科研/.test(JSON.stringify(value || ''));
+}
+function ensureGenericPlanbookInfo(p) {
+  var defaults = {
+    'y1-academic': Y1A,
+    'y2-academic': Y2A,
+    'y3-academic': Y3A,
+    'y4-academic': Y4A,
+    'y5-academic': Y5A
+  };
+  Object.keys(defaults).forEach(function(key) {
+    if (p[key] && hasPlanbookLegacyText(p[key])) p[key] = cloneDeep(defaults[key]);
+  });
+  if (p._overviews && typeof p._overviews === 'object') {
+    Object.keys(p._overviews).forEach(function(key) {
+      var isPlanbookKey = key === 'hmark' || key === 'hsub' || key.indexOf('hstat-') === 0 || /^y[1-5](?:-|$)/.test(key) || key.indexOf('sum') === 0;
+      if (isPlanbookKey && hasPlanbookLegacyText(p._overviews[key])) delete p._overviews[key];
+    });
+  }
+  if (!Array.isArray(p._footer) || hasPlanbookLegacyText(p._footer)) {
+    p._footer = ['数据自动保存在浏览器 · 每天自动高亮当天 · 每日支持多行输入', '计划本 · 长期目标 · 阶段推进'];
+  }
+  if (Array.isArray(p._pages)) {
+    p._pages.forEach(function(page) {
+      if (!page || page.id !== 'p0') return;
+      page.label = '计划本';
+      page.icon = '📒';
+      if (!Array.isArray(page.categories)) page.categories = [];
+      page.categories = [
+        { id: 'academic', icon: '📌', label: '项目' },
+        { id: 'exam', icon: '🧭', label: '能力' },
+        { id: 'finance', icon: '💰', label: '财务' },
+        { id: 'life', icon: '❤️', label: '生活' }
+      ];
+    });
+  }
+}
 function save(){localStorage.setItem(SK,JSON.stringify(data));saveOpenState();try{computeStats()}catch(e){}}
 
 // ======================== RENDER ========================
@@ -1618,10 +1657,10 @@ function renderCustomYears() {
 
 // Add new year
 function addCustomYear() {
-  const label = prompt('请输入新计划名称（如：博六、拓展计划等）', '新计划');
+  const label = prompt('请输入新计划名称（如：阶段六、拓展计划等）', '新计划');
   if (!label || !label.trim()) return;
-  const title = prompt('请输入副标题（如：延毕年、备选方案等）', '新规划年');
-  const subtitle = prompt('请输入分类比例（如：学术30% · 考公45%）', '');
+  const title = prompt('请输入副标题（如：备选方案、拓展阶段等）', '新规划阶段');
+  const subtitle = prompt('请输入分类比例（如：项目40% · 能力30%）', '');
   customYearCounter++;
   const id = 'c' + Date.now();
   const years = getCustomYears();
@@ -1651,8 +1690,8 @@ function initPages() {
       icon: '📒',
       type: 'year',
       categories: [
-        { id: 'academic', icon: '📚', label: '学术' },
-        { id: 'exam', icon: '📋', label: '考公' },
+        { id: 'academic', icon: '📌', label: '项目' },
+        { id: 'exam', icon: '🧭', label: '能力' },
         { id: 'finance', icon: '💰', label: '财务' },
         { id: 'life', icon: '❤️', label: '生活' }
       ]
@@ -1671,7 +1710,7 @@ function initPages() {
 
 function renderFooter() {
   if (!data._footer || !Array.isArray(data._footer)) {
-    data._footer = ['数据自动保存在浏览器 · 每天自动高亮当天 · 每日支持多行输入', '北京航空航天大学 · 生物医学光子学 · 2026–2030'];
+    data._footer = ['数据自动保存在浏览器 · 每天自动高亮当天 · 每日支持多行输入', '计划本 · 长期目标 · 阶段推进'];
   }
   var f1 = document.getElementById('footerLine1');
   var f2 = document.getElementById('footerLine2');
