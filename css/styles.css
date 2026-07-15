@@ -312,6 +312,11 @@ body.sb{--sb-w:145px;--content-gutter:clamp(.75rem,1.8vw,1.4rem)}
 .left-bar .bb .bb-icon{font-size:.6rem;flex-shrink:0;width:20px;text-align:center;line-height:1}
 .left-bar .bb .lb-lbl{overflow:hidden;white-space:nowrap;opacity:1;transition:opacity .2s,width .2s}
 .left-bar:not(.s) .bb .lb-lbl{opacity:0;width:0;overflow:hidden}
+.tool-group{width:100%;border-top:1px solid rgba(212,165,116,.08);padding-top:.12rem;margin-top:.08rem;display:flex;flex-direction:column;gap:.08rem;flex-shrink:0}
+.tool-group:first-of-type{border-top:none;margin-top:0}
+.tool-group-title{font-family:var(--font-sans);font-size:.43rem;line-height:1;color:var(--txt4);letter-spacing:.22em;text-transform:uppercase;padding:.05rem .28rem .02rem;white-space:nowrap}
+.left-bar:not(.s) .tool-group{align-items:center;border-top-color:rgba(212,165,116,.05);padding-top:.08rem;margin-top:.05rem}
+.left-bar:not(.s) .tool-group-title{width:100%;height:1px;overflow:hidden;padding:0;color:transparent}
 /* toggle button */
 .lb-toggle{flex-shrink:0;width:30px;height:30px;border:1px solid var(--line-2);border-radius:6px;background:transparent;color:var(--muted);font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-bottom:.08rem;transition:all .2s;flex-shrink:0}
 .lb-toggle:hover{border-color:var(--accent);color:var(--accent)}
@@ -416,6 +421,10 @@ body{padding-left:calc(var(--sb-w) + var(--content-gutter));padding-right:var(--
 .stg-custom-wrap .stg-input:focus{border-color:var(--accent)}
 .stg-custom-wrap .stg-input::placeholder{color:var(--muted)}
 .stg-custom-wrap .stg-unit{font-size:clamp(.5rem,.75vw,.55rem);color:var(--muted);white-space:nowrap}
+.stg-status-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.35rem}
+.stg-status-grid div{border:1px solid var(--line);border-radius:8px;background:rgba(255,255,255,.025);padding:.35rem .42rem;min-width:0}
+.stg-status-grid span{display:block;color:var(--txt4);font-size:.5rem;letter-spacing:.12em;margin-bottom:.16rem}
+.stg-status-grid strong{display:block;color:var(--fg-dim);font-size:.62rem;font-weight:400;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 #fileInput{display:none}
 

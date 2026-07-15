@@ -174,24 +174,45 @@
     <span class="ci-page" id="pageIndicator">0/0</span>
     <span class="ci-jump">↕</span>
   </div>
-  <button class="bb x" id="editToggle2"><span class="bb-icon">✎</span><span class="lb-lbl">编辑</span></button>
-  <button class="bb" id="expandAll2"><span class="bb-icon">📂</span><span class="lb-lbl">展开</span></button>
-  <button class="bb" id="collapseAll2"><span class="bb-icon">📁</span><span class="lb-lbl">收起</span></button>
-  <button class="bb" id="repoSaveBtn" title="保存数据到仓库"><span class="bb-icon">💾</span><span class="lb-lbl">存档</span></button>
-  <button class="bb" id="gistIndicator" title="数据同步状态"><span class="bb-icon">⚡</span><span class="lb-lbl">--</span></button>
-  <button class="bb" id="installBtn" title="安装到桌面" style="display:none"><span class="bb-icon">📥</span><span class="lb-lbl">安装</span></button>
-  <button class="bb" id="helpBtn" title="使用说明"><span class="bb-icon">📖</span><span class="lb-lbl">说明</span></button>
-  <button class="bb" id="stgBtn" title="设置"><span class="bb-icon">⚙</span><span class="lb-lbl">设置</span></button>
-  <button class="bb" id="githubAccountBtn" title="GitHub 账号"><span class="bb-icon">👤</span><span class="lb-lbl">账号</span></button>
-  <button class="bb" id="financeBtn" title="财务管理"><span class="bb-icon">💰</span><span class="lb-lbl">财务</span></button>
-  <button class="bb" id="snBtn" title="进度快照"><span class="bb-icon">📸</span><span class="lb-lbl">快照</span></button>
-  <button class="bb" id="bkpBtn" title="数据备份"><span class="bb-icon">💾</span><span class="lb-lbl">备份</span></button>
-  <button class="bb" id="rcBtn" title="月历"><span class="bb-icon">🗓️</span><span class="lb-lbl">月历</span></button>
-  <button class="bb" id="academicBtn" title="学术进展（论文/实验/文献）"><span class="bb-icon">🎓</span><span class="lb-lbl">学术</span></button>
-  <button class="bb" id="housingBtn" title="购房综合（贷款+成本+清单）"><span class="bb-icon">🏠</span><span class="lb-lbl">购房</span></button>
-  <button class="bb" id="careerBtn" title="选调/求职时间线"><span class="bb-icon">📋</span><span class="lb-lbl">求职</span></button>
-  <button class="bb" id="cityBtn" title="城市数据卡"><span class="bb-icon">🏙️</span><span class="lb-lbl">城市</span></button>
-  <button class="bb" id="reviewBtn" title="记录本"><span class="bb-icon">📓</span><span class="lb-lbl">记录本</span></button>
+  <div class="tool-group" data-group="计划">
+    <div class="tool-group-title">计划</div>
+    <button class="bb x" id="editToggle2"><span class="bb-icon">✎</span><span class="lb-lbl">编辑</span></button>
+    <button class="bb" id="expandAll2"><span class="bb-icon">📂</span><span class="lb-lbl">展开</span></button>
+    <button class="bb" id="collapseAll2"><span class="bb-icon">📁</span><span class="lb-lbl">收起</span></button>
+  </div>
+  <div class="tool-group" data-group="时间">
+    <div class="tool-group-title">时间</div>
+    <button class="bb" id="rcBtn" title="月历"><span class="bb-icon">🗓️</span><span class="lb-lbl">月历</span></button>
+  </div>
+  <div class="tool-group" data-group="项目">
+    <div class="tool-group-title">项目</div>
+    <button class="bb" id="academicBtn" title="学术进展（论文/实验/文献）"><span class="bb-icon">🎓</span><span class="lb-lbl">学术</span></button>
+    <button class="bb" id="reviewBtn" title="记录本"><span class="bb-icon">📓</span><span class="lb-lbl">记录本</span></button>
+    <button class="bb" id="snBtn" title="进度快照"><span class="bb-icon">📸</span><span class="lb-lbl">快照</span></button>
+  </div>
+  <div class="tool-group" data-group="资产">
+    <div class="tool-group-title">资产</div>
+    <button class="bb" id="financeBtn" title="财务管理"><span class="bb-icon">💰</span><span class="lb-lbl">财务</span></button>
+    <button class="bb" id="housingBtn" title="购房综合（贷款+成本+清单）"><span class="bb-icon">🏠</span><span class="lb-lbl">购房</span></button>
+  </div>
+  <div class="tool-group" data-group="职业">
+    <div class="tool-group-title">职业</div>
+    <button class="bb" id="careerBtn" title="选调/求职时间线"><span class="bb-icon">📋</span><span class="lb-lbl">求职</span></button>
+    <button class="bb" id="cityBtn" title="城市数据卡"><span class="bb-icon">🏙️</span><span class="lb-lbl">城市</span></button>
+  </div>
+  <div class="tool-group" data-group="数据">
+    <div class="tool-group-title">数据</div>
+    <button class="bb" id="repoSaveBtn" title="保存数据到仓库"><span class="bb-icon">💾</span><span class="lb-lbl">存档</span></button>
+    <button class="bb" id="gistIndicator" title="数据同步状态"><span class="bb-icon">⚡</span><span class="lb-lbl">--</span></button>
+    <button class="bb" id="bkpBtn" title="数据备份"><span class="bb-icon">💾</span><span class="lb-lbl">备份</span></button>
+  </div>
+  <div class="tool-group" data-group="系统">
+    <div class="tool-group-title">系统</div>
+    <button class="bb" id="installBtn" title="安装到桌面" style="display:none"><span class="bb-icon">📥</span><span class="lb-lbl">安装</span></button>
+    <button class="bb" id="helpBtn" title="使用说明"><span class="bb-icon">📖</span><span class="lb-lbl">说明</span></button>
+    <button class="bb" id="stgBtn" title="设置"><span class="bb-icon">⚙</span><span class="lb-lbl">设置</span></button>
+    <button class="bb" id="githubAccountBtn" title="GitHub 账号"><span class="bb-icon">👤</span><span class="lb-lbl">账号</span></button>
+  </div>
 </div>
 
 <!-- ===== HELP MODAL ===== -->
@@ -204,11 +225,24 @@
   <div class="help-body">
     <section>
       <h4>🎯 总览</h4>
-      <p>这是一个本地优先的多页面计划系统。首页用于通用全景规划，顶部页签可新增按年或按月组织的大计划；左侧工具栏提供编辑、备份、同步、月历、财务、学术、购房、求职、城市和记录本等模块。</p>
+      <p>这是一个本地优先的多页面计划系统。首页用于通用全景规划，顶部页签可新增按年或按月组织的大计划；左侧工具栏按工作台分组：计划、时间、项目、资产、职业、数据和系统。</p>
       <ul>
         <li>数据默认保存在浏览器本地存储，刷新后会自动恢复</li>
         <li>周计划、月历提醒、工具面板数据和地图备注均走本地保存</li>
         <li>页面主题、字号、字体和布局会跟随设置实时调整</li>
+        <li>设置里的数据中心会显示当前账号空间、同步状态和恢复点数量</li>
+      </ul>
+    </section>
+    <section>
+      <h4>🧭 工具工作台</h4>
+      <ul>
+        <li><strong>计划</strong>：编辑、展开和收起周计划</li>
+        <li><strong>时间</strong>：月历、本周事项和提醒</li>
+        <li><strong>项目</strong>：学术进展、记录本和快照</li>
+        <li><strong>资产</strong>：财务和购房工具</li>
+        <li><strong>职业</strong>：求职时间线和城市卡片</li>
+        <li><strong>数据</strong>：存档、同步和备份</li>
+        <li><strong>系统</strong>：说明、设置和账号</li>
       </ul>
     </section>
     <section>
@@ -403,7 +437,16 @@
         <button class="stg-btn stg-action" id="exportBtnSettings" type="button">📥 导出</button>
         <button class="stg-btn stg-action" id="importBtnSettings" type="button">📤 导入</button>
         <button class="stg-btn stg-action" id="themeBtnSettings" type="button">🌙 主题</button>
+        <button class="stg-btn stg-action" id="restorePointSettings" type="button">↩ 恢复点</button>
         <button class="stg-btn stg-action danger" id="resetTasksSettings" type="button">🗑 重置</button>
+      </div>
+    </div>
+    <div class="stg-group">
+      <div class="stg-label">账号与同步</div>
+      <div class="stg-status-grid">
+        <div><span>数据空间</span><strong id="stgDataScope">--</strong></div>
+        <div><span>同步状态</span><strong id="stgSyncState">--</strong></div>
+        <div><span>恢复点</span><strong id="stgRecoveryCount">0</strong></div>
       </div>
     </div>
   </div>
@@ -1057,6 +1100,54 @@ function ensureGenericPlanbookInfo(p) {
   }
 }
 function save(){localStorage.setItem(SK,JSON.stringify(data));saveOpenState();try{computeStats()}catch(e){}}
+const RECOVERY_KEY = SK + '_recovery_points';
+function recoveryPoints() {
+  try { return JSON.parse(localStorage.getItem(RECOVERY_KEY) || '[]'); } catch(e) { return []; }
+}
+function createRecoveryPoint(reason) {
+  try {
+    var points = recoveryPoints();
+    points.unshift({
+      reason: reason || '自动恢复点',
+      createdAt: new Date().toISOString(),
+      data: JSON.parse(JSON.stringify(data || {})),
+      openState: JSON.parse(JSON.stringify(openState || {}))
+    });
+    points = points.slice(0, 8);
+    localStorage.setItem(RECOVERY_KEY, JSON.stringify(points));
+    updateDataCenterStatus();
+  } catch(e) {}
+}
+function restoreLatestRecoveryPoint() {
+  var points = recoveryPoints();
+  if (!points.length) { showToast('暂无恢复点'); return; }
+  var p = points[0];
+  var label = (p.reason || '自动恢复点') + ' · ' + new Date(p.createdAt).toLocaleString('zh-CN');
+  if (!confirm('恢复最近恢复点？\n' + label + '\n当前数据会先自动保存为恢复点。')) return;
+  createRecoveryPoint('恢复前自动备份');
+  data = p.data || {};
+  openState = p.openState || {};
+  ensure(data);
+  save();
+  saveOpenState();
+  renderAll();
+  renderPageToolbar();
+  updateDataCenterStatus();
+  showToast('已恢复最近恢复点');
+}
+function updateDataCenterStatus() {
+  var scopeEl = document.getElementById('stgDataScope');
+  var syncEl = document.getElementById('stgSyncState');
+  var recEl = document.getElementById('stgRecoveryCount');
+  var user = readStoredGithubUser();
+  if (scopeEl) scopeEl.textContent = user && user.login ? '@' + user.login : (localStorage.getItem(GITHUB_LOCAL_MODE_KEY) === '1' ? '本地模式' : '访客');
+  if (syncEl) {
+    if (gistId && gistLastSync > 0) syncEl.textContent = '已同步 ' + new Date(gistLastSync).toLocaleString('zh-CN', {hour:'2-digit',minute:'2-digit'});
+    else if (gistToken && gistId) syncEl.textContent = '待同步';
+    else syncEl.textContent = '未连接';
+  }
+  if (recEl) recEl.textContent = String(recoveryPoints().length);
+}
 
 // ======================== RENDER ========================
 function formatDateKey(d) {
@@ -1502,6 +1593,7 @@ function deleteBaseYear(yid) {
   if (!/^y[1-5]$/.test(yid)) return;
   var label = baseYearLabel(yid);
   if (!confirm('确定删除「' + label + '」及其所有周计划数据？')) return;
+  createRecoveryPoint('删除' + label + '前');
   if (!Array.isArray(data._hiddenBaseYears)) data._hiddenBaseYears = [];
   if (data._hiddenBaseYears.indexOf(yid) < 0) data._hiddenBaseYears.push(yid);
   ['academic','exam','finance','life'].forEach(function(type) {
@@ -1644,6 +1736,7 @@ function renderCustomYears() {
       e.stopPropagation();
       const id = this.dataset.id;
       if (!confirm('确定删除「' + id + '」及其所有周计划数据？')) return;
+      createRecoveryPoint('删除自定义计划前');
       // Remove from data
       const years = getCustomYears();
       data._customYears = years.filter(y => y.id !== id);
@@ -1962,6 +2055,7 @@ function deletePage(pageId) {
   if (idx === -1) return;
   var label = pages[idx].label || '此页';
   if (!confirm('确认删除「' + label + '」？\n该页面所有数据将被永久移除。')) return;
+  createRecoveryPoint('删除页面「' + label + '」前');
   
   // Remove from pages array
   pages.splice(idx, 1);
@@ -2023,6 +2117,7 @@ function deletePageSection(pageId, secId) {
   if (!page || !secId) return;
   var label = dynamicSectionLabel(pageId, page, secId);
   if (!confirm('确定删除「' + label + '」及其所有周计划数据？')) return;
+  createRecoveryPoint('删除分段「' + label + '」前');
 
   var fullSecId = pageId + '-' + secId;
   var cardPrefix = fullSecId + '-';
@@ -2068,6 +2163,7 @@ function deleteDynamicStat(pageId, idx) {
   var stats = getDynamicCustomStats(pageId);
   idx = parseInt(idx);
   if (isNaN(idx) || idx < 0 || idx >= stats.length) return;
+  createRecoveryPoint('删除统计栏目前');
   stats.splice(idx, 1);
   save();
   renderDynamicPage(pageId);
@@ -2288,6 +2384,10 @@ document.addEventListener('click', e => {
     document.getElementById('fileInput').click();
     return;
   }
+  if (t.id==='restorePointSettings'||t.closest('#restorePointSettings')) {
+    restoreLatestRecoveryPoint();
+    return;
+  }
 
   // Edit toggle (both buttons)
   if (t.id==='editToggle'||t.closest('#editToggle')||t.id==='editToggle2'||t.closest('#editToggle2')) {
@@ -2332,6 +2432,7 @@ document.addEventListener('click', e => {
   // Reset
   if (t.id==='resetTasksSettings'||t.closest('#resetTasksSettings')) {
     if (confirm('确定重置所有任务数据？')) {
+      createRecoveryPoint('重置前');
       localStorage.removeItem(SK); localStorage.removeItem(SK+'_open');
       data = load(); openState = {}; renderAll(); showToast('🗑 已重置');
     }
@@ -2348,6 +2449,7 @@ document.getElementById('fileInput').addEventListener('change', function(e) {
     try {
       const imported = JSON.parse(ev.target.result);
       if (typeof imported !== 'object') throw new Error('invalid');
+      createRecoveryPoint('导入前');
       data = imported; ensure(data); save(); renderAll(); showToast('📤 已导入');
     } catch(err) { alert('导入失败：格式不正确'); }
   };
@@ -3598,6 +3700,7 @@ function setGistStatus(msg, cls) {
 
 function updateGistUI() {
   const el = gistDom('gistIndicator');
+  updateDataCenterStatus();
   if (!el) return;
   if (gistId && gistLastSync > 0) {
     const d = new Date(gistLastSync);
@@ -4341,6 +4444,7 @@ function stgHighlight(grp,v){
 }
 function stgOpen(){
   var s=data._settings||{fontSize:1,fontFamily:0,lineHeight:1,pageWidth:0}
+  updateDataCenterStatus()
   stgHighlight('FontSize',s.fontSize)
   stgHighlight('FontFamily',s.fontFamily)
   stgHighlight('LineHeight',s.lineHeight)
