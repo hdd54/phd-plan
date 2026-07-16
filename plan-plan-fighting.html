@@ -1528,6 +1528,13 @@ function overviewBucket(cid) {
 function restoreEditableText(root) {
   root = root || document;
   if (!data._overviews) return;
+  var mainHero = root.getElementById ? root.getElementById('mainHero') : document.getElementById('mainHero');
+  if (mainHero) {
+    var heroTitle = mainHero.querySelector('#heroTitle');
+    var heroSub = mainHero.querySelector('#heroSub');
+    if (heroTitle && data._overviews.hmark) heroTitle.innerHTML = data._overviews.hmark;
+    if (heroSub && data._overviews.hsub) heroSub.textContent = data._overviews.hsub;
+  }
   root.querySelectorAll('.tb[id^="ov-"]').forEach(function(el) {
     var html = overviewValue(el.id.replace('ov-', ''));
     if (html !== null) el.innerHTML = html;
@@ -1547,6 +1554,17 @@ function restoreEditableText(root) {
     if (ey) { var eyEl = sec.querySelector('.sh .ey'); if (eyEl) eyEl.textContent = ey; }
     if (h2) { var h2El = sec.querySelector('.sh h2'); if (h2El) h2El.innerHTML = h2; }
     if (sub) { var subEl = sec.querySelector('.sh .sub'); if (subEl) subEl.textContent = sub; }
+  });
+  refreshBaseNavLabels();
+}
+
+function refreshBaseNavLabels() {
+  ['y1','y2','y3','y4','y5'].forEach(function(yid) {
+    var savedH2 = data._overviews && data._overviews[yid + '-h2'];
+    var savedEy = data._overviews && data._overviews[yid + '-ey'];
+    var label = plainTextFromHtml(savedH2) || (savedEy || '').trim() || baseYearLabel(yid);
+    var navLabel = document.querySelector('.yni[data-y="' + yid + '"] .yl');
+    if (navLabel && label) navLabel.textContent = label;
   });
 }
 
@@ -1615,6 +1633,7 @@ function deleteBaseYear(yid) {
 
 function renderAll() {
   installBaseYearDeleteControls();
+  restoreEditableText(document);
   applyBaseYearVisibility();
   document.querySelectorAll('.wp[data-c]').forEach(el => {
     const cid = el.dataset.c;
@@ -1623,6 +1642,7 @@ function renderAll() {
     renderWeeks(cid);
   });
   renderCustomYears();
+  restoreEditableText(document);
   applyBaseYearVisibility();
 }
 
@@ -2393,6 +2413,7 @@ document.addEventListener('click', e => {
   // Edit toggle (both buttons)
   if (t.id==='editToggle'||t.closest('#editToggle')||t.id==='editToggle2'||t.closest('#editToggle2')) {
     const isEdit = !document.querySelector('.tb[contentEditable="true"]');
+    if (!isEdit) persistLiveEdits();
     // Toggle contentEditable on ALL text elements
     document.querySelectorAll(
       '.tb, .tc .ti, .tc .tt > span:first-child, .tc .tm, .wk-label, ' +
@@ -2528,6 +2549,7 @@ function persistLiveEdits() {
     if (ftp.id === 'footerLine1') data._footer[0] = ftp.textContent;
     else if (ftp.id === 'footerLine2') data._footer[1] = ftp.textContent;
   });
+  refreshBaseNavLabels();
   save();
   scheduleUpdateAllStats();
 }
@@ -2541,6 +2563,13 @@ window.addEventListener('beforeunload', function() {
 
 document.addEventListener('input', e => {
   const t = e.target;
+  if (t.closest && t.closest('[contenteditable="true"]')) {
+    persistLiveEdits();
+    refreshBaseNavLabels();
+    var sec = t.closest('.sec');
+    if (sec && sec.id && sec.id.indexOf('-') > 0) refreshDynamicNavLabels(sec.id.split('-')[0]);
+    return;
+  }
   // Day textarea
   if (t.classList.contains('di')) {
     autoResize(t);
@@ -5033,6 +5062,7 @@ document.addEventListener('blur', e => {
     if (!data._overviews) data._overviews = {};
     data._overviews[sec.id+'-ey'] = ey.textContent;
     var pageForEy = sec.id.indexOf('-') > 0 ? sec.id.split('-')[0] : '';
+    refreshBaseNavLabels();
     refreshDynamicNavLabels(pageForEy);
     save(); return;
   }
@@ -5045,6 +5075,7 @@ document.addEventListener('blur', e => {
     // Store text-only, preserve the emoji icons
     data._overviews[sec.id+'-h2'] = h2el.innerHTML;
     var pageForH2 = sec.id.indexOf('-') > 0 ? sec.id.split('-')[0] : '';
+    refreshBaseNavLabels();
     refreshDynamicNavLabels(pageForH2);
     save(); return;
   }
